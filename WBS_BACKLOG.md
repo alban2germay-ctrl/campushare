@@ -1,58 +1,69 @@
-# 📋 WBS (Work Breakdown Structure) — Projet CampuShare
+# 📋 WBS (Work Breakdown Structure) — Développement de la PWA CampuShare
 
-Ce document est l'arbre hiérarchique de toutes les micro-tâches du projet.
-**Légende des états :**
+Ce document est l'arbre hiérarchique officiel du développement de l'application **PWA CampuShare**.
+Chaque tâche est atomique, progressive et conçue pour un apprentissage complet d'Alban et Mathys.
+
+**Légende des statuts :**
 * ⚪ `[À FAIRE]` : En attente
-* 🟡 `[EN COURS]` : Tâche active
-* 🟢 `[VALIDÉ]` : Hypothèse vérifiée scientifiquement
+* 🟡 `[EN COURS]` : Micro-tâche active en développement
+* 🟢 `[VALIDÉ]` : Testé et validé par Alban & Mathys
 
 ---
 
-## 🟢 PHASE 1 : Cadrage des Hypothèses Critiques & Modèle de Confiance (Zéro code)
+## 🟢 PHASE 1 : Socle Technique PWA & Coquille Mobile-First
+*Objectif : Mettre en place un conteneur smartphone ultra-fluide avec une navigation au pouce et le support PWA.*
+*Agent responsable :* `@agent-architect` & `@agent-ui-design`
 
-### Tâche 1.1 : Cadrage Fondamental de l'Offre & de la Caution
-* 🟡 **Micro-tâche 1.1.1** : *L'Hypothèse de Sécurité Propriétaire* — Définir le mécanisme de caution exact (empreinte bancaire, carte d'identité, montant acceptable) qui élimine la peur de la casse chez un étudiant prêteur.
-  * *Responsable :* Alban
-  * *Condition de succès :* Règle de gestion claire formalisée dans `JOURNAL_DECISIONS.md`.
-* ⚪ **Micro-tâche 1.1.2** : *L'Inventaire Personnel Initial* — Identifier 5 objets réels détenus par les fondateurs ou leurs proches, prêts à être mis en location test ce week-end.
-  * *Responsable :* Alban & Mathys
-  * *Condition de succès :* Liste des 5 objets avec valeur à neuf et prix de location week-end cible.
+### Tâche 1.1 : La Coquille d'Application Smartphone (Mobile Shell)
+* 🟡 **Micro-tâche 1.1.1** : *Conteneur Mobile & Safe Areas* — Créer la structure viewport smartphone (largeur max 430px centrée sur grand écran, 100% responsive sur mobile, gestion des encoches iOS/Android).
+* ⚪ **Micro-tâche 1.1.2** : *Header Mobile Campus* — Créer le bandeau supérieur avec le badge de l'école (Toulouse INP - ENSEEIHT), le profil étudiant et l'accès rapide aux notifications.
+* ⚪ **Micro-tâche 1.1.3** : *Bottom Navigation Bar Tactile* — Développer la barre de navigation inférieure fixe au pouce avec 4 onglets :
+  1. 🔍 **Explorer** (Catalogue matériel)
+  2. 📦 **Mes Objets** (Espace propriétaire)
+  3. 📅 **Réservations** (Locations en cours)
+  4. 👤 **Mon Compte** (Profil certifié promo)
 
-### Tâche 1.2 : Enquête Terrain & Cartographie de la Demande
-* 🟡 **Micro-tâche 1.2.1** : *Interviews flash étudiants* — Sonder 5 camarades de promotion sur les objets qu'ils rêveraient de louer à 10-15€ ce week-end.
-  * *Responsable :* Mathys
-  * *Condition de succès :* Retours retranscrits dans `ESPACE_MATHYS.md`.
-* ⚪ **Micro-tâche 1.2.2** : *Hiérarchisation du Top 3 d'Urgence* — Identifier les 3 catégories de matériel ayant le score de désirabilité le plus élevé pour les 30 prochains jours.
-  * *Responsable :* Alban & Mathys + IA
-
----
-
-## ⚪ PHASE 2 : Conception de l'Expérience Pilote Concierge (Manuel)
-
-### Tâche 2.1 : Conception du Protocole de Fausse Porte (*Fake Door*)
-* ⚪ **Micro-tâche 2.1.1** : Rdaction du pitch d'offre minimal pour le campus (accroche, 5 objets vedettes, prix, garantie sécurité).
-* ⚪ **Micro-tâche 2.1.2** : Création du canal de commande léger (formulaire sans code ou contact WhatsApp direct).
+### Tâche 1.2 : Configuration Native PWA (Installation Smartphone)
+* ⚪ **Micro-tâche 1.2.1** : *Manifest PWA* — Créer `manifest.json` avec affichage plein écran (`display: standalone`), couleurs de thème crème/vert sauge et icônes d'application.
+* ⚪ **Micro-tâche 1.2.2** : *Service Worker & Cache Offline* — Configurer le Service Worker pour le chargement instantané sans temps de latence réseau.
 
 ---
 
-## ⚪ PHASE 3 : Sourcing Physique & Mobilisation de l'Offre Initiale (Supply-Side)
+## ⚪ PHASE 2 : Chantier A — Le Moteur Emprunteur & Découverte (Feed & Fiche)
+*Objectif : Permettre à un étudiant de trouver et réserver un objet pour le week-end en moins de 3 clics.*
+*Agent responsable :* `@agent-renter` & `@agent-ui-design`
 
-### Tâche 3.1 : Partenariat Pilote Assos de l'École
-* ⚪ **Micro-tâche 3.1.1** : Identification du matériel dormant dans les locaux associatifs (BDE, BDS, Club Son/Montagne).
-* ⚪ **Micro-tâche 3.1.2** : Proposition d'accord gagnant-gagnant avec un bureau associatif pour monétiser leur matériel inutilisé.
+### Tâche 2.1 : L'Écran d'Accueil & Filtres Catégories
+* ⚪ **Micro-tâche 2.1.1** : *Bannière Week-end Dynamique* — Affichage du compte à rebours avant le prochain week-end (ex: *« Prochain départ : Vendredi 17h au foyer »*).
+* ⚪ **Micro-tâche 2.1.2** : *Pills de Catégories Tactiles* — Sélecteur horizontal à défilement doux (🎉 Soirée, 🏔️ Montagne/Ski, 🔨 Bricolage, 🍳 Cuisine/Raclette, 💻 Tech/Projo).
+* ⚪ **Micro-tâche 2.1.3** : *Carte Objet Tactile* — Composant de carte avec photo nette, titre, badge catégorie, prix forfait week-end (ex: 12€), montant de caution rassurant et badge promo du propriétaire.
+
+### Tâche 2.2 : La Fiche Produit 360° & Réservation Week-end
+* ⚪ **Micro-tâche 2.2.1** : *Fiche Détail Matériel* — Caractéristiques de l'objet, accessoires inclus, état d'usure certifié et avis des camarades de promo.
+* ⚪ **Micro-tâche 2.2.2** : *Sélecteur de Retrait Physique* — Choix du lieu de rendez-vous sur le campus (Foyer N7, Cafétéria, Résidence étudiante).
+* ⚪ **Micro-tâche 2.2.3** : *Modale de Confirmation & Caution* — Récapitulatif transparent du prix de location et de l'empreinte de caution non débitée.
 
 ---
 
-## ⚪ PHASE 4 : Test de Traction & Premières Transactions Réelles (Demand-Side)
+## ⚪ PHASE 3 : Chantier B — Le Moteur Propriétaire & Prise de Vue (Mise en Location)
+*Objectif : Permettre à un propriétaire de photographier et lister son objet en moins de 60 secondes.*
+*Agent responsable :* `@agent-owner` & `@agent-trust`
 
-### Tâche 4.1 : Test de Location Réel d'un Week-end
-* ⚪ **Micro-tâche 4.1.1** : Diffusion de l'offre auprès d'une cohorte test de 50 étudiants de l'école.
-* ⚪ **Micro-tâche 4.1.2** : Exécution de 3 locations réelles en mode concierge (remise en main propre, encaissement de la part, vérification du retour).
+### Tâche 3.1 : Formulaire d'Ajout d'Objet Mobile Express
+* ⚪ **Micro-tâche 3.1.1** : *Déclencheur Caméra Smartphone* — Bouton d'upload direct ouvrant l'appareil photo du téléphone avec prévisualisation immédiate.
+* ⚪ **Micro-tâche 3.1.2** : *Formulaire Épuré à 3 Champs* — Titre de l'objet, catégorie et valeur d'achat estimée.
+* ⚪ **Micro-tâche 3.1.3** : *Calculateur Tarifaire Intelligent* — Suggestion automatique du prix week-end recommandé (10-15% du prix neuf) et de la caution adéquate.
+
+### Tâche 3.2 : Tableau de Bord Propriétaire & Gestion des Demandes
+* ⚪ **Micro-tâche 3.2.1** : *Gestionnaire d'Inventaire Personnel* — Liste des objets du propriétaire avec statut (Disponible / En location / Indisponible).
+* ⚪ **Micro-tâche 3.2.2** : *Centre de Validation des Demandes* — Carte de demande entrante d'un camarade avec options tactiles *Accepter* / *Décliner*.
 
 ---
 
-## ⚪ PHASE 5 : Débrief Scientifique, Arbitrages & Architecture du Produit Web
+## ⚪ PHASE 4 : Le Module de Confiance & Check-in / Check-out (Anti-Casse)
+*Objectif : Supprimer la peur de la casse grâce à l'état des lieux numérique simplifié.*
+*Agent responsable :* `@agent-trust` & `@agent-architect`
 
-### Tâche 5.1 : Spécification Technique du MVP Web-App
-* ⚪ **Micro-tâche 5.1.1** : Synthèse des frictions constatées lors des locations physiques.
-* ⚪ **Micro-tâche 5.1.2** : Cahier des charges de la web-app (authentification email école, empreinte Stripe, catalogue).
+### Tâche 4.1 : Passation Numérique de Début et Fin de Prêt
+* ⚪ **Micro-tâche 4.1.1** : *Check-in du Vendredi* — Double photo de l'objet remis au départ pour figer son état initial.
+* ⚪ **Micro-tâche 4.1.2** : *Check-out du Dimanche* — Confirmation de restitution en bon état et déblocage instantané de l'empreinte de caution.
