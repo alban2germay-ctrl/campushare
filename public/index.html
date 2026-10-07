@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr" class="h-full bg-[#F0EBE1]">
+<html lang="fr" class="h-full bg-[#EAE2D5]">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>CampuShare — Matos Étudiant ENSEEIHT (PWA)</title>
+  <title>CampuShare — Matos Étudiant ENSEEIHT (PWA Studio)</title>
   
   <!-- PWA & Mobile Web Capabilities -->
   <link rel="manifest" href="./manifest.json">
@@ -84,215 +84,371 @@
     }
   </style>
 </head>
-<body class="h-full w-full bg-[#EAE2D5] flex items-center justify-center font-sans antialiased selection:bg-[#E6EFE6] selection:text-[#354F48]">
-  <div id="root" class="h-full w-full flex items-center justify-center"></div>
+<body class="h-full w-full bg-[#E8E2D5] flex flex-col items-center justify-center font-sans antialiased selection:bg-[#E6EFE6] selection:text-[#354F48] p-0 sm:p-4">
+  <div id="root" class="h-full w-full flex flex-col items-center justify-center"></div>
 
   <script type="text/babel">
     const { useState, useEffect } = React;
 
     function App() {
       const [currentTab, setCurrentTab] = useState('explore');
-      const [userMode, setUserMode] = useState('renter'); // 'renter' (Alban / Emprunteur) ou 'owner' (Mathys / Propriétaire)
-      const [activeSubTask, setActiveSubTask] = useState('1.1.1');
+      const [deviceMode, setDeviceMode] = useState('iphone'); // 'iphone' (390px) | 'pixel' (412px) | 'fullscreen'
+      const [currentUser, setCurrentUser] = useState('alban'); // 'alban' ou 'mathys'
+      const [userRole, setUserRole] = useState('renter'); // 'renter' (Emprunteur) ou 'owner' (Propriétaire)
+      const [walletBalance, setWalletBalance] = useState(24.00);
+      const [activeNotification, setActiveNotification] = useState(true);
+
+      const users = {
+        alban: {
+          name: 'Alban D.',
+          promo: '2A SN (Numérique)',
+          school: 'Toulouse INP • ENSEEIHT',
+          avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80',
+          activeItems: 2,
+          wallet: 32.50
+        },
+        mathys: {
+          name: 'Mathys D.',
+          promo: '2A 3EA (Électronique/Énergie)',
+          school: 'Toulouse INP • ENSEEIHT',
+          avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=120&q=80',
+          activeItems: 3,
+          wallet: 18.00
+        }
+      };
+
+      const activeUserData = users[currentUser];
 
       useEffect(() => {
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [currentTab, userMode, activeSubTask]);
+      }, [currentTab, deviceMode, currentUser, userRole, activeNotification]);
+
+      // Calcul des largeurs selon le mode choisi par les directeurs
+      const getDeviceContainerClass = () => {
+        if (deviceMode === 'fullscreen') {
+          return 'w-full h-full rounded-none shadow-none border-none';
+        }
+        if (deviceMode === 'pixel') {
+          return 'w-full h-full sm:h-[860px] sm:max-w-[412px] sm:rounded-[40px] sm:shadow-2xl sm:ring-8 sm:ring-black/15 border border-[#EAE2D5]';
+        }
+        // iPhone 15 Pro par défaut
+        return 'w-full h-full sm:h-[844px] sm:max-w-[390px] sm:rounded-[48px] sm:shadow-2xl sm:ring-8 sm:ring-black/15 border border-[#EAE2D5]';
+      };
 
       return (
-        <div className="relative w-full h-full sm:h-[844px] sm:max-w-[390px] sm:rounded-[44px] sm:shadow-2xl sm:ring-8 sm:ring-black/10 bg-[#FAF8F5] overflow-hidden flex flex-col border border-[#EAE2D5]">
+        <div className="w-full h-full flex flex-col items-center justify-center">
           
-          {/* Status Bar Simulée (Masquée si installée en PWA native) */}
-          <div className="pt-2 px-6 flex items-center justify-between text-xs font-semibold text-[#2C2720] flex-shrink-0 select-none">
-            <span>09:41</span>
-            {/* Dynamic Island / Encoche factice sur ordinateur */}
-            <div className="hidden sm:block w-24 h-4 bg-[#2C2720] rounded-full mx-auto"></div>
-            <div className="flex items-center gap-1.5 text-xs text-[#2C2720]">
-              <i data-lucide="wifi" className="w-3.5 h-3.5"></i>
-              <i data-lucide="battery" className="w-4 h-4"></i>
-            </div>
-          </div>
-
-          {/* Header Mobile Campus */}
-          <header className="px-5 pt-3 pb-3 border-b border-[#EAE2D5] bg-white/80 backdrop-blur-md flex items-center justify-between flex-shrink-0 z-20">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-2xl bg-[#E6EFE6] text-[#52796F] font-extrabold flex items-center justify-center text-sm shadow-xs">
-                🎒
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <h1 className="font-extrabold text-[#2C2720] text-sm tracking-tight">CampuShare</h1>
-                  <span className="px-1.5 py-0.2 rounded-md bg-[#E6EFE6] text-[#354F48] text-[9px] font-bold">
-                    PWA
-                  </span>
-                </div>
-                <p className="text-[10px] text-[#6B6358] font-semibold">Toulouse INP • ENSEEIHT</p>
-              </div>
+          {/* BARRE D'OUTILS DIRECTIONNELLE (Visible sur PC / Mac pour Alban & Mathys) */}
+          <div className="hidden sm:flex items-center justify-between w-full max-w-2xl mb-3 px-4 py-2 bg-white/80 backdrop-blur rounded-2xl border border-[#DCD5C5] shadow-xs text-xs">
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold text-[#2C2720] flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#52796F] animate-pulse"></span>
+                CampuShare Studio
+              </span>
+              <span className="text-[#A89F91]">&bull;</span>
+              <span className="text-[#6B6358] font-medium">Banc d'essai PWA des Directeurs</span>
             </div>
 
-            {/* Sélecteur de Mode pour tester les deux chantiers (Alban vs Mathys) */}
-            <div className="flex items-center bg-[#FAF8F5] p-1 rounded-xl border border-[#EAE2D5]">
+            {/* Sélecteur de profil actif */}
+            <div className="flex items-center gap-1.5 bg-[#FAF8F5] p-1 rounded-xl border border-[#EAE2D5]">
+              <span className="text-[10px] text-[#8C8275] font-bold px-1.5">Profil :</span>
               <button
-                onClick={() => setUserMode('renter')}
-                className={`px-2 py-1 rounded-lg text-[10px] font-bold transition ${
-                  userMode === 'renter'
+                onClick={() => setCurrentUser('alban')}
+                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${
+                  currentUser === 'alban'
                     ? 'bg-[#52796F] text-white shadow-xs'
                     : 'text-[#6B6358] hover:text-[#2C2720]'
                 }`}
-                title="Chantier Emprunteur (Recherche & Réservation)"
               >
-                Emprunteur
+                Alban
               </button>
               <button
-                onClick={() => setUserMode('owner')}
-                className={`px-2 py-1 rounded-lg text-[10px] font-bold transition ${
-                  userMode === 'owner'
-                    ? 'bg-[#D87D4A] text-white shadow-xs'
+                onClick={() => setCurrentUser('mathys')}
+                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${
+                  currentUser === 'mathys'
+                    ? 'bg-[#52796F] text-white shadow-xs'
                     : 'text-[#6B6358] hover:text-[#2C2720]'
                 }`}
-                title="Chantier Propriétaire (Ajout & Matos)"
               >
-                Propriétaire
+                Mathys
               </button>
             </div>
-          </header>
 
-          {/* Corps de l'Application Scrollable */}
-          <main className="flex-1 overflow-y-auto mobile-scroll-container p-5 space-y-4">
+            {/* Sélecteur de simulateur / plein écran */}
+            <div className="flex items-center gap-1 bg-[#FAF8F5] p-1 rounded-xl border border-[#EAE2D5]">
+              <button
+                onClick={() => setDeviceMode('iphone')}
+                className={`px-2 py-1 rounded-lg text-[10px] font-semibold transition ${
+                  deviceMode === 'iphone' ? 'bg-[#2C2720] text-white font-bold' : 'text-[#6B6358]'
+                }`}
+                title="Simulateur iPhone 15 Pro (390px)"
+              >
+                📱 iPhone
+              </button>
+              <button
+                onClick={() => setDeviceMode('pixel')}
+                className={`px-2 py-1 rounded-lg text-[10px] font-semibold transition ${
+                  deviceMode === 'pixel' ? 'bg-[#2C2720] text-white font-bold' : 'text-[#6B6358]'
+                }`}
+                title="Simulateur Android Pixel (412px)"
+              >
+                📱 Pixel
+              </button>
+              <button
+                onClick={() => setDeviceMode('fullscreen')}
+                className={`px-2 py-1 rounded-lg text-[10px] font-semibold transition ${
+                  deviceMode === 'fullscreen' ? 'bg-[#2C2720] text-white font-bold' : 'text-[#6B6358]'
+                }`}
+                title="Mode Plein Écran Web"
+              >
+                🖥️ Plein Écran
+              </button>
+            </div>
+          </div>
+
+          {/* CONTENEUR DE L'APPLICATION SMARTPHONE */}
+          <div className={`relative bg-[#FAF8F5] overflow-hidden flex flex-col transition-all duration-300 ${getDeviceContainerClass()}`}>
             
-            {/* Statut de la Micro-tâche Active */}
-            <div className="p-4 rounded-3xl bg-white border border-[#EAE2D5] shadow-xs space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E6EFE6] text-[#354F48]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#52796F] animate-pulse"></span>
-                  Micro-tâche 1.1.1 Validée
-                </span>
-                <span className="text-[10px] text-[#8C8275] font-mono font-semibold">@agent-architect</span>
-              </div>
-              <h2 className="text-base font-extrabold text-[#2C2720] leading-snug">
-                Coquille Smartphone & Safe Areas Opérationnelles
-              </h2>
-              <p className="text-xs text-[#6B6358] leading-relaxed">
-                Ce cadre représente exactement votre future PWA sur les smartphones des élèves de l'N7. Il s'adapte à toutes les tailles d'écran sans aucune déformation.
-              </p>
-            </div>
-
-            {/* Présentation Pédagogique des 2 Chantiers */}
-            <div className="space-y-3">
-              <span className="text-[10px] font-bold text-[#8C8275] uppercase tracking-wider block">
-                Mode Actif : {userMode === 'renter' ? 'Chantier A (Emprunteur)' : 'Chantier B (Propriétaire)'}
-              </span>
-
-              {userMode === 'renter' ? (
-                /* Aperçu Chantier Emprunteur */
-                <div className="p-4.5 rounded-3xl bg-gradient-to-br from-[#FAF8F5] to-[#F4EFE6] border border-[#EAE2D5] space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">🔍</span>
-                    <div>
-                      <h3 className="font-bold text-sm text-[#2C2720]">Parcours Découverte & Emprunt</h3>
-                      <p className="text-[11px] text-[#6B6358]">Trouver et bloquer du matos pour le week-end</p>
-                    </div>
-                  </div>
-                  <div className="p-3 rounded-2xl bg-white/90 border border-[#EAE2D5] text-xs space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#8C8275]">Bannière week-end :</span>
-                      <span className="font-bold text-[#52796F]">Ven 17h &rarr; Dim 20h</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#8C8275]">Catégories clés :</span>
-                      <span className="font-bold text-[#2C2720]">🎉 Soirée &bull; 🏔️ Ski &bull; 🔨 Brico</span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Aperçu Chantier Propriétaire */
-                <div className="p-4.5 rounded-3xl bg-gradient-to-br from-[#FEF9EF] to-[#F8EFE3] border border-[#F4E3C5] space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">📸</span>
-                    <div>
-                      <h3 className="font-bold text-sm text-[#785E2F]">Parcours Propriétaire Express</h3>
-                      <p className="text-[11px] text-[#8C734B]">Lister son objet en moins de 60s par photo</p>
-                    </div>
-                  </div>
-                  <div className="p-3 rounded-2xl bg-white/90 border border-[#F4E3C5] text-xs space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#8C734B]">Prise de vue :</span>
-                      <span className="font-bold text-[#D87D4A]">Appareil photo smartphone</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#8C734B]">Caution recommandée :</span>
-                      <span className="font-bold text-[#785E2F]">Pré-autorisation sans débit</span>
-                    </div>
-                  </div>
-                </div>
+            {/* 1. STATUS BAR SYSTÈME (Encoche ou Dynamic Island) */}
+            <div className="pt-2 px-6 flex items-center justify-between text-xs font-semibold text-[#2C2720] flex-shrink-0 select-none">
+              <span>09:41</span>
+              {deviceMode !== 'fullscreen' && (
+                <div className="w-24 h-4 bg-[#2C2720] rounded-full mx-auto"></div>
               )}
-            </div>
-
-            {/* Checklist d'Avancement Scientifique */}
-            <div className="p-4 rounded-3xl bg-white border border-[#EAE2D5] space-y-2">
-              <span className="text-[11px] font-bold text-[#2C2720] flex items-center gap-1.5">
-                <i data-lucide="list-checks" className="w-3.5 h-3.5 text-[#52796F]"></i>
-                Prochaines Micro-tâches :
-              </span>
-              <div className="text-[11px] text-[#6B6358] space-y-1.5 pl-1">
-                <div className="flex items-center gap-2 text-[#52796F] font-bold">
-                  <span>&bull;</span>
-                  <span>1.1.2 : Header Campus & Profil Promo (@agent-ui-design)</span>
-                </div>
-                <div className="flex items-center gap-2 text-[#8C8275]">
-                  <span>&bull;</span>
-                  <span>1.1.3 : Bottom Navigation Bar tactile au pouce (@agent-ui-design)</span>
-                </div>
-                <div className="flex items-center gap-2 text-[#8C8275]">
-                  <span>&bull;</span>
-                  <span>1.2.1 : Activation du Manifest PWA plein écran (@agent-architect)</span>
-                </div>
+              <div className="flex items-center gap-1.5 text-xs text-[#2C2720]">
+                <i data-lucide="wifi" className="w-3.5 h-3.5"></i>
+                <i data-lucide="battery" className="w-4 h-4"></i>
               </div>
             </div>
 
-          </main>
+            {/* 2. HEADER MOBILE CAMPUS & SOLDE CAGNOTTE (Micro-tâche 1.1.2) */}
+            <header className="px-5 pt-3 pb-3 border-b border-[#EAE2D5] bg-white/95 backdrop-blur-md flex flex-col gap-2.5 flex-shrink-0 z-20 shadow-2xs">
+              
+              {/* Ligne Supérieure : Marque + Identité Étudiant */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="relative">
+                    <img
+                      src={activeUserData.avatar}
+                      alt={activeUserData.name}
+                      className="w-10 h-10 rounded-2xl object-cover ring-2 ring-[#52796F]/20 shadow-xs"
+                    />
+                    <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#52796F] text-white flex items-center justify-center text-[9px] font-bold">
+                      ✓
+                    </span>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <h2 className="font-extrabold text-[#2C2720] text-sm leading-tight">
+                        {activeUserData.name}
+                      </h2>
+                      <span className="px-1.5 py-0.2 rounded-md bg-[#E6EFE6] text-[#354F48] text-[9px] font-bold">
+                        Certifié
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-[#6B6358] font-semibold">{activeUserData.promo}</p>
+                  </div>
+                </div>
 
-          {/* Bottom Navigation Bar Tactile (Squelette de la Micro-tâche 1.1.3) */}
-          <nav className="border-t border-[#EAE2D5] bg-white/95 backdrop-blur-md px-4 py-2 flex items-center justify-around flex-shrink-0 z-20">
-            <button
-              onClick={() => setCurrentTab('explore')}
-              className={`flex flex-col items-center gap-0.5 transition ${
-                currentTab === 'explore' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
-              }`}
-            >
-              <i data-lucide="search" className="w-5 h-5"></i>
-              <span className="text-[10px] font-bold">Explorer</span>
-            </button>
-            <button
-              onClick={() => setCurrentTab('items')}
-              className={`flex flex-col items-center gap-0.5 transition ${
-                currentTab === 'items' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
-              }`}
-            >
-              <i data-lucide="package" className="w-5 h-5"></i>
-              <span className="text-[10px] font-semibold">Mes Objets</span>
-            </button>
-            <button
-              onClick={() => setCurrentTab('bookings')}
-              className={`flex flex-col items-center gap-0.5 transition ${
-                currentTab === 'bookings' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
-              }`}
-            >
-              <i data-lucide="calendar" className="w-5 h-5"></i>
-              <span className="text-[10px] font-semibold">Réservations</span>
-            </button>
-            <button
-              onClick={() => setCurrentTab('profile')}
-              className={`flex flex-col items-center gap-0.5 transition ${
-                currentTab === 'profile' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
-              }`}
-            >
-              <i data-lucide="user" className="w-5 h-5"></i>
-              <span className="text-[10px] font-semibold">Compte</span>
-            </button>
-          </nav>
+                {/* Notifications & Switcher de Rôle */}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => setActiveNotification(!activeNotification)}
+                    className="relative p-2 rounded-xl bg-[#FAF8F5] text-[#4A443A] hover:bg-[#F4EFE6] transition border border-[#EAE2D5]"
+                    title="Alertes de prêt"
+                  >
+                    <i data-lucide="bell" className="w-4 h-4 text-[#52796F]"></i>
+                    {activeNotification && (
+                      <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#D87D4A] ring-2 ring-white"></span>
+                    )}
+                  </button>
+
+                  <div className="flex bg-[#FAF8F5] p-0.5 rounded-xl border border-[#EAE2D5]">
+                    <button
+                      onClick={() => setUserRole('renter')}
+                      className={`px-2 py-1 rounded-lg text-[9px] font-bold transition ${
+                        userRole === 'renter'
+                          ? 'bg-[#52796F] text-white shadow-xs'
+                          : 'text-[#6B6358]'
+                      }`}
+                    >
+                      Emprunt
+                    </button>
+                    <button
+                      onClick={() => setUserRole('owner')}
+                      className={`px-2 py-1 rounded-lg text-[9px] font-bold transition ${
+                        userRole === 'owner'
+                          ? 'bg-[#D87D4A] text-white shadow-xs'
+                          : 'text-[#6B6358]'
+                      }`}
+                    >
+                      Prêt
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ligne Inférieure : Widget Cagnotte & Garantie Cautions */}
+              <div className="grid grid-cols-2 gap-2 pt-1 border-t border-[#F0EBE1] text-xs">
+                <div className="p-2.5 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] flex items-center justify-between">
+                  <div>
+                    <span className="text-[9px] text-[#8C8275] block font-semibold uppercase">Cagnotte dispo</span>
+                    <span className="font-extrabold text-sm text-[#2C2720]">
+                      {activeUserData.wallet.toFixed(2)} €
+                    </span>
+                  </div>
+                  <div className="w-7 h-7 rounded-xl bg-[#E6EFE6] text-[#52796F] flex items-center justify-center font-bold text-xs">
+                    💶
+                  </div>
+                </div>
+
+                <div className="p-2.5 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] flex items-center justify-between">
+                  <div>
+                    <span className="text-[9px] text-[#8C8275] block font-semibold uppercase">Garantie Cautions</span>
+                    <span className="font-extrabold text-xs text-[#52796F] flex items-center gap-1">
+                      <span>0 litige</span>
+                      <span className="text-[10px] text-[#8C8275]">(100%)</span>
+                    </span>
+                  </div>
+                  <div className="w-7 h-7 rounded-xl bg-[#E6EFE6] text-[#354F48] flex items-center justify-center text-xs">
+                    🛡️
+                  </div>
+                </div>
+              </div>
+            </header>
+
+            {/* 3. CORPS TACTILE SCROLLABLE */}
+            <main className="flex-1 overflow-y-auto mobile-scroll-container p-4 space-y-4">
+              
+              {/* Carte Statut Micro-tâche 1.1.2 Validée */}
+              <div className="p-4 rounded-3xl bg-white border border-[#EAE2D5] shadow-xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E6EFE6] text-[#354F48]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#52796F] animate-pulse"></span>
+                    Micro-tâche 1.1.2 Validée
+                  </span>
+                  <span className="text-[10px] text-[#8C8275] font-mono font-semibold">@agent-ui-design</span>
+                </div>
+                <h3 className="text-sm font-extrabold text-[#2C2720]">
+                  Header Campus & Widget Cagnotte Intégrés
+                </h3>
+                <p className="text-xs text-[#6B6358] leading-relaxed">
+                  Le bandeau supérieur affiche désormais le profil certifié de l'étudiant ({activeUserData.name}), son solde réel et son statut de confiance sans débit de caution.
+                </p>
+              </div>
+
+              {/* Aperçu du Rôle Actif */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-[#8C8275] uppercase tracking-wider">
+                    {userRole === 'renter' ? 'Chantier A : Parcours Emprunteur' : 'Chantier B : Parcours Propriétaire'}
+                  </span>
+                  <span className="text-[10px] text-[#52796F] font-bold">
+                    Toulouse INP • ENSEEIHT
+                  </span>
+                </div>
+
+                {userRole === 'renter' ? (
+                  /* Prévisualisation Découverte Emprunteur */
+                  <div className="p-4 rounded-3xl bg-gradient-to-br from-[#FAF8F5] to-[#F4EFE6] border border-[#EAE2D5] space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[#2C2720] flex items-center gap-1.5">
+                        <span>🏔️</span>
+                        <span>Offre du week-end à l'N7</span>
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full bg-[#52796F] text-white text-[10px] font-bold">
+                        Ven 17h &rarr; Dim 20h
+                      </span>
+                    </div>
+
+                    <div className="bg-white/95 p-3 rounded-2xl border border-[#EAE2D5] flex items-center gap-3">
+                      <div className="w-14 h-14 rounded-xl bg-[#FAF8F5] overflow-hidden flex-shrink-0">
+                        <img
+                          src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=200&q=80"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-xs text-[#2C2720] truncate">Appareil Raclette 8p Tefal</h4>
+                        <span className="text-[10px] text-[#52796F] font-semibold block">Prêté par Mathys D. (2A 3EA)</span>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="font-extrabold text-xs text-[#2C2720]">12,00 € <span className="text-[9px] font-normal text-[#8C8275]">/we</span></span>
+                          <span className="text-[9px] font-bold text-[#354F48] bg-[#E6EFE6] px-1.5 py-0.2 rounded-md">Caution : 40€</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Prévisualisation Découverte Propriétaire */
+                  <div className="p-4 rounded-3xl bg-gradient-to-br from-[#FEF9EF] to-[#F8EFE3] border border-[#F4E3C5] space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[#785E2F] flex items-center gap-1.5">
+                        <span>📸</span>
+                        <span>Mes Objets Listés ({activeUserData.activeItems})</span>
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full bg-[#D87D4A] text-white text-[10px] font-bold">
+                        Prêt Express
+                      </span>
+                    </div>
+
+                    <div className="bg-white/95 p-3 rounded-2xl border border-[#F4E3C5] flex items-center justify-between text-xs">
+                      <div>
+                        <h4 className="font-bold text-xs text-[#2C2720]">JBL Partybox 310 (240W)</h4>
+                        <span className="text-[10px] text-[#52796F] font-semibold">1 demande en attente (Hugo L.)</span>
+                      </div>
+                      <button className="px-2.5 py-1 rounded-xl bg-[#52796F] text-white text-[10px] font-bold">
+                        Accepter
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+            </main>
+
+            {/* 4. BOTTOM NAVIGATION BAR TACTILE (Micro-tâche 1.1.3 active) */}
+            <nav className="border-t border-[#EAE2D5] bg-white/95 backdrop-blur-md px-4 py-2 flex items-center justify-around flex-shrink-0 z-20 shadow-sm">
+              <button
+                onClick={() => setCurrentTab('explore')}
+                className={`flex flex-col items-center gap-0.5 transition ${
+                  currentTab === 'explore' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
+                }`}
+              >
+                <i data-lucide="compass" className="w-5 h-5"></i>
+                <span className="text-[10px] font-bold">Explorer</span>
+              </button>
+              <button
+                onClick={() => setCurrentTab('items')}
+                className={`flex flex-col items-center gap-0.5 transition ${
+                  currentTab === 'items' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
+                }`}
+              >
+                <i data-lucide="package" className="w-5 h-5"></i>
+                <span className="text-[10px] font-semibold">Mes Objets</span>
+              </button>
+              <button
+                onClick={() => setCurrentTab('bookings')}
+                className={`flex flex-col items-center gap-0.5 transition ${
+                  currentTab === 'bookings' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
+                }`}
+              >
+                <i data-lucide="calendar" className="w-5 h-5"></i>
+                <span className="text-[10px] font-semibold">Week-end</span>
+              </button>
+              <button
+                onClick={() => setCurrentTab('profile')}
+                className={`flex flex-col items-center gap-0.5 transition ${
+                  currentTab === 'profile' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
+                }`}
+              >
+                <i data-lucide="user" className="w-5 h-5"></i>
+                <span className="text-[10px] font-semibold">Compte</span>
+              </button>
+            </nav>
+
+          </div>
 
         </div>
       );
