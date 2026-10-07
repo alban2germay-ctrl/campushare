@@ -15,13 +15,9 @@ Chaque tâche est atomique, progressive et conçue pour un apprentissage complet
 *Agent responsable :* `@agent-architect` & `@agent-ui-design`
 
 ### Tâche 1.1 : La Coquille d'Application Smartphone (Mobile Shell)
-* 🟡 **Micro-tâche 1.1.1** : *Conteneur Mobile & Safe Areas* — Créer la structure viewport smartphone (largeur max 430px centrée sur grand écran, 100% responsive sur mobile, gestion des encoches iOS/Android).
-* ⚪ **Micro-tâche 1.1.2** : *Header Mobile Campus* — Créer le bandeau supérieur avec le badge de l'école (Toulouse INP - ENSEEIHT), le profil étudiant et l'accès rapide aux notifications.
-* ⚪ **Micro-tâche 1.1.3** : *Bottom Navigation Bar Tactile* — Développer la barre de navigation inférieure fixe au pouce avec 4 onglets :
-  1. 🔍 **Explorer** (Catalogue matériel)
-  2. 📦 **Mes Objets** (Espace propriétaire)
-  3. 📅 **Réservations** (Locations en cours)
-  4. 👤 **Mon Compte** (Profil certifié promo)
+* 🟢 **Micro-tâche 1.1.1** : *Conteneur Mobile & Safe Areas* — Structure viewport smartphone (largeur 390px-430px sur PC, 100% responsive sur mobile, encoches iOS/Android et palette pastel).
+* 🟡 **Micro-tâche 1.1.2** : *Header Mobile Campus & Solde Cagnotte* — Bandeau supérieur avec badge Toulouse INP - ENSEEIHT, avatar étudiant certifié et compteur de cagnotte campus.
+* ⚪ **Micro-tâche 1.1.3** : *Bottom Navigation Bar Tactile (4 onglets au pouce)* — Barre de navigation inférieure fixe au pouce avec 4 onglets tactiles.
 
 ### Tâche 1.2 : Configuration Native PWA (Installation Smartphone)
 * ⚪ **Micro-tâche 1.2.1** : *Manifest PWA* — Créer `manifest.json` avec affichage plein écran (`display: standalone`), couleurs de thème crème/vert sauge et icônes d'application.
