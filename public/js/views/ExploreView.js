@@ -7,7 +7,7 @@
 window.CS = window.CS || {};
 window.CS.views = window.CS.views || {};
 
-window.CS.views.ExploreView = function ExploreView() {
+window.CS.views.ExploreView = function ExploreView({ onNavigateTab }) {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedPeriod, setSelectedPeriod] = React.useState('24h'); // '24h' | 'weekend' | 'weekly' | 'custom'
@@ -120,116 +120,83 @@ window.CS.views.ExploreView = function ExploreView() {
   };
 
   return (
-    <div className="space-y-4 animate-fade-in pb-4">
+    <div className="space-y-3.5 animate-fade-in pb-4">
       
-      {/* Toast de confirmation de réservation */}
+      {/* 1. POPUP DE SUCCÈS MODALE : CÉLÉBRATION & ACCÈS DIRECT AU QR CODE */}
       {bookingSuccess && (
-        <div className="p-3 rounded-2xl bg-[#E6EFE6] border border-[#52796F]/30 text-[#354F48] text-xs flex items-center justify-between shadow-sm animate-fade-in">
-          <div className="flex items-center gap-2">
-            <span className="w-5 h-5 rounded-full bg-[#52796F] text-white flex items-center justify-center text-[11px] font-bold">✓</span>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl border border-[#EAE2D5] text-center space-y-3.5">
+            <div className="w-14 h-14 rounded-full bg-[#E6EFE6] text-[#52796F] flex items-center justify-center text-2xl mx-auto shadow-xs">
+              🎉
+            </div>
+
             <div>
-              <p className="font-extrabold">{bookingSuccess.title} réservé !</p>
-              <p className="text-[10px] text-[#52796F]">{bookingSuccess.dates} &bull; Retrait : {bookingSuccess.spot}</p>
+              <span className="px-2.5 py-0.5 rounded-full bg-[#E6EFE6] text-[#354F48] text-[9px] font-extrabold uppercase tracking-wide">
+                Réservation Confirmée
+              </span>
+              <h3 className="font-extrabold text-base text-[#2C2720] mt-1.5 leading-snug">
+                {bookingSuccess.title}
+              </h3>
+              <p className="text-xs text-[#6B6358] mt-0.5">
+                Prêté par <strong>{bookingSuccess.ownerName}</strong>
+              </p>
+            </div>
+
+            {/* Billet récapitulatif */}
+            <div className="p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] text-left space-y-2 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="text-[9px] font-bold text-[#8C8275] uppercase">Pass Campus N7</span>
+                <span className="font-mono font-extrabold text-[#52796F] text-xs">
+                  {bookingSuccess.bookingRef}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-[#2C2720]">
+                <i data-lucide="map-pin" className="w-3.5 h-3.5 text-[#D87D4A] flex-shrink-0"></i>
+                <span>Retrait : <strong>{bookingSuccess.spot}</strong></span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-[#6B6358]">
+                <i data-lucide="clock" className="w-3.5 h-3.5 text-[#52796F] flex-shrink-0"></i>
+                <span>{bookingSuccess.dates}</span>
+              </div>
+              <div className="pt-1.5 border-t border-[#EAE2D5] flex items-center justify-between text-[10px] text-[#354F48]">
+                <span>Empreinte caution :</span>
+                <span className="font-bold">0,00 € débité</span>
+              </div>
+            </div>
+
+            {/* Actions principales de l'emprunteur */}
+            <div className="space-y-2 pt-1">
+              <button
+                onClick={() => {
+                  setBookingSuccess(null);
+                  if (onNavigateTab) {
+                    onNavigateTab('bookings');
+                  }
+                }}
+                className="w-full py-3 rounded-2xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-md flex items-center justify-center gap-2 active:scale-[0.98]"
+              >
+                <span>👉 Voir mon Billet & QR Code de retrait</span>
+              </button>
+
+              <button
+                onClick={() => setBookingSuccess(null)}
+                className="w-full py-1.5 rounded-xl text-xs font-semibold text-[#8C8275] hover:text-[#2C2720] transition"
+              >
+                Continuer à explorer
+              </button>
             </div>
           </div>
-          <button onClick={() => setBookingSuccess(null)} className="text-[#52796F] text-xs font-bold px-1.5">✕</button>
         </div>
       )}
 
-      {/* 1. SÉLECTEUR DYNAMIQUE DE PÉRIODE 7J/7 */}
-      <div className="p-4 rounded-3xl bg-gradient-to-br from-[#FAF8F5] to-[#F4EFE6] border border-[#EAE2D5] space-y-3 shadow-2xs">
-        <div className="flex items-center justify-between">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E6EFE6] text-[#354F48]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#52796F] animate-pulse"></span>
-            Locations 7j/7 sans restriction
-          </span>
-          <span className="text-[10px] text-[#8C8275] font-semibold">Toulouse INP</span>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-extrabold text-[#2C2720]">Quand as-tu besoin de ce matériel ?</h3>
-          <p className="text-[11px] text-[#6B6358] mt-0.5">Choisis ta formule :</p>
-        </div>
-
-        {/* Boutons tactiles des formules */}
-        <div className="grid grid-cols-3 gap-1.5">
-          <button
-            onClick={() => setSelectedPeriod('24h')}
-            className={`p-2.5 rounded-2xl text-center transition ${
-              selectedPeriod === '24h'
-                ? 'bg-[#52796F] text-white shadow-xs ring-2 ring-[#52796F]/30'
-                : 'bg-white/90 border border-[#EAE2D5] text-[#2C2720] hover:border-[#52796F]'
-            }`}
-          >
-            <span className={`block text-[9px] font-bold ${selectedPeriod === '24h' ? 'text-white/80' : 'text-[#8C8275]'}`}>
-              24H SEMAINE
-            </span>
-            <span className="text-xs font-extrabold block mt-0.5">Dès 4 €</span>
-            <span className={`text-[8px] block ${selectedPeriod === '24h' ? 'text-white/70' : 'text-[#8C8275]'}`}>
-              Express
-            </span>
-          </button>
-
-          <button
-            onClick={() => setSelectedPeriod('weekend')}
-            className={`p-2.5 rounded-2xl text-center transition ${
-              selectedPeriod === 'weekend'
-                ? 'bg-[#52796F] text-white shadow-xs ring-2 ring-[#52796F]/30'
-                : 'bg-white/90 border border-[#EAE2D5] text-[#2C2720] hover:border-[#52796F]'
-            }`}
-          >
-            <span className={`block text-[9px] font-bold ${selectedPeriod === 'weekend' ? 'text-white/80' : 'text-[#8C8275]'}`}>
-              WEEK-END
-            </span>
-            <span className="text-xs font-extrabold block mt-0.5">Ven &rarr; Dim</span>
-            <span className={`text-[8px] block ${selectedPeriod === 'weekend' ? 'text-white/70' : 'text-[#8C8275]'}`}>
-              Forfait 48h
-            </span>
-          </button>
-
-          <button
-            onClick={() => setSelectedPeriod('weekly')}
-            className={`p-2.5 rounded-2xl text-center transition ${
-              selectedPeriod === 'weekly'
-                ? 'bg-[#52796F] text-white shadow-xs ring-2 ring-[#52796F]/30'
-                : 'bg-white/90 border border-[#EAE2D5] text-[#2C2720] hover:border-[#52796F]'
-            }`}
-          >
-            <span className={`block text-[9px] font-bold ${selectedPeriod === 'weekly' ? 'text-white/80' : 'text-[#8C8275]'}`}>
-              SEMAINE (7J)
-            </span>
-            <span className="text-xs font-extrabold block mt-0.5">-30%</span>
-            <span className={`text-[8px] block ${selectedPeriod === 'weekly' ? 'text-white/70' : 'text-[#8C8275]'}`}>
-              Vacances/Projet
-            </span>
-          </button>
-        </div>
-
-        {/* Rappel dynamique du créneau */}
-        <div className="p-2.5 rounded-2xl bg-white border border-[#EAE2D5] flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-xl bg-[#E6EFE6] text-[#52796F] flex items-center justify-center font-bold text-xs flex-shrink-0">
-              📅
-            </div>
-            <div>
-              <p className="font-extrabold text-[#2C2720] text-[11px]">{periodInfo.label}</p>
-              <p className="text-[10px] text-[#6B6358]">{periodInfo.dates}</p>
-            </div>
-          </div>
-          <span className="text-[9px] font-bold text-[#52796F] bg-[#FAF8F5] px-2 py-1 rounded-lg border border-[#EAE2D5]">
-            {periodInfo.tag}
-          </span>
-        </div>
-      </div>
-
-      {/* 2. BARRE DE RECHERCHE + BOUTON FILTRES AVANCÉS */}
+      {/* 2. BARRE COMPACTE DE RECHERCHE + FILTRES (Style Airbnb / Vinted) */}
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Rechercher raclette, tente, perceuse, enceinte..."
+            placeholder="Rechercher raclette, tente, perceuse, sono..."
             className="w-full pl-9 pr-8 py-2.5 rounded-2xl bg-white border border-[#EAE2D5] text-xs text-[#2C2720] placeholder-[#A89F91] focus:outline-none focus:ring-2 focus:ring-[#52796F]/30 shadow-2xs"
           />
           <i data-lucide="search" className="w-4 h-4 text-[#8C8275] absolute left-3 top-3"></i>
@@ -246,7 +213,7 @@ window.CS.views.ExploreView = function ExploreView() {
         {/* Bouton d'ouverture des filtres avancés */}
         <button
           onClick={() => setShowFilterDrawer(!showFilterDrawer)}
-          className={`px-3 py-2.5 rounded-2xl border text-xs font-bold flex items-center gap-1.5 transition shadow-2xs ${
+          className={`px-3 py-2.5 rounded-2xl border text-xs font-bold flex items-center gap-1.5 transition shadow-2xs flex-shrink-0 ${
             showFilterDrawer || activeFiltersCount > 0
               ? 'bg-[#52796F] text-white border-[#52796F]'
               : 'bg-white text-[#2C2720] border-[#EAE2D5] hover:bg-[#FAF8F5]'
@@ -261,6 +228,30 @@ window.CS.views.ExploreView = function ExploreView() {
             </span>
           )}
         </button>
+      </div>
+
+      {/* 3. SÉLECTEUR RAPIDE DE FORMULE EN PILLS (1 Ligne Horizontale Épurée) */}
+      <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+        <span className="text-[9px] font-bold text-[#8C8275] uppercase whitespace-nowrap mr-0.5">
+          Durée :
+        </span>
+        {[
+          { id: '24h', label: '⚡ 24h Express', subtitle: 'Dès 4€' },
+          { id: 'weekend', label: '🎉 Ce Week-end (Ven-Dim)', subtitle: 'Forfait 48h' },
+          { id: 'weekly', label: '📦 Semaine 7j (-30%)', subtitle: 'Vacances' }
+        ].map((p) => (
+          <button
+            key={p.id}
+            onClick={() => setSelectedPeriod(p.id)}
+            className={`px-2.5 py-1.5 rounded-xl text-[10px] font-bold whitespace-nowrap transition flex items-center gap-1 ${
+              selectedPeriod === p.id
+                ? 'bg-[#52796F] text-white shadow-xs'
+                : 'bg-white border border-[#EAE2D5] text-[#6B6358] hover:bg-[#FAF8F5]'
+            }`}
+          >
+            <span>{p.label}</span>
+          </button>
+        ))}
       </div>
 
       {/* 3. PANNEAU DE FILTRES AVANCÉS & TRI (OPTION A ALBAN) */}
@@ -510,13 +501,13 @@ window.CS.views.ExploreView = function ExploreView() {
         )}
       </div>
 
-      {/* 6. MODALE BOTTOMSHEET FICHE OBJET 360° ENRICHIE & VALIDATION RÉSERVATION */}
+      {/* 6. MODALE BOTTOMSHEET FICHE OBJET 360° AVEC CTA STICKY FIXÉ EN BAS */}
       {activeModalItem && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl border border-[#EAE2D5] max-h-[92vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#EAE2D5] max-h-[90vh] flex flex-col overflow-hidden">
             
-            {/* En-tête de la modale */}
-            <div className="flex items-center justify-between pb-2 border-b border-[#F0EBE1]">
+            {/* En-tête fixe de la modale */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-[#F0EBE1] flex-shrink-0 bg-white">
               <div className="flex items-center gap-2">
                 <span className="px-2 py-0.5 rounded-full bg-[#E6EFE6] text-[#354F48] text-[9px] font-bold">
                   {activeModalItem.categoryLabel}
@@ -533,189 +524,200 @@ window.CS.views.ExploreView = function ExploreView() {
               </button>
             </div>
 
-            {/* Photo & Titre avec état certifié */}
-            <div className="space-y-2">
-              <div className="flex gap-3 items-center">
-                <img
-                  src={activeModalItem.image}
-                  alt={activeModalItem.title}
-                  className="w-16 h-16 rounded-2xl object-cover ring-2 ring-[#52796F]/20 flex-shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-extrabold text-sm text-[#2C2720] leading-tight">
-                    {activeModalItem.title}
-                  </h3>
-                  <p className="text-xs text-[#6B6358] mt-0.5">
-                    Prêté par <strong>{activeModalItem.owner.name}</strong> ({activeModalItem.owner.promo})
-                  </p>
-                  <p className="text-[10px] text-[#52796F] font-semibold">
-                    ⭐ {activeModalItem.owner.rating} / 5 &bull; {activeModalItem.owner.reviewsCount} prêts réussis (0 litige)
-                  </p>
+            {/* Corps scrollable ergonomique */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3.5 mobile-scroll-container">
+              {/* Photo & Titre avec état certifié */}
+              <div className="space-y-2">
+                <div className="flex gap-3 items-center">
+                  <img
+                    src={activeModalItem.image}
+                    alt={activeModalItem.title}
+                    className="w-16 h-16 rounded-2xl object-cover ring-2 ring-[#52796F]/20 flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-extrabold text-sm text-[#2C2720] leading-tight">
+                      {activeModalItem.title}
+                    </h3>
+                    <p className="text-xs text-[#6B6358] mt-0.5">
+                      Prêté par <strong>{activeModalItem.owner.name}</strong> ({activeModalItem.owner.promo})
+                    </p>
+                    <p className="text-[10px] text-[#52796F] font-semibold">
+                      ⭐ {activeModalItem.owner.rating} / 5 &bull; {activeModalItem.owner.reviewsCount} prêts réussis (0 litige)
+                    </p>
+                  </div>
+                </div>
+
+                {/* Badge d'état certifié */}
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#FAF8F5] border border-[#EAE2D5] text-[10px] font-bold text-[#354F48]">
+                  <span>🛡️ État du matériel :</span>
+                  <span className="text-[#52796F]">{activeModalItem.condition || 'Comme neuf'}</span>
                 </div>
               </div>
 
-              {/* Badge d'état certifié */}
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#FAF8F5] border border-[#EAE2D5] text-[10px] font-bold text-[#354F48]">
-                <span>🛡️ État du matériel :</span>
-                <span className="text-[#52796F]">{activeModalItem.condition || 'Comme neuf'}</span>
-              </div>
-            </div>
-
-            {/* Checklist des Accessoires Inclus (Fiche 360°) */}
-            {activeModalItem.includedAccessories && (
-              <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] space-y-1.5">
-                <span className="text-[10px] font-bold text-[#8C8275] uppercase block">
-                  Accessoires inclus & vérifiés lors du retrait :
-                </span>
-                <div className="grid grid-cols-2 gap-1 text-[10px] text-[#2C2720]">
-                  {activeModalItem.includedAccessories.map((acc, idx) => (
-                    <div key={idx} className="flex items-center gap-1.5 bg-white p-1.5 rounded-lg border border-[#EAE2D5]">
-                      <span className="text-[#52796F] font-bold">✓</span>
-                      <span className="truncate">{acc}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Spécifications Clés */}
-            {activeModalItem.specs && (
-              <div className="flex gap-1.5 flex-wrap">
-                {activeModalItem.specs.map((spec, idx) => (
-                  <span key={idx} className="px-2 py-0.5 rounded-lg bg-white border border-[#EAE2D5] text-[9px] font-semibold text-[#6B6358]">
-                    ⚙️ {spec}
+              {/* Checklist des Accessoires Inclus (Fiche 360°) */}
+              {activeModalItem.includedAccessories && (
+                <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] space-y-1.5">
+                  <span className="text-[10px] font-bold text-[#8C8275] uppercase block">
+                    Accessoires inclus & vérifiés lors du retrait :
                   </span>
-                ))}
-              </div>
-            )}
-
-            {/* Avis d'étudiants de l'N7 */}
-            {activeModalItem.reviews && activeModalItem.reviews.length > 0 && (
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-bold text-[#8C8275] uppercase block">
-                  Derniers avis d'élèves de l'N7 :
-                </span>
-                <div className="space-y-1.5 max-h-24 overflow-y-auto pr-1">
-                  {activeModalItem.reviews.map((rev, idx) => (
-                    <div key={idx} className="p-2 rounded-xl bg-white border border-[#EAE2D5] text-[10px] space-y-0.5">
-                      <div className="flex justify-between items-center font-bold">
-                        <span className="text-[#2C2720]">{rev.author} ({rev.promo})</span>
-                        <span className="text-[#D87D4A]">⭐ {rev.rating}/5</span>
+                  <div className="grid grid-cols-2 gap-1 text-[10px] text-[#2C2720]">
+                    {activeModalItem.includedAccessories.map((acc, idx) => (
+                      <div key={idx} className="flex items-center gap-1.5 bg-white p-1.5 rounded-lg border border-[#EAE2D5]">
+                        <span className="text-[#52796F] font-bold">✓</span>
+                        <span className="truncate">{acc}</span>
                       </div>
-                      <p className="text-[#6B6358] italic leading-tight">« {rev.comment} »</p>
-                    </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Spécifications Clés */}
+              {activeModalItem.specs && (
+                <div className="flex gap-1.5 flex-wrap">
+                  {activeModalItem.specs.map((spec, idx) => (
+                    <span key={idx} className="px-2 py-0.5 rounded-lg bg-white border border-[#EAE2D5] text-[9px] font-semibold text-[#6B6358]">
+                      ⚙️ {spec}
+                    </span>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* SÉLECTEUR DE DATE & HEURE AU JOUR LE JOUR (Datepicker 7j/7) */}
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] space-y-2">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-[#2C2720]">Créneau sélectionné :</span>
-                <span className="font-extrabold text-[#52796F]">{periodInfo.label}</span>
-              </div>
-              <p className="text-[11px] text-[#6B6358] flex items-center gap-1.5">
-                <i data-lucide="clock" className="w-3.5 h-3.5 text-[#52796F]"></i>
-                <span>{periodInfo.dates}</span>
-              </p>
+              {/* Avis d'étudiants de l'N7 */}
+              {activeModalItem.reviews && activeModalItem.reviews.length > 0 && (
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-bold text-[#8C8275] uppercase block">
+                    Derniers avis d'élèves de l'N7 :
+                  </span>
+                  <div className="space-y-1.5 max-h-24 overflow-y-auto pr-1">
+                    {activeModalItem.reviews.map((rev, idx) => (
+                      <div key={idx} className="p-2 rounded-xl bg-white border border-[#EAE2D5] text-[10px] space-y-0.5">
+                        <div className="flex justify-between items-center font-bold">
+                          <span className="text-[#2C2720]">{rev.author} ({rev.promo})</span>
+                          <span className="text-[#D87D4A]">⭐ {rev.rating}/5</span>
+                        </div>
+                        <p className="text-[#6B6358] italic leading-tight">« {rev.comment} »</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-              {/* Choix de la tranche horaire de remise */}
-              <div className="pt-1 border-t border-[#EAE2D5]">
-                <label className="block text-[9px] font-bold text-[#8C8275] uppercase mb-1">
-                  Heure de rendez-vous souhaitée :
+              {/* SÉLECTEUR DE DATE & HEURE AU JOUR LE JOUR (Datepicker 7j/7) */}
+              <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] space-y-2">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-bold text-[#2C2720]">Créneau sélectionné :</span>
+                  <span className="font-extrabold text-[#52796F]">{periodInfo.label}</span>
+                </div>
+                <p className="text-[11px] text-[#6B6358] flex items-center gap-1.5">
+                  <i data-lucide="clock" className="w-3.5 h-3.5 text-[#52796F]"></i>
+                  <span>{periodInfo.dates}</span>
+                </p>
+
+                {/* Choix de l'heure de rendez-vous */}
+                <div className="pt-1 border-t border-[#EAE2D5]">
+                  <label className="block text-[9px] font-bold text-[#8C8275] uppercase mb-1">
+                    Heure de rendez-vous souhaitée :
+                  </label>
+                  <div className="grid grid-cols-4 gap-1 text-[10px]">
+                    {['12h00', '14h00', '17h00', '18h30'].map((h) => (
+                      <button
+                        key={h}
+                        type="button"
+                        className="py-1 rounded-lg bg-white border border-[#EAE2D5] text-center font-semibold text-[#2C2720] hover:border-[#52796F] hover:bg-[#E6EFE6]"
+                      >
+                        {h}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Choix du lieu de retrait campus */}
+              <div>
+                <label className="block text-[10px] font-bold text-[#8C8275] uppercase mb-1.5">
+                  Lieu de retrait sur le campus :
                 </label>
-                <div className="grid grid-cols-4 gap-1 text-[10px]">
-                  {['12h00', '14h00', '17h00', '18h30'].map((h) => (
-                    <button
-                      key={h}
-                      type="button"
-                      className="py-1 rounded-lg bg-white border border-[#EAE2D5] text-center font-semibold text-[#2C2720] hover:border-[#52796F] hover:bg-[#E6EFE6]"
-                    >
-                      {h}
-                    </button>
-                  ))}
-                </div>
+                <select
+                  value={pickupSpot}
+                  onChange={(e) => setPickupSpot(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-[#EAE2D5] bg-[#FAF8F5] text-xs font-semibold text-[#2C2720] focus:outline-none focus:ring-2 focus:ring-[#52796F]/30"
+                >
+                  <option value="Foyer des élèves N7">📍 Foyer des élèves N7 (Bâtiment B)</option>
+                  <option value="Cafétéria N7">📍 Cafétéria N7</option>
+                  <option value="Résidence étudiante R1">📍 Résidence étudiante R1</option>
+                  <option value="Résidence étudiante R2">📍 Résidence étudiante R2</option>
+                </select>
               </div>
-            </div>
 
-            {/* Choix du lieu de retrait campus */}
-            <div>
-              <label className="block text-[10px] font-bold text-[#8C8275] uppercase mb-1.5">
-                Lieu de retrait sur le campus :
-              </label>
-              <select
-                value={pickupSpot}
-                onChange={(e) => setPickupSpot(e.target.value)}
-                className="w-full p-2.5 rounded-xl border border-[#EAE2D5] bg-[#FAF8F5] text-xs font-semibold text-[#2C2720] focus:outline-none focus:ring-2 focus:ring-[#52796F]/30"
-              >
-                <option value="Foyer des élèves N7">📍 Foyer des élèves N7 (Bâtiment B)</option>
-                <option value="Cafétéria N7">📍 Cafétéria N7</option>
-                <option value="Résidence étudiante R1">📍 Résidence étudiante R1</option>
-                <option value="Résidence étudiante R2">📍 Résidence étudiante R2</option>
-              </select>
-            </div>
-
-            {/* Décomposition financière transparente */}
-            <div className="p-3 rounded-2xl bg-white border border-[#EAE2D5] space-y-1.5 text-xs">
-              <div className="flex justify-between text-[#6B6358]">
-                <span>Part location ({periodInfo.tag}) :</span>
-                <span className="font-bold text-[#2C2720]">{calculateItemPrice(activeModalItem).toFixed(2)} €</span>
-              </div>
-              <div className="flex justify-between text-[#6B6358]">
-                <span>Frais de service campus :</span>
-                <span className="font-bold text-[#2C2720]">0,00 € (Offert)</span>
-              </div>
-              <div className="flex justify-between pt-1 border-t border-[#F0EBE1] font-extrabold text-[#2C2720]">
-                <span>Total à régler :</span>
-                <span className="text-sm text-[#52796F]">{calculateItemPrice(activeModalItem).toFixed(2)} €</span>
-              </div>
-              <div className="p-2 rounded-xl bg-[#E6EFE6] text-[#354F48] text-[10px] mt-2 flex items-center gap-1.5">
+              {/* Garantie Caution Sans Débit */}
+              <div className="p-2.5 rounded-2xl bg-[#E6EFE6] text-[#354F48] text-[10px] flex items-center gap-2">
                 <i data-lucide="shield-check" className="w-4 h-4 text-[#52796F] flex-shrink-0"></i>
                 <span>Caution de <strong>{activeModalItem.depositAmount} € bloquée SANS DÉBIT</strong>. Libérée automatiquement dès la restitution.</span>
               </div>
             </div>
 
-            {/* Bouton de confirmation */}
-            <button
-              onClick={() => {
-                const confirmedItem = activeModalItem;
-                const cost = calculateItemPrice(confirmedItem);
-                window.CS.data.bookings.unshift({
-                  id: `book-${Date.now()}`,
-                  bookingRef: `CS-N7-2026-${Math.floor(100 + Math.random() * 900)}`,
-                  itemTitle: confirmedItem.title,
-                  itemCategory: confirmedItem.categoryLabel,
-                  itemPrice: cost,
-                  depositAmount: confirmedItem.depositAmount,
-                  periodLabel: periodInfo.dates,
-                  type: periodInfo.tag,
-                  pickupLocation: pickupSpot,
-                  status: 'confirmed',
-                  step: 1, // 1: Confirmée, 2: Retrait & Check-in, 3: Utilisation, 4: Restitution
-                  pinCode: `${Math.floor(1000 + Math.random() * 9000)}`,
-                  renterName: 'Alban D.',
-                  ownerName: confirmedItem.owner.name,
-                  ownerPromo: confirmedItem.owner.promo || '2A ENSEEIHT',
-                  ownerAvatar: confirmedItem.owner.avatar,
-                  ownerPhone: '06 42 78 91 23',
-                  accessories: confirmedItem.includedAccessories || [
-                    'Accessoire officiel vérifié',
-                    'Câbles et connectique d\'origine',
-                    'Notice campus'
-                  ]
-                });
-                setBookingSuccess({
-                  title: confirmedItem.title,
-                  dates: periodInfo.dates,
-                  spot: pickupSpot
-                });
-                setActiveModalItem(null);
-              }}
-              className="w-full py-3 rounded-xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-xs flex items-center justify-center gap-1.5"
-            >
-              <span>Confirmer ma demande de réservation</span>
-            </button>
+            {/* STICKY BOTTOM BAR (Toujours visible sous le pouce !) */}
+            <div className="p-3.5 bg-white/95 backdrop-blur-md border-t border-[#F0EBE1] flex-shrink-0 space-y-2 shadow-lg">
+              <div className="flex items-center justify-between text-xs px-1">
+                <div>
+                  <span className="text-[9px] text-[#8C8275] block font-semibold">Total ({periodInfo.tag})</span>
+                  <span className="font-extrabold text-sm text-[#52796F]">
+                    {calculateItemPrice(activeModalItem).toFixed(2)} €
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[9px] font-bold text-[#354F48] bg-[#E6EFE6] px-2 py-0.5 rounded-full inline-block">
+                    0,00 € débité aujourd'hui
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  const confirmedItem = activeModalItem;
+                  const cost = calculateItemPrice(confirmedItem);
+                  const newBookingRef = `CS-N7-2026-${Math.floor(100 + Math.random() * 900)}`;
+                  const newPinCode = `${Math.floor(1000 + Math.random() * 9000)}`;
+                  window.CS.data.bookings.unshift({
+                    id: `book-${Date.now()}`,
+                    bookingRef: newBookingRef,
+                    itemTitle: confirmedItem.title,
+                    itemCategory: confirmedItem.categoryLabel,
+                    itemPrice: cost,
+                    depositAmount: confirmedItem.depositAmount,
+                    periodLabel: periodInfo.dates,
+                    type: periodInfo.tag,
+                    pickupLocation: pickupSpot,
+                    status: 'confirmed',
+                    step: 1, // 1: Confirmée, 2: Retrait & Check-in, 3: Utilisation, 4: Restitution
+                    pinCode: newPinCode,
+                    renterName: 'Alban D.',
+                    ownerName: confirmedItem.owner.name,
+                    ownerPromo: confirmedItem.owner.promo || '2A ENSEEIHT',
+                    ownerAvatar: confirmedItem.owner.avatar,
+                    ownerPhone: '06 42 78 91 23',
+                    accessories: confirmedItem.includedAccessories || [
+                      'Accessoire officiel vérifié',
+                      'Câbles et connectique d\'origine',
+                      'Notice campus'
+                    ]
+                  });
+                  setBookingSuccess({
+                    title: confirmedItem.title,
+                    dates: periodInfo.dates,
+                    spot: pickupSpot,
+                    bookingRef: newBookingRef,
+                    ownerName: confirmedItem.owner.name
+                  });
+                  setActiveModalItem(null);
+                }}
+                className="w-full py-3 rounded-2xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-md flex items-center justify-center gap-1.5 active:scale-[0.98]"
+              >
+                <span>Confirmer ma réservation en 1 clic</span>
+                <i data-lucide="arrow-right" className="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
           </div>
         </div>
       )}

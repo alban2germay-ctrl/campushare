@@ -68,6 +68,8 @@ function App() {
 
         {/* HEADER MOBILE CAMPUS & SOLDE CAGNOTTE */}
         <CampusHeader
+          currentTab={currentTab}
+          setCurrentTab={setCurrentTab}
           activeUserData={activeUserData}
           activeNotification={activeNotification}
           setActiveNotification={setActiveNotification}
@@ -77,7 +79,7 @@ function App() {
 
         {/* CORPS TACTILE SCROLLABLE MULTI-ÉCRANS */}
         <main className="flex-1 overflow-y-auto mobile-scroll-container p-4 space-y-4">
-          {currentTab === 'explore' && <ExploreView />}
+          {currentTab === 'explore' && <ExploreView onNavigateTab={setCurrentTab} />}
           {currentTab === 'items' && <ItemsView activeUserData={activeUserData} currentUser={currentUser} />}
           {currentTab === 'bookings' && <BookingsView />}
           {currentTab === 'profile' && <ProfileView activeUserData={activeUserData} currentUser={currentUser} />}
