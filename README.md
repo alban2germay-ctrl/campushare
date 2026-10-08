@@ -4,6 +4,16 @@ Plateforme fermée et certifiée par adresse universitaire pour emprunter et lou
 
 ---
 
+## 📸 Rendu Visuel en Temps Réel (Auto-Généré à chaque push par GitHub Actions)
+
+| 📱 Application Mobile (iPhone 15 Pro) | 🖥️ Hub GitHub & Roadmap Interactive |
+| :---: | :---: |
+| <img src=".github/previews/latest-iphone.png" width="280" alt="Capture iPhone 15 Pro" /> | <img src=".github/previews/latest-desktop.png" width="460" alt="Capture Desktop Studio" /> |
+
+> ⚡ **Démonstration en Direct :** Accessible sur **[Tunnel Cloudflare](https://cassette-python-cultural-dylan.trycloudflare.com)** et **[Hub GitHub Roadmap](https://cassette-python-cultural-dylan.trycloudflare.com/roadmap.html)**.
+
+---
+
 ## 👥 Équipe Fondatrice
 * **Alban** (@alban2germay-ctrl) — Co-fondateur
 * **Mathys** (@Mathys-git) — Co-fondateur
