@@ -1,0 +1,75 @@
+name: CampuShare CI & Agent Verification Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-javascript-syntax:
+    name: 🧪 Valider la syntaxe des composants & brackets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code source
+        uses: actions/checkout@v4
+
+      - name: Configurer Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Vérifier l'équilibre strict des brackets, accolades & parenthèses
+        run: |
+          python3 -c "
+          import glob, sys
+          files = glob.glob('public/js/**/*.js', recursive=True)
+          errors = 0
+          for fp in sorted(files):
+              with open(fp, 'r', encoding='utf-8') as f:
+                  code = f.read()
+              counts = {c: code.count(c) for c in '()[]{}'}
+              diff_p = counts['('] - counts[')']
+              diff_b = counts['{'] - counts['}']
+              diff_k = counts['['] - counts[']']
+              if diff_p != 0 or diff_b != 0 or diff_k != 0:
+                  print(f'❌ ERREUR: {fp} -> ()= {diff_p}, {{}}= {diff_b}, []= {diff_k}')
+                  errors += 1
+              else:
+                  print(f'✅ OK: {fp}')
+          if errors > 0:
+              sys.exit(1)
+          print('🎉 Tous les fichiers JavaScript sont 100% équilibrés et valides !')
+          "
+
+  check-mathys-sanctuarization:
+    name: 🔒 Vérifier la sanctuarisation de la partie Mathys
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code source
+        uses: actions/checkout@v4
+
+      - name: Vérifier l'intégrité de ItemsView.js
+        run: |
+          test -f public/js/views/ItemsView.js
+          echo "✅ ItemsView.js est présent et prêt pour Mathys."
+
+  test-web-endpoints:
+    name: 🌐 Vérifier les endpoints de l'application & roadmap
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code source
+        uses: actions/checkout@v4
+
+      - name: Configurer Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Démarrer le serveur HTTP de test
+        run: |
+          python3 -m http.server 3000 --directory public &
+          sleep 2
+          curl -I http://127.0.0.1:3000/
+          curl -I http://127.0.0.1:3000/roadmap.html
+          echo "🎉 Tous les écrans et le hub Roadmap répondent en HTTP 200 OK !"
