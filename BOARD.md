@@ -8,12 +8,12 @@ Il applique une décomposition cartésienne au niveau unitaire (nano-tâches). A
 ### 📊 VUE D'ENSEMBLE DE L'AVANCEMENT
 
 | Phase | Intitulé | Total Micro-Tâches | Terminées | En Cours | Progression |
-| :---: | :--- | :---: | :---: | :--- | :---: |
+| :---: | :--- | :---: | :---: | :--- | :--- |
 | **P1** | Socle Technique PWA & Navigation Mobile | 12 | 12 | 0 | **100 %** |
 | **P2** | Chantier A : Moteur Emprunteur (Découverte 7j/7 - Alban) | 10 | 10 | 0 | **100 %** |
 | **P3** | Chantier B : Moteur Propriétaire (Matériel Express - Mathys) | 10 | 0 | 0 | **0 %** |
-| **P4** | Module Confiance, Cautions & Sécurité | 8 | 0 | 0 | **0 %** |
-| **TOTAL** | **Architecture Globale CampuShare** | **40** | **22** | **0** | **55.0 %** |
+| **P4** | Module Confiance, Cautions & Sécurité | 8 | 4 | 0 | **50.0 %** |
+| **TOTAL** | **Architecture Globale CampuShare** | **40** | **26** | **0** | **65.0 %** |
 
 ---
 
@@ -89,16 +89,16 @@ Il applique une décomposition cartésienne au niveau unitaire (nano-tâches). A
 
 ---
 
-## ⚪ PHASE 4 : CONFIANCE, CAUTIONS & SÉCURITÉ ANTI-CASSE
+## 🟡 PHASE 4 : CONFIANCE, CAUTIONS & SÉCURITÉ ANTI-CASSE (50% VALIDÉE)
 
-### Tâche 4.1 : Passation & État des Lieux Numérique
+### Tâche 4.1 : Passation & Billet Numérique Boarding Pass
 | ID | Micro-Tâche Unitaire | Responsable | Fichier Impacté | Critère d'Acceptation Binaire (DoD) | Statut |
 | :--- | :--- | :---: | :--- | :--- | :---: |
-| `MT-4.1.1.1` | Écran de Check-in au départ de la location (Remise en main propre) | `@agent-trust` | `public/index.html` | Photo de départ prise pour figer l'état initial de l'objet le jour J. | `[ ]` |
-| `MT-4.1.1.2` | Signature numérique conjointe de remise de matériel | `@agent-trust` | `public/index.html` | Validation bilatérale du prêt entre l'emprunteur et le propriétaire. | `[ ]` |
-| `MT-4.1.1.3` | Écran de Check-out au retour de la location (Restitution) | `@agent-trust` | `public/index.html` | Photo de retour comparée à celle du départ à l'heure convenue. | `[ ]` |
-| `MT-4.1.1.4` | Déblocage automatique de l'empreinte de caution | `@agent-trust` | `public/index.html` | Confirmation de bon état libérant instantanément la caution. | `[ ]` |
-| `MT-4.1.1.5` | Système de notation mutuelle (1 à 5 étoiles) | `@agent-trust` | `public/index.html` | Attribution d'une note renforçant la réputation étudiante du camarade. | `[ ]` |
-| `MT-4.1.1.6` | Procédure de litige simplifiée en cas de casse | `@agent-trust` | `public/index.html` | Signalement avec photo et médiation BDE/plateforme. | `[ ]` |
-| `MT-4.1.1.7` | Contrat de prêt PDF/Texte instantané généré | `@agent-trust` | `public/index.html` | Récapitulatif contractuel opposable généré automatiquement. | `[ ]` |
-| `MT-4.1.1.8` | Filtrage de domaine e-mail institutionnel (`@enseeiht.fr`) | `@agent-trust` | `public/index.html` | Blocage strict de toute adresse hors campus. | `[ ]` |
+| `MT-4.1.1.1` | Écran de Check-in au départ de la location (Billet Boarding Pass) | `@agent-trust` | `public/js/views/BookingsView.js` | Carte d'embarquement campus avec référence officielle, lieu de retrait et sous-onglets Actives vs Historique. | `[x]` |
+| `MT-4.1.1.2` | Passeport QR Code & Checklist contradictoire avec Code PIN | `@agent-trust` | `public/js/views/BookingsView.js` | Modale plein écran avec grand QR SVG vectoriel, code PIN 4 chiffres et checklist des accessoires. | `[x]` |
+| `MT-4.1.1.3` | Stepper horizontal de suivi du prêt en 4 étapes | `@agent-trust` | `public/js/views/BookingsView.js` | Barre de progression : 1. Confirmée ✓ -> 2. Retrait/Check-in -> 3. Utilisation 7j/7 -> 4. Restitution. | `[x]` |
+| `MT-4.1.1.4` | Déblocage automatique de l'empreinte de caution (0,00 € débité) | `@agent-trust` | `public/js/views/BookingsView.js` | Confirmation de bon état libérant instantanément la pré-autorisation bancaire sans débit. | `[x]` |
+| `MT-4.1.1.5` | Système de notation mutuelle (1 à 5 étoiles) | `@agent-trust` | `public/js/views/BookingsView.js` | Attribution d'une note renforçant la réputation étudiante du camarade. | `[ ]` |
+| `MT-4.1.1.6` | Procédure de litige simplifiée en cas de casse | `@agent-trust` | `public/js/views/ProfileView.js` | Signalement avec photo et médiation BDE/plateforme. | `[ ]` |
+| `MT-4.1.1.7` | Contrat de prêt PDF/Texte instantané généré | `@agent-trust` | `public/js/views/BookingsView.js` | Récapitulatif contractuel opposable généré automatiquement. | `[ ]` |
+| `MT-4.1.1.8` | Filtrage de domaine e-mail institutionnel (`@enseeiht.fr`) | `@agent-trust` | `public/js/views/ProfileView.js` | Blocage strict de toute adresse hors campus. | `[ ]` |

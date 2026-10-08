@@ -63,7 +63,14 @@ window.CS.data = {
       },
       image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80',
       status: 'available',
-      pickupLocation: 'Foyer des élèves N7 / Résidence R1'
+      pickupLocation: 'Foyer des élèves N7 / Résidence R1',
+      condition: 'Comme neuf (testé & nettoyé)',
+      includedAccessories: ['8 poêlons antiadhésifs', '8 spatules en bois', 'Câble secteur 2m', 'Plaque grill supérieure'],
+      specs: ['Puissance 1050W', 'Revêtement sans PFOA', 'Thermostat automatique'],
+      reviews: [
+        { author: 'Thomas P.', promo: '2A SN', rating: 5, date: 'Il y a 3 jours', comment: 'Super raclette au foyer avec les potes de promo, matériel nickel et poêlons très propres !' },
+        { author: 'Léa M.', promo: '1A 3EA', rating: 5, date: 'Semaine dernière', comment: 'Mathys est super arrangeant pour la remise des clés au bâtiment B. Recommandé à 100% !' }
+      ]
     },
     {
       id: 'item-jbl',
@@ -87,7 +94,14 @@ window.CS.data = {
       },
       image: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=400&q=80',
       status: 'available',
-      pickupLocation: 'Bâtiment A / Foyer N7'
+      pickupLocation: 'Bâtiment A / Foyer N7',
+      condition: 'Très bon état (son impeccable)',
+      includedAccessories: ['Câble secteur de charge', 'Micro karaoké avec fil', 'Roulettes télescopiques intégrées'],
+      specs: ['Puissance 240W RMS', 'Autonomie 18h sur batterie', 'Jeux de lumières synchronisés', 'Bluetooth 5.1'],
+      reviews: [
+        { author: 'Hugo L.', promo: '1A SN', rating: 5, date: 'Il y a 5 jours', comment: 'Le son a régalé toute la soirée d\'inté ! Batterie increvable de 20h à 5h du matin.' },
+        { author: 'Sarah K.', promo: '2A MFEE', rating: 5, date: 'Le 28 sept.', comment: 'Excellente enceinte, Alban a été super réactif pour le prêt.' }
+      ]
     },
     {
       id: 'item-bosch',
@@ -111,7 +125,13 @@ window.CS.data = {
       },
       image: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=400&q=80',
       status: 'available',
-      pickupLocation: 'Résidence R2 / Salle de TP'
+      pickupLocation: 'Résidence R2 / Salle de TP',
+      condition: 'Comme neuf',
+      includedAccessories: ['2 batteries Lithium 18V', 'Chargeur rapide', 'Coffret 32 embouts & mèches bois/béton', 'Mallette rigide'],
+      specs: ['Couple max 50 Nm', 'Mandrin auto-serrant 13mm', 'Éclairage LED intégré'],
+      reviews: [
+        { author: 'Maxime D.', promo: '1A SN', rating: 5, date: 'Il y a 2 semaines', comment: 'A sauvé mon emménagement à la résidence R2 pour monter mon lit et mes étagères en 1h chrono.' }
+      ]
     },
     {
       id: 'item-quechua',
@@ -135,7 +155,13 @@ window.CS.data = {
       },
       image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=400&q=80',
       status: 'available',
-      pickupLocation: 'Foyer des élèves N7'
+      pickupLocation: 'Foyer des élèves N7',
+      condition: 'Très bon état (imperméable)',
+      includedAccessories: ['Double toit imperméable', 'Arceaux aluminium', '12 piquets sardines', 'Housse de compression'],
+      specs: ['Dimensions chambre : 210 x 195 cm', 'Poids : 3.2 kg', 'Résistance vent 50 km/h'],
+      reviews: [
+        { author: 'Bastien V.', promo: '2A 3EA', rating: 5, date: 'Le mois dernier', comment: 'Utilisée pour le bivouac dans les Pyrénées, facile à monter et bien étanche sous la pluie.' }
+      ]
     },
     {
       id: 'item-crepiere',
@@ -159,13 +185,20 @@ window.CS.data = {
       },
       image: 'https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&w=400&q=80',
       status: 'available',
-      pickupLocation: 'Résidence étudiante R1'
+      pickupLocation: 'Résidence étudiante R1',
+      condition: 'Comme neuf',
+      includedAccessories: ['6 mini-spatules en bois', '1 louche doseuse', 'Cordon d\'alimentation 1.5m'],
+      specs: ['Puissance 1000W', 'Revêtement antiadhésif Prometal', 'Indicateur Thermo-Spot'],
+      reviews: [
+        { author: 'Clara T.', promo: '1A SN', rating: 5, date: 'Hier soir', comment: 'Soirée crêpes réussie à la coloc R1, chauffe super vite et ne colle pas du tout.' }
+      ]
     }
   ],
 
   bookings: [
     {
       id: 'book-001',
+      bookingRef: 'CS-N7-2026-884',
       itemTitle: 'Perceuse sans fil Bosch 18V',
       itemCategory: 'Bricolage',
       itemPrice: 6.00,
@@ -174,8 +207,46 @@ window.CS.data = {
       type: '24h semaine',
       pickupLocation: 'Foyer des élèves N7',
       status: 'confirmed',
+      step: 2, // 1: Confirmée, 2: Retrait & Check-in, 3: Utilisation, 4: Restitution
+      pinCode: '8492',
       renterName: 'Alban D.',
-      ownerName: 'Mathys D.'
+      ownerName: 'Mathys D.',
+      ownerPromo: '2A 3EA (Électronique/Énergie)',
+      ownerAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=120&q=80',
+      ownerPhone: '06 42 78 91 23',
+      accessories: [
+        'Batterie 18V Li-Ion chargée',
+        'Chargeur secteur Bosch rapide',
+        'Boîte de 10 embouts & mèches métal',
+        'Mallette de transport rigide'
+      ]
+    },
+    {
+      id: 'book-000',
+      bookingRef: 'CS-N7-2026-712',
+      itemTitle: 'Appareil à Raclette 8p Tefal',
+      itemCategory: 'Convivialité',
+      itemPrice: 12.00,
+      depositAmount: 40.00,
+      periodLabel: 'Week-end dernier (Ven 18h → Dim 20h)',
+      type: 'Week-end 48h',
+      pickupLocation: 'Résidence étudiante R1',
+      status: 'completed',
+      step: 4,
+      pinCode: '3142',
+      renterName: 'Alban D.',
+      ownerName: 'Mathys D.',
+      ownerPromo: '2A 3EA (Électronique/Énergie)',
+      ownerAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=120&q=80',
+      ownerPhone: '06 42 78 91 23',
+      returnedAt: 'Dimanche 20h15',
+      depositReleased: true,
+      accessories: [
+        '8 poêlons antiadhésifs',
+        '8 spatules en bois',
+        'Cordon d\'alimentation 2m',
+        'Caquelon & plaque nettoyés'
+      ]
     }
   ]
 };

@@ -510,10 +510,10 @@ window.CS.views.ExploreView = function ExploreView() {
         )}
       </div>
 
-      {/* 6. MODALE BOTTOMSHEET FICHE OBJET 360° & VALIDATION RÉSERVATION */}
+      {/* 6. MODALE BOTTOMSHEET FICHE OBJET 360° ENRICHIE & VALIDATION RÉSERVATION */}
       {activeModalItem && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl border border-[#EAE2D5] max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl border border-[#EAE2D5] max-h-[92vh] overflow-y-auto">
             
             {/* En-tête de la modale */}
             <div className="flex items-center justify-between pb-2 border-b border-[#F0EBE1]">
@@ -521,7 +521,9 @@ window.CS.views.ExploreView = function ExploreView() {
                 <span className="px-2 py-0.5 rounded-full bg-[#E6EFE6] text-[#354F48] text-[9px] font-bold">
                   {activeModalItem.categoryLabel}
                 </span>
-                <span className="text-[10px] text-[#8C8275]">Prêt Campus N7</span>
+                <span className="text-[10px] text-[#52796F] font-bold flex items-center gap-1">
+                  <span>✓</span> Certifié N7
+                </span>
               </div>
               <button
                 onClick={() => setActiveModalItem(null)}
@@ -531,25 +533,83 @@ window.CS.views.ExploreView = function ExploreView() {
               </button>
             </div>
 
-            {/* Photo & Titre */}
-            <div className="flex gap-3 items-center">
-              <img
-                src={activeModalItem.image}
-                alt={activeModalItem.title}
-                className="w-16 h-16 rounded-2xl object-cover ring-2 ring-[#52796F]/20"
-              />
-              <div className="flex-1 min-w-0">
-                <h3 className="font-extrabold text-sm text-[#2C2720] leading-tight">
-                  {activeModalItem.title}
-                </h3>
-                <p className="text-xs text-[#6B6358] mt-0.5">
-                  Propriétaire : <strong>{activeModalItem.owner.name}</strong> ({activeModalItem.owner.promo})
-                </p>
-                <p className="text-[10px] text-[#52796F] font-semibold">⭐ {activeModalItem.owner.rating} / 5 &bull; 0 litige</p>
+            {/* Photo & Titre avec état certifié */}
+            <div className="space-y-2">
+              <div className="flex gap-3 items-center">
+                <img
+                  src={activeModalItem.image}
+                  alt={activeModalItem.title}
+                  className="w-16 h-16 rounded-2xl object-cover ring-2 ring-[#52796F]/20 flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-extrabold text-sm text-[#2C2720] leading-tight">
+                    {activeModalItem.title}
+                  </h3>
+                  <p className="text-xs text-[#6B6358] mt-0.5">
+                    Prêté par <strong>{activeModalItem.owner.name}</strong> ({activeModalItem.owner.promo})
+                  </p>
+                  <p className="text-[10px] text-[#52796F] font-semibold">
+                    ⭐ {activeModalItem.owner.rating} / 5 &bull; {activeModalItem.owner.reviewsCount} prêts réussis (0 litige)
+                  </p>
+                </div>
+              </div>
+
+              {/* Badge d'état certifié */}
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#FAF8F5] border border-[#EAE2D5] text-[10px] font-bold text-[#354F48]">
+                <span>🛡️ État du matériel :</span>
+                <span className="text-[#52796F]">{activeModalItem.condition || 'Comme neuf'}</span>
               </div>
             </div>
 
-            {/* Récapitulatif du créneau choisi */}
+            {/* Checklist des Accessoires Inclus (Fiche 360°) */}
+            {activeModalItem.includedAccessories && (
+              <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] space-y-1.5">
+                <span className="text-[10px] font-bold text-[#8C8275] uppercase block">
+                  Accessoires inclus & vérifiés lors du retrait :
+                </span>
+                <div className="grid grid-cols-2 gap-1 text-[10px] text-[#2C2720]">
+                  {activeModalItem.includedAccessories.map((acc, idx) => (
+                    <div key={idx} className="flex items-center gap-1.5 bg-white p-1.5 rounded-lg border border-[#EAE2D5]">
+                      <span className="text-[#52796F] font-bold">✓</span>
+                      <span className="truncate">{acc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Spécifications Clés */}
+            {activeModalItem.specs && (
+              <div className="flex gap-1.5 flex-wrap">
+                {activeModalItem.specs.map((spec, idx) => (
+                  <span key={idx} className="px-2 py-0.5 rounded-lg bg-white border border-[#EAE2D5] text-[9px] font-semibold text-[#6B6358]">
+                    ⚙️ {spec}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Avis d'étudiants de l'N7 */}
+            {activeModalItem.reviews && activeModalItem.reviews.length > 0 && (
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-bold text-[#8C8275] uppercase block">
+                  Derniers avis d'élèves de l'N7 :
+                </span>
+                <div className="space-y-1.5 max-h-24 overflow-y-auto pr-1">
+                  {activeModalItem.reviews.map((rev, idx) => (
+                    <div key={idx} className="p-2 rounded-xl bg-white border border-[#EAE2D5] text-[10px] space-y-0.5">
+                      <div className="flex justify-between items-center font-bold">
+                        <span className="text-[#2C2720]">{rev.author} ({rev.promo})</span>
+                        <span className="text-[#D87D4A]">⭐ {rev.rating}/5</span>
+                      </div>
+                      <p className="text-[#6B6358] italic leading-tight">« {rev.comment} »</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* SÉLECTEUR DE DATE & HEURE AU JOUR LE JOUR (Datepicker 7j/7) */}
             <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] space-y-2">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-bold text-[#2C2720]">Créneau sélectionné :</span>
@@ -559,6 +619,24 @@ window.CS.views.ExploreView = function ExploreView() {
                 <i data-lucide="clock" className="w-3.5 h-3.5 text-[#52796F]"></i>
                 <span>{periodInfo.dates}</span>
               </p>
+
+              {/* Choix de la tranche horaire de remise */}
+              <div className="pt-1 border-t border-[#EAE2D5]">
+                <label className="block text-[9px] font-bold text-[#8C8275] uppercase mb-1">
+                  Heure de rendez-vous souhaitée :
+                </label>
+                <div className="grid grid-cols-4 gap-1 text-[10px]">
+                  {['12h00', '14h00', '17h00', '18h30'].map((h) => (
+                    <button
+                      key={h}
+                      type="button"
+                      className="py-1 rounded-lg bg-white border border-[#EAE2D5] text-center font-semibold text-[#2C2720] hover:border-[#52796F] hover:bg-[#E6EFE6]"
+                    >
+                      {h}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Choix du lieu de retrait campus */}
@@ -605,6 +683,7 @@ window.CS.views.ExploreView = function ExploreView() {
                 const cost = calculateItemPrice(confirmedItem);
                 window.CS.data.bookings.unshift({
                   id: `book-${Date.now()}`,
+                  bookingRef: `CS-N7-2026-${Math.floor(100 + Math.random() * 900)}`,
                   itemTitle: confirmedItem.title,
                   itemCategory: confirmedItem.categoryLabel,
                   itemPrice: cost,
@@ -613,8 +692,18 @@ window.CS.views.ExploreView = function ExploreView() {
                   type: periodInfo.tag,
                   pickupLocation: pickupSpot,
                   status: 'confirmed',
+                  step: 1, // 1: Confirmée, 2: Retrait & Check-in, 3: Utilisation, 4: Restitution
+                  pinCode: `${Math.floor(1000 + Math.random() * 9000)}`,
                   renterName: 'Alban D.',
-                  ownerName: confirmedItem.owner.name
+                  ownerName: confirmedItem.owner.name,
+                  ownerPromo: confirmedItem.owner.promo || '2A ENSEEIHT',
+                  ownerAvatar: confirmedItem.owner.avatar,
+                  ownerPhone: '06 42 78 91 23',
+                  accessories: confirmedItem.includedAccessories || [
+                    'Accessoire officiel vérifié',
+                    'Câbles et connectique d\'origine',
+                    'Notice campus'
+                  ]
                 });
                 setBookingSuccess({
                   title: confirmedItem.title,
