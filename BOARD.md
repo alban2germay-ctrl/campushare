@@ -10,10 +10,10 @@ Il applique une décomposition cartésienne au niveau unitaire (nano-tâches). A
 | Phase | Intitulé | Total Micro-Tâches | Terminées | En Cours | Progression |
 | :---: | :--- | :---: | :---: | :--- | :---: |
 | **P1** | Socle Technique PWA & Navigation Mobile | 12 | 12 | 0 | **100 %** |
-| **P2** | Chantier A : Moteur Emprunteur (Découverte) | 10 | 0 | 0 | **0 %** |
+| **P2** | Chantier A : Moteur Emprunteur (Découverte 7j/7) | 10 | 10 | 0 | **100 %** |
 | **P3** | Chantier B : Moteur Propriétaire (Matériel) | 10 | 0 | 0 | **0 %** |
 | **P4** | Module Confiance, Cautions & Sécurité | 8 | 0 | 0 | **0 %** |
-| **TOTAL** | **Architecture Globale CampuShare** | **40** | **12** | **0** | **30.0 %** |
+| **TOTAL** | **Architecture Globale CampuShare** | **40** | **22** | **0** | **55.0 %** |
 
 ---
 
@@ -29,41 +29,41 @@ Il applique une décomposition cartésienne au niveau unitaire (nano-tâches). A
 ### Tâche 1.2 : Header Campus & Profils Étudiants
 | ID | Micro-Tâche Unitaire | Responsable | Fichier Impacté | Critère d'Acceptation Binaire (DoD) | Statut |
 | :--- | :--- | :---: | :--- | :--- | :---: |
-| `MT-1.1.2.1` | Modélisation des profils certifiés d'Alban et Mathys | `@agent-trust` | `public/index.html` | Données promo (SN / 3EA) et avatars distincts enregistrés dans l'état. | `[x]` |
-| `MT-1.1.2.2` | Intégration du composant d'identité avec coche de vérification | `@agent-ui` | `public/index.html` | Nom, filière N7 et pastille certifiée affichés nettement dans l'en-tête. | `[x]` |
-| `MT-1.1.2.3` | Conception du widget solde cagnotte & garanties | `@agent-ui` | `public/index.html` | Solde affiché en euros (`24,00 €`) + mention `0 litige (100%)`. | `[x]` |
+| `MT-1.1.2.1` | Modélisation des profils certifiés d'Alban et Mathys | `@agent-trust` | `public/js/data/mockData.js` | Données promo (SN / 3EA) et avatars distincts enregistrés dans l'état. | `[x]` |
+| `MT-1.1.2.2` | Intégration du composant d'identité avec coche de vérification | `@agent-ui` | `public/js/components/CampusHeader.js` | Nom, filière N7 et pastille certifiée affichés nettement dans l'en-tête. | `[x]` |
+| `MT-1.1.2.3` | Conception du widget solde cagnotte & garanties | `@agent-ui` | `public/js/components/CampusHeader.js` | Solde affiché en euros (`24,00 €`) + mention `0 litige (100%)`. | `[x]` |
 
 ### Tâche 1.3 : Bottom Navigation Bar Tactile (Au pouce)
 | ID | Micro-Tâche Unitaire | Responsable | Fichier Impacté | Critère d'Acceptation Binaire (DoD) | Statut |
 | :--- | :--- | :---: | :--- | :--- | :---: |
-| `MT-1.1.3.1` | Définition de la structure de données des 4 onglets | `@agent-arch` | `public/index.html` | Tableau des 4 onglets : Explorer, Mes Objets, Locations (7j/7), Compte. | `[x]` |
-| `MT-1.1.3.2` | Conteneur `nav` fixe en bas avec effet de flou (*backdrop-blur*) | `@agent-ui` | `public/index.html` | Barre fixée en bas, contenu scrollable passant sous la barre sans collision. | `[x]` |
-| `MT-1.1.3.3` | Dimensionnement tactile ergonomique Apple/Android (min 44x44px) | `@agent-ui` | `public/index.html` | Chaque zone cliquable au pouce mesure au moins 44px de hauteur. | `[x]` |
-| `MT-1.1.3.4` | États visuels actif vs inactif (vert sauge vs gris doux) | `@agent-ui` | `public/index.html` | L'onglet actif passe en `#52796F` avec texte en gras, inactif en `#8C8275`. | `[x]` |
-| `MT-1.1.3.5` | Routage d'état `currentTab` avec bascule sous les 16ms (60fps) | `@agent-arch` | `public/index.html` | Clic sur un onglet actualise la vue sans rechargement de page. | `[x]` |
-| `MT-1.1.3.6` | Création des 4 vues-écrans correspondantes | `@agent-arch` | `public/index.html` | Chaque onglet affiche un conteneur d'écran propre et indépendant. | `[x]` |
+| `MT-1.1.3.1` | Définition de la structure de données des 4 onglets | `@agent-arch` | `public/js/components/BottomNav.js` | Tableau des 4 onglets : Explorer, Mes Objets, Locations (7j/7), Compte. | `[x]` |
+| `MT-1.1.3.2` | Conteneur `nav` fixe en bas avec effet de flou (*backdrop-blur*) | `@agent-ui` | `public/js/components/BottomNav.js` | Barre fixée en bas, contenu scrollable passant sous la barre sans collision. | `[x]` |
+| `MT-1.1.3.3` | Dimensionnement tactile ergonomique Apple/Android (min 44x44px) | `@agent-ui` | `public/js/components/BottomNav.js` | Chaque zone cliquable au pouce mesure au moins 44px de hauteur. | `[x]` |
+| `MT-1.1.3.4` | États visuels actif vs inactif (vert sauge vs gris doux) | `@agent-ui` | `public/js/components/BottomNav.js` | L'onglet actif passe en `#52796F` avec texte en gras, inactif en `#8C8275`. | `[x]` |
+| `MT-1.1.3.5` | Routage d'état `currentTab` avec bascule sous les 16ms (60fps) | `@agent-arch` | `public/js/app.js` | Clic sur un onglet actualise la vue sans rechargement de page. | `[x]` |
+| `MT-1.1.3.6` | Création des 4 vues-écrans correspondantes | `@agent-arch` | `public/js/views/` | Chaque onglet affiche un conteneur d'écran propre et indépendant. | `[x]` |
 
 ---
 
-## ⚪ PHASE 2 : CHANTIER A — MOTEUR EMPRUNTEUR (RECHERCHE & DÉCOUVERTE)
+## 🟢 PHASE 2 : CHANTIER A — MOTEUR EMPRUNTEUR (100% VALIDÉE - ALBAN)
 
 ### Tâche 2.1 : Feed d'Accueil & Matériel Disponible 7j/7
 | ID | Micro-Tâche Unitaire | Responsable | Fichier Impacté | Critère d'Acceptation Binaire (DoD) | Statut |
 | :--- | :--- | :---: | :--- | :--- | :---: |
-| `MT-2.1.1.1` | Sélecteur dynamique de période (24h, Week-end, Semaine libre) | `@agent-renter` | `public/index.html` | Choix libre du créneau de location 7j/7 sans restriction. | `[ ]` |
-| `MT-2.1.1.2` | Composant de recherche textuelle temps réel | `@agent-renter` | `public/index.html` | Champ de recherche filtrant instantanément les objets tapés au clavier. | `[ ]` |
-| `MT-2.1.1.3` | Barre de pills de catégories à défilement horizontal doux | `@agent-ui` | `public/index.html` | Catégories : 🎉 Soirée, 🏔️ Montagne/Ski, 🔨 Bricolage, 🍳 Convivialité. | `[ ]` |
-| `MT-2.1.1.4` | Carte objet unitaire (Photo, titre, prix /jour & forfaits, caution) | `@agent-renter` | `public/index.html` | Carte tactile avec image nette, badge promo du propriétaire et tarifs. | `[ ]` |
-| `MT-2.1.1.5` | Grille réactive des objets disponibles 7j/7 | `@agent-renter` | `public/index.html` | Grille à 1 ou 2 colonnes adaptative avec disponibilité instantanée. | `[ ]` |
+| `MT-2.1.1.1` | Sélecteur dynamique de période (24h, Week-end, Semaine libre) | `@agent-renter` | `public/js/views/ExploreView.js` | Choix libre du créneau de location 7j/7 sans restriction. | `[x]` |
+| `MT-2.1.1.2` | Composant de recherche textuelle temps réel | `@agent-renter` | `public/js/views/ExploreView.js` | Champ de recherche filtrant instantanément les objets tapés au clavier. | `[x]` |
+| `MT-2.1.1.3` | Barre de pills de catégories à défilement horizontal doux | `@agent-ui` | `public/js/views/ExploreView.js` | Catégories : 🎉 Soirée, 🏔️ Montagne/Ski, 🔨 Bricolage, 🍳 Convivialité. | `[x]` |
+| `MT-2.1.1.4` | Carte objet unitaire (Photo, titre, prix /jour & forfaits, caution) | `@agent-renter` | `public/js/views/ExploreView.js` | Carte tactile avec image nette, badge promo du propriétaire et tarifs. | `[x]` |
+| `MT-2.1.1.5` | Grille réactive des objets disponibles 7j/7 | `@agent-renter` | `public/js/views/ExploreView.js` | Grille à 1 ou 2 colonnes adaptative avec disponibilité instantanée. | `[x]` |
 
 ### Tâche 2.2 : Fiche Objet 360° & Réservation
 | ID | Micro-Tâche Unitaire | Responsable | Fichier Impacté | Critère d'Acceptation Binaire (DoD) | Statut |
 | :--- | :--- | :---: | :--- | :--- | :---: |
-| `MT-2.2.1.1` | Modale coulissante de fiche détail objet (*BottomSheet*) | `@agent-ui` | `public/index.html` | Modale tactile s'ouvrant depuis le bas de l'écran avec fermeture par croix. | `[ ]` |
-| `MT-2.2.1.2` | Fiche technique : état certifié, accessoires inclus, descriptif | `@agent-renter` | `public/index.html` | Données techniques complètes affichées sans ambiguïté. | `[ ]` |
-| `MT-2.2.1.3` | Sélecteur du lieu de retrait physique sur le campus | `@agent-renter` | `public/index.html` | Choix : Foyer N7, Cafétéria, ou Résidence étudiante R1/R2. | `[ ]` |
-| `MT-2.2.1.4` | Calculateur de coût total transparent (Tarif durée + Caution non débitée) | `@agent-trust` | `public/index.html` | Détail clair : montant payé vs montant de caution bloqué. | `[ ]` |
-| `MT-2.2.1.5` | Déclencheur d'action : bouton « Réserver pour mes dates » | `@agent-renter` | `public/index.html` | Clic enregistre la demande sur la période choisie (24h, WE, etc.). | `[ ]` |
+| `MT-2.2.1.1` | Modale coulissante de fiche détail objet (*BottomSheet*) | `@agent-ui` | `public/js/views/ExploreView.js` | Modale tactile s'ouvrant depuis le bas de l'écran avec fermeture par croix. | `[x]` |
+| `MT-2.2.1.2` | Fiche technique : état certifié, accessoires inclus, descriptif | `@agent-renter` | `public/js/views/ExploreView.js` | Données techniques complètes affichées sans ambiguïté. | `[x]` |
+| `MT-2.2.1.3` | Sélecteur du lieu de retrait physique sur le campus | `@agent-renter` | `public/js/views/ExploreView.js` | Choix : Foyer N7, Cafétéria, ou Résidence étudiante R1/R2. | `[x]` |
+| `MT-2.2.1.4` | Calculateur de coût total transparent (Tarif durée + Caution non débitée) | `@agent-trust` | `public/js/views/ExploreView.js` | Détail clair : montant payé vs montant de caution bloqué. | `[x]` |
+| `MT-2.2.1.5` | Déclencheur d'action : bouton « Confirmer ma demande de réservation » | `@agent-renter` | `public/js/views/ExploreView.js` | Clic enregistre la demande sur la période choisie (24h, WE, etc.). | `[x]` |
 
 ---
 
