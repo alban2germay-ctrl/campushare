@@ -61,6 +61,23 @@ window.CS.views.ProfileView = function ProfileView({ activeUserData, currentUser
           Transférer vers mon compte bancaire
         </button>
       </div>
+
+      {/* Carte Accès Roadmap & Suivi du Projet */}
+      <a
+        href="/roadmap.html"
+        className="p-3.5 rounded-3xl bg-white border border-[#EAE2D5] shadow-xs flex items-center justify-between hover:border-[#52796F] transition block"
+      >
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-[#E6EFE6] text-[#52796F] flex items-center justify-center font-bold text-xs flex-shrink-0">
+            🗺️
+          </div>
+          <div>
+            <h4 className="font-extrabold text-xs text-[#2C2720]">Roadmap & Preuves des Agents</h4>
+            <p className="text-[10px] text-[#6B6358]">Suivi des micro-tâches, délibérations et livrables Git</p>
+          </div>
+        </div>
+        <span className="text-xs text-[#52796F] font-bold">→</span>
+      </a>
     </div>
   );
 };
