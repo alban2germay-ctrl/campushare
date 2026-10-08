@@ -127,29 +127,35 @@
 
 ---
 
-## ⏳ Phase 4 : Chantier B — Mathys : Studio Propriétaire & Ajout Express (Sanctuarisé)
+## 🟢 Phase 4 : Chantier B — Mathys : Studio Propriétaire & Ajout Express (100% Livré)
 
-> 🔒 **Garantie de Sanctuarisation :** Le fichier [`public/js/views/ItemsView.js`](file:///Users/albandegermay/.gemini/antigravity/scratch/campushare/public/js/views/ItemsView.js) est réservé à 100% pour Mathys sur PC. Aucun commit extérieur n'a altéré ce fichier depuis la séparation des chantiers (Commit initial `705f81f`).
+> 🔒 **Livrable de Mathys :** Mathys a développé et livré l'intégralité du Chantier B dans [`public/js/views/ItemsView.js`](file:///Users/albandegermay/.gemini/antigravity/scratch/campushare/public/js/views/ItemsView.js) (Commit `b90bee1`) et le script Windows [`collab.ps1`](file:///Users/albandegermay/.gemini/antigravity/scratch/campushare/collab.ps1) (Commit `8e873a3`).
 
 ### 4.1 Formulaire d'Ajout d'Objet Mobile Express (< 60 secondes)
-* **MT-4.1.1 : Prise de Photo Caméra Native**
-  - **Statut :** `[ ] PRÊT POUR MATHYS`
+* **MT-4.1.1 : Prise de Photo Caméra Native (<input type=file capture>)**
+  - **Statut :** `[x] LIVRÉ PAR MATHYS`
   - **Fichier :** [`public/js/views/ItemsView.js`](file:///Users/albandegermay/.gemini/antigravity/scratch/campushare/public/js/views/ItemsView.js)
-  - **Spécification :** `<input type="file" accept="image/*" capture>` permettant d'ouvrir directement l'appareil photo du smartphone.
+  - **Preuve Git :** Commit `b90bee1`
+  - **Fonctionnalité :** Déclencheur caméra smartphone avec prévisualisation immédiate et gestion des erreurs de format.
 
-* **MT-4.1.2 : Algorithme de Tarification Suggérée**
-  - **Statut :** `[ ] PRÊT POUR MATHYS`
+* **MT-4.1.2 : Algorithme de Tarification Suggérée Automatique (10-15%)**
+  - **Statut :** `[x] LIVRÉ PAR MATHYS`
   - **Fichier :** [`public/js/views/ItemsView.js`](file:///Users/albandegermay/.gemini/antigravity/scratch/campushare/public/js/views/ItemsView.js)
-  - **Spécification :** Calcul automatique d'un prix de location recommandé (ex: 5-8 €/j) et caution indicative (30-50 €).
+  - **Preuve Git :** Commit `b90bee1`
+  - **Fonctionnalité :** Calcul automatique d'un prix de location par jour, week-end et caution recommandée dès la saisie de la valeur d'achat.
 
 ### 4.2 Tableau de Bord des Demandes & Gains Propriétaire
 * **MT-4.2.1 : Validation / Refus des Emprunts en 1 Clic**
-  - **Statut :** `[ ] PRÊT POUR MATHYS`
+  - **Statut :** `[x] LIVRÉ PAR MATHYS`
   - **Fichier :** [`public/js/views/ItemsView.js`](file:///Users/albandegermay/.gemini/antigravity/scratch/campushare/public/js/views/ItemsView.js)
+  - **Preuve Git :** Commit `b90bee1`
+  - **Fonctionnalité :** Cartes de demandes entrantes (Thomas P., Léa M.) avec acceptation ou refus immédiat et notifications toast.
 
-* **MT-4.2.2 : Compteur de Gains et Virement Bancaire**
-  - **Statut :** `[ ] PRÊT POUR MATHYS`
+* **MT-4.2.2 : Compteur de Gains Cumulés et Solde Cagnotte**
+  - **Statut :** `[x] LIVRÉ PAR MATHYS`
   - **Fichier :** [`public/js/views/ItemsView.js`](file:///Users/albandegermay/.gemini/antigravity/scratch/campushare/public/js/views/ItemsView.js)
+  - **Preuve Git :** Commit `b90bee1`
+  - **Fonctionnalité :** Total des gains générés par le matériel affiché en direct.
 
 ---
 
