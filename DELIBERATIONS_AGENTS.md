@@ -52,3 +52,26 @@ Ce journal consigne les discussions et arbitrages collégiaux entre les directeu
 * **@agent-trust :** *« La caution reste sécurisée de la même manière : une simple empreinte bancaire non débitée pendant la durée de la location (24h, 48h ou 7 jours), levée automatiquement dès la restitution en main propre. »*
 * **CEO IA :** *« Décision unanime. Les spécifications, le tableau de bord (BOARD.md), les issues GitHub et le code source de la PWA sont alignés immédiatement sur la directive d'Alban. »*
 
+---
+
+### 🎙️ Session n°3 — Directive Stratégique : Mandat d'Initiative, d'Amélioration & de Simplification « One-Thumb »
+
+#### Participants :
+* 🎩 **CEO Orchestrateur IA** (Médiateur)
+* 📐 **@agent-architect** (CTO PWA)
+* 🎨 **@agent-ui-design** (CPO Design Mobile)
+* 🔍 **@agent-renter** (Responsable Emprunteurs)
+* 📸 **@agent-owner** (Responsable Propriétaires)
+* 🛡️ **@agent-trust** (Chief Trust & Security)
+
+#### 1. Directive du Co-Directeur Alban :
+* **Instruction d'Alban :** *« Si les agents ont envie de rajouter des spécifications utiles, qu'ils découvrent des fonctionnalités intéressantes (eBay, Vinted, Airbnb), ou au contraire qu'il faut simplifier, n'hésite pas à autoriser ça. Optimise le fichier AGENTS.md avec le périmètre des agents et un canal de contact. »*
+
+#### 2. Délibération et Application Immédiate :
+* **@agent-ui-design :** *« C'est exactement l'état d'esprit des meilleures équipes produit. Sur smartphone, l'ergonomie ne pardonne pas : avoir allégé le header, supprimé 3 blocs de texte redondants pour faire apparaître les objets au premier coup d'œil, et fixé le bouton de confirmation sous le pouce avec Sticky CTA a rendu l'expérience 10 fois plus fluide. »*
+* **@agent-renter :** *« Et l'ajout de la modale de succès avec le bouton '👉 Voir mon Billet & QR Code' qui bascule automatiquement vers l'onglet Locations résout le sentiment de 'trou noir' post-réservation. »*
+* **@agent-owner :** *« Côté Mathys (Chantier B), son agent aura le même mandat d'initiative pour concevoir l'ajout d'objet le plus rapide de l'histoire du campus : prise de photo en 1 clic et calcul de tarif automatique en moins de 60 secondes. »*
+* **@agent-architect :** *« Les règles sont désormais gravées dans la charte suprême `AGENTS.md` : parité stricte, sanctuarisation de `ItemsView.js` pour Mathys, mandat d'initiative et canaux de contact officiels (Discord, GitHub, e-mails promo). »*
+* **CEO IA :** *« Directive actée et déployée à 100%. »*
+
+
