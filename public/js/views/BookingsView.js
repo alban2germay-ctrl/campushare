@@ -352,51 +352,15 @@ window.CS.views.BookingsView = function BookingsView() {
         </div>
       )}
 
-      {/* 4. ENCADRÉ VERT RASSURANT : GARANTIE CAUTION CAMPUS TOULOUSE INP */}
-      <div className="p-3.5 rounded-3xl bg-[#E6EFE6] border border-[#52796F]/30 text-[#354F48] shadow-xs space-y-2">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-xl bg-[#52796F] text-white flex items-center justify-center flex-shrink-0 shadow-2xs">
-            <i data-lucide="shield-check" className="w-4 h-4"></i>
-          </div>
-          <div className="flex-1 min-w-0">
-            <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#52796F] block">
-              Protection Totale Étudiant N7
-            </span>
-            <h4 className="font-extrabold text-xs text-[#2C2720] leading-tight">
-              Garantie Séquestre & Caution 0 € Débité
-            </h4>
-          </div>
-          <span className="px-2 py-0.5 rounded-full bg-white text-[#354F48] text-[9px] font-extrabold border border-[#52796F]/20">
-            0,00 € Prélévé
-          </span>
-        </div>
-
-        <p className="text-[11px] leading-relaxed text-[#354F48] font-medium">
-          « Empreinte bancaire de pré-autorisation <strong>non débitée (0,00 € prélevé)</strong>. Levée automatique et intégrale dès confirmation du retour contradictoire. »
-        </p>
-
-        <div className="flex items-center gap-3 pt-1 border-t border-[#52796F]/15 text-[10px] text-[#52796F] font-semibold">
-          <span className="flex items-center gap-1">
-            <i data-lucide="check" className="w-3 h-3"></i> 0 litige sur le campus
-          </span>
-          <span className="flex items-center gap-1">
-            <i data-lucide="lock" className="w-3 h-3"></i> Échanges sécurisés
-          </span>
-          <span className="flex items-center gap-1">
-            <i data-lucide="sparkles" className="w-3 h-3"></i> Prêt solidaire 7j/7
-          </span>
-        </div>
-      </div>
-
       {/* 1. SÉLECTEUR DE SOUS-ONGLETS : "En cours (Actives)" vs "Historique (Terminées)" */}
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         <div className="flex items-center justify-between px-1">
           <div>
-            <h3 className="text-sm font-extrabold text-[#2C2720]">Mes Billets de Passation</h3>
-            <p className="text-[10px] text-[#6B6358]">Retraits, check-ins et restitutions 7j/7</p>
+            <h3 className="text-sm font-extrabold text-[#2C2720]">Mes Passations Campus</h3>
+            <p className="text-[10px] text-[#6B6358]">Retraits, QR codes et retours sans débit</p>
           </div>
-          <span className="text-[10px] font-bold text-[#8C8275]">
-            Total : {allNormalized.length}
+          <span className="text-[10px] font-bold text-[#52796F] bg-[#E6EFE6] px-2 py-0.5 rounded-full">
+            🛡️ 0 € débité
           </span>
         </div>
 
@@ -404,286 +368,112 @@ window.CS.views.BookingsView = function BookingsView() {
         <div className="p-1 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] flex gap-1 shadow-2xs">
           <button
             onClick={() => setSubTab('active')}
-            className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
               subTab === 'active'
                 ? 'bg-[#52796F] text-white shadow-xs'
                 : 'text-[#6B6358] hover:text-[#2C2720] hover:bg-white/60'
             }`}
           >
             <i data-lucide="ticket" className="w-3.5 h-3.5"></i>
-            <span>En cours (Actives)</span>
-            <span
-              className={`px-1.5 py-0.2 rounded-full text-[9px] font-extrabold ${
-                subTab === 'active'
-                  ? 'bg-white text-[#52796F]'
-                  : 'bg-[#EAE2D5] text-[#6B6358]'
-              }`}
-            >
-              {activeBookings.length}
-            </span>
+            <span>En cours ({activeBookings.length})</span>
           </button>
 
           <button
             onClick={() => setSubTab('history')}
-            className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
               subTab === 'history'
                 ? 'bg-[#52796F] text-white shadow-xs'
                 : 'text-[#6B6358] hover:text-[#2C2720] hover:bg-white/60'
             }`}
           >
             <i data-lucide="clock" className="w-3.5 h-3.5"></i>
-            <span>Historique (Terminées)</span>
-            <span
-              className={`px-1.5 py-0.2 rounded-full text-[9px] font-extrabold ${
-                subTab === 'history'
-                  ? 'bg-white text-[#52796F]'
-                  : 'bg-[#EAE2D5] text-[#6B6358]'
-              }`}
-            >
-              {historyBookings.length}
-            </span>
+            <span>Historique ({historyBookings.length})</span>
           </button>
         </div>
       </div>
 
-      {/* 2. BILLET DE PASSATION NUMÉRIQUE STYLE "BOARDING PASS" CAMPUS */}
-      <div className="space-y-4">
+      {/* 2. CARTES DE PASSATION ÉPURÉES (Style moderne Vinted / Trainline) */}
+      <div className="space-y-2.5">
         {displayedBookings.map((booking) => {
           const isDone = booking.isCompleted;
 
           return (
             <div
               key={booking.id}
-              className="relative rounded-3xl bg-white border border-[#EAE2D5] shadow-sm overflow-hidden transition hover:border-[#52796F]/40"
+              className="rounded-2xl bg-white border border-[#EAE2D5] p-3.5 shadow-2xs hover:shadow-xs transition space-y-2.5"
             >
-              {/* EN-TÊTE DU BILLET BOARDING PASS */}
-              <div className="bg-gradient-to-r from-[#FAF8F5] via-[#F4EFE6] to-[#FAF8F5] px-4 py-2.5 border-b border-[#EAE2D5] flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-lg bg-[#52796F] text-white flex items-center justify-center text-[10px] font-bold">
-                    🎫
-                  </span>
-                  <div>
-                    <span className="text-[9px] font-bold text-[#8C8275] uppercase block leading-none">
-                      Boarding Pass Campus N7
-                    </span>
-                    <span className="font-mono font-extrabold text-[#2C2720] text-xs">
-                      {booking.bookingRef}
-                    </span>
-                  </div>
-                </div>
-
+              {/* Header de la carte : Ref + Statut */}
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-mono text-[10px] font-bold text-[#8C8275] bg-[#FAF8F5] px-2 py-0.5 rounded-lg border border-[#EAE2D5]">
+                  {booking.bookingRef}
+                </span>
                 {isDone ? (
-                  <span className="px-2 py-0.5 rounded-full bg-[#E6EFE6] text-[#354F48] text-[9px] font-extrabold flex items-center gap-1 border border-[#52796F]/20">
-                    <i data-lucide="check" className="w-3 h-3 text-[#52796F]"></i>
-                    Terminée & Caution levée
+                  <span className="text-[10px] font-bold text-[#52796F] bg-[#E6EFE6] px-2 py-0.5 rounded-full flex items-center gap-1">
+                    ✓ Caution 0€ levée
                   </span>
                 ) : (
-                  <span className="px-2 py-0.5 rounded-full bg-[#E6EFE6] text-[#354F48] text-[9px] font-extrabold flex items-center gap-1 border border-[#52796F]/20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#52796F] animate-ping"></span>
-                    {booking.step === 3 ? 'Utilisation 7j/7' : 'Prêt confirmé'}
+                  <span className="text-[10px] font-bold text-[#D87D4A] bg-[#FFF3EB] px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#D87D4A] animate-ping"></span>
+                    {booking.step === 3 ? 'En usage 7j/7' : 'À retirer'}
                   </span>
                 )}
               </div>
 
-              {/* CORPS PRINCIPAL : DÉTAILS DU PRÊT */}
-              <div className="p-4 space-y-3">
-                
-                {/* Ligne 1 : Équipement & Tarif */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[9px] font-bold text-[#52796F] uppercase tracking-wider block">
-                      {booking.itemCategory || 'Matériel Étudiant'} &bull; {booking.type || 'Formule 7j/7'}
-                    </span>
-                    <h4 className="font-extrabold text-sm text-[#2C2720] leading-snug">
-                      {booking.itemTitle}
-                    </h4>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <span className="text-sm font-extrabold text-[#2C2720] block">
-                      {Number(booking.itemPrice).toFixed(2)} €
-                    </span>
-                    <span className="text-[9px] text-[#8C8275] font-semibold">
-                      Caution {booking.depositAmount} €
-                    </span>
-                  </div>
+              {/* Titre & Prix */}
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <h4 className="font-extrabold text-xs text-[#2C2720] leading-snug">
+                    {booking.itemTitle}
+                  </h4>
+                  <p className="text-[10px] text-[#6B6358] mt-0.5 flex items-center gap-1.5">
+                    <span>📍 {booking.pickupLocation}</span>
+                    <span>&bull;</span>
+                    <span>Avec {booking.ownerName}</span>
+                  </p>
                 </div>
-
-                {/* Trajet & Lieux Campus (Style Itinéraire Vol / Passation) */}
-                <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] space-y-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-[11px] text-[#2C2720] font-semibold">
-                      <i data-lucide="map-pin" className="w-3.5 h-3.5 text-[#D87D4A]"></i>
-                      <span>Retrait : <strong>{booking.pickupLocation}</strong></span>
-                    </div>
-                    <span className="text-[9px] font-mono font-bold bg-white px-2 py-0.5 rounded-md border border-[#EAE2D5] text-[#52796F]">
-                      INP ENSEEIHT
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 text-[10px] text-[#6B6358]">
-                    <i data-lucide="clock" className="w-3.5 h-3.5 text-[#52796F]"></i>
-                    <span>Créneau : {booking.periodLabel}</span>
-                  </div>
-
-                  {/* Propriétaire certifié */}
-                  <div className="flex items-center justify-between pt-1.5 border-t border-[#EAE2D5]/70 text-[10px]">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={booking.ownerAvatar}
-                        alt={booking.ownerName}
-                        className="w-5 h-5 rounded-full object-cover ring-1 ring-[#52796F]/30"
-                      />
-                      <span className="text-[#2C2720] font-bold">
-                        Prêté par {booking.ownerName}
-                      </span>
-                      <span className="text-[#8C8275]">({booking.ownerPromo})</span>
-                    </div>
-
-                    {!isDone && (
-                      <button
-                        onClick={() => handleContactOwner(booking.ownerName, booking.ownerPhone)}
-                        className="text-[9px] font-bold text-[#52796F] hover:underline flex items-center gap-1"
-                      >
-                        <i data-lucide="message-circle" className="w-3 h-3"></i>
-                        Contacter
-                      </button>
-                    )}
-                  </div>
+                <div className="text-right flex-shrink-0">
+                  <span className="text-xs font-extrabold text-[#52796F]">
+                    {Number(booking.itemPrice).toFixed(2)} €
+                  </span>
+                  <span className="text-[9px] text-[#8C8275] block">
+                    Caution {booking.depositAmount} €
+                  </span>
                 </div>
+              </div>
 
-                {/* DÉCOUPE / PERFORATION DU TICKET BOARDING PASS */}
-                <div className="relative py-1 flex items-center justify-center">
-                  <div className="w-full border-t-2 border-dashed border-[#EAE2D5]"></div>
-                  {/* Encoches latérales de billet découpé */}
-                  <div className="absolute -left-6 w-4 h-4 rounded-full bg-[#FAF8F5] border-r border-[#EAE2D5]"></div>
-                  <div className="absolute -right-6 w-4 h-4 rounded-full bg-[#FAF8F5] border-l border-[#EAE2D5]"></div>
+              {/* Barre de progression épurée */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-[9px] font-bold text-[#8C8275]">
+                  <span>Progression</span>
+                  <span className="text-[#52796F]">
+                    {isDone ? 'Terminé (4/4)' : booking.step === 3 ? 'En usage (3/4)' : 'Retrait en attente (2/4)'}
+                  </span>
                 </div>
-
-                {/* STEPPER HORIZONTAL DE PROGRESSION DU PRÊT (4 ÉTAPES) */}
-                <div className="space-y-2 pt-0.5">
-                  <div className="flex items-center justify-between text-[10px]">
-                    <span className="font-extrabold text-[#2C2720] uppercase tracking-wider text-[9px]">
-                      Progression de la passation :
-                    </span>
-                    <span className="font-bold text-[#52796F] text-[9px]">
-                      {isDone
-                        ? '4/4 Restitué (100%)'
-                        : booking.step === 3
-                        ? '3/4 En cours d\'usage'
-                        : '2/4 Check-in à effectuer'}
-                    </span>
-                  </div>
-
-                  {/* Barre visuelle du Stepper */}
-                  <div className="relative flex items-center justify-between">
-                    {/* Ligne d'arrière-plan */}
-                    <div className="absolute left-3 right-3 top-3 -translate-y-1/2 h-0.5 bg-[#EAE2D5] z-0"></div>
-                    {/* Ligne d'avancement verte */}
-                    <div
-                      className="absolute left-3 top-3 -translate-y-1/2 h-0.5 bg-[#52796F] transition-all duration-300 z-0"
-                      style={{
-                        width: isDone
-                          ? 'calc(100% - 24px)'
-                          : booking.step === 3
-                          ? '66%'
-                          : '33%'
-                      }}
-                    ></div>
-
-                    {/* Étape 1 : Réservation confirmée */}
-                    <div className="relative z-10 flex flex-col items-center">
-                      <div className="w-6 h-6 rounded-full bg-[#52796F] text-white flex items-center justify-center text-[10px] font-bold shadow-2xs">
-                        ✓
-                      </div>
-                      <span className="text-[8px] font-bold text-[#2C2720] text-center mt-1 w-14 leading-tight">
-                        Réservation confirmée
-                      </span>
-                    </div>
-
-                    {/* Étape 2 : Retrait & Check-in */}
-                    <div className="relative z-10 flex flex-col items-center">
-                      <div
-                        className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition ${
-                          booking.step >= 2
-                            ? booking.step > 2 || isDone
-                              ? 'bg-[#52796F] text-white shadow-2xs'
-                              : 'bg-[#52796F] text-white ring-4 ring-[#52796F]/20'
-                            : 'bg-white border-2 border-[#EAE2D5] text-[#8C8275]'
-                        }`}
-                      >
-                        {booking.step > 2 || isDone ? '✓' : '2'}
-                      </div>
-                      <span className="text-[8px] font-bold text-[#2C2720] text-center mt-1 w-14 leading-tight">
-                        Retrait & Check-in
-                      </span>
-                    </div>
-
-                    {/* Étape 3 : Utilisation 7j/7 */}
-                    <div className="relative z-10 flex flex-col items-center">
-                      <div
-                        className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition ${
-                          booking.step >= 3
-                            ? isDone
-                              ? 'bg-[#52796F] text-white shadow-2xs'
-                              : 'bg-[#52796F] text-white ring-4 ring-[#52796F]/20'
-                            : 'bg-white border-2 border-[#EAE2D5] text-[#8C8275]'
-                        }`}
-                      >
-                        {isDone ? '✓' : '3'}
-                      </div>
-                      <span className="text-[8px] font-bold text-[#2C2720] text-center mt-1 w-14 leading-tight">
-                        Utilisation 7j/7
-                      </span>
-                    </div>
-
-                    {/* Étape 4 : Restitution & Caution levée */}
-                    <div className="relative z-10 flex flex-col items-center">
-                      <div
-                        className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition ${
-                          isDone
-                            ? 'bg-[#52796F] text-white shadow-2xs'
-                            : 'bg-white border-2 border-[#EAE2D5] text-[#8C8275]'
-                        }`}
-                      >
-                        {isDone ? '✓' : '4'}
-                      </div>
-                      <span className="text-[8px] font-bold text-[#2C2720] text-center mt-1 w-16 leading-tight">
-                        Restitution & 0€ débité
-                      </span>
-                    </div>
-                  </div>
+                <div className="w-full bg-[#FAF8F5] h-1.5 rounded-full overflow-hidden border border-[#EAE2D5]">
+                  <div
+                    className="bg-[#52796F] h-full transition-all duration-300 rounded-full"
+                    style={{
+                      width: isDone ? '100%' : booking.step === 3 ? '75%' : '50%'
+                    }}
+                  ></div>
                 </div>
+              </div>
 
-                {/* PIED DU BILLET : ACTIONS & STATUT CAUTION */}
-                <div className="pt-2 flex items-center justify-between gap-2 border-t border-[#F0EBE1]">
-                  <div className="flex items-center gap-1.5 text-[10px] text-[#354F48]">
-                    <i data-lucide="shield-check" className="w-3.5 h-3.5 text-[#52796F]"></i>
-                    <span>
-                      Caution {booking.depositAmount} € <strong>non débitée</strong>
-                    </span>
+              {/* Action rapide */}
+              <div className="pt-1 flex items-center justify-between gap-2">
+                {!isDone ? (
+                  <button
+                    onClick={() => openQrModal(booking)}
+                    className="w-full py-2 rounded-xl bg-[#52796F] text-white text-[11px] font-bold hover:bg-[#43665D] transition shadow-2xs flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                  >
+                    <i data-lucide="qr-code" className="w-3.5 h-3.5"></i>
+                    <span>Afficher mon QR Code de retrait</span>
+                  </button>
+                ) : (
+                  <div className="w-full text-center text-[10px] text-[#6B6358] py-1 bg-[#FAF8F5] rounded-xl border border-[#EAE2D5]">
+                    ✓ Restitution validée ({booking.returnedAt || 'Conforme'})
                   </div>
-
-                  {!isDone ? (
-                    <button
-                      onClick={() => openQrModal(booking)}
-                      className="px-3.5 py-2 rounded-xl bg-[#52796F] text-white text-[11px] font-extrabold hover:bg-[#43665D] transition shadow-xs flex items-center gap-1.5"
-                    >
-                      <i data-lucide="qr-code" className="w-3.5 h-3.5"></i>
-                      <span>Afficher le QR Code de retrait</span>
-                    </button>
-                  ) : (
-                    <div className="text-right">
-                      <span className="text-[10px] font-bold text-[#52796F] flex items-center gap-1 justify-end">
-                        <i data-lucide="check-circle" className="w-3 h-3"></i>
-                        Caution levée
-                      </span>
-                      <span className="text-[9px] text-[#8C8275] block">
-                        {booking.returnedAt || 'Restitution 100% conforme'}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
+                )}
               </div>
             </div>
           );
@@ -709,164 +499,79 @@ window.CS.views.BookingsView = function BookingsView() {
         )}
       </div>
 
-      {/* 3. MODALE INTERACTIVE "PASSEPORT QR CODE DE RETRAIT & CHECK-IN" */}
+      {/* 3. MODALE INTERACTIVE "PASSEPORT QR CODE DE RETRAIT" */}
       {qrModalBooking && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-          <div className="w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl border border-[#EAE2D5] max-h-[92vh] overflow-y-auto">
+          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-4 space-y-3 shadow-2xl border border-[#EAE2D5]">
             
             {/* Header de la Modale */}
             <div className="flex items-center justify-between pb-2 border-b border-[#F0EBE1]">
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded-lg bg-[#E6EFE6] text-[#52796F] flex items-center justify-center text-xs font-bold">
-                  🛡️
+              <div className="flex items-center gap-1.5">
+                <span className="w-5 h-5 rounded-lg bg-[#E6EFE6] text-[#52796F] flex items-center justify-center text-[10px] font-bold">
+                  🎫
                 </span>
                 <div>
-                  <h3 className="font-extrabold text-sm text-[#2C2720] leading-tight">
-                    Passeport QR de Retrait
-                  </h3>
-                  <p className="text-[10px] text-[#6B6358]">
-                    Toulouse INP • ENSEEIHT &bull; Réf : {qrModalBooking.bookingRef}
-                  </p>
+                  <h3 className="font-extrabold text-xs text-[#2C2720]">Passation Campus</h3>
+                  <p className="text-[9px] font-mono text-[#8C8275]">{qrModalBooking.bookingRef}</p>
                 </div>
               </div>
               <button
                 onClick={closeQrModal}
-                className="w-7 h-7 rounded-full bg-[#FAF8F5] text-[#8C8275] hover:text-[#2C2720] flex items-center justify-center text-sm font-bold border border-[#EAE2D5]"
+                className="w-6 h-6 rounded-full bg-[#FAF8F5] text-[#8C8275] hover:text-[#2C2720] flex items-center justify-center text-xs font-bold border border-[#EAE2D5]"
               >
                 ✕
               </button>
             </div>
 
-            {/* Fiche Objet résumé */}
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] flex items-center justify-between">
-              <div className="min-w-0">
-                <span className="text-[9px] font-bold text-[#52796F] uppercase block">
-                  {qrModalBooking.itemCategory || 'Équipement'} &bull; Retrait à {qrModalBooking.pickupLocation}
-                </span>
-                <h4 className="font-extrabold text-xs text-[#2C2720] truncate">
+            {/* Info Matériel & Propriétaire */}
+            <div className="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#EAE2D5] flex items-center justify-between text-xs">
+              <div>
+                <h4 className="font-extrabold text-xs text-[#2C2720] leading-tight">
                   {qrModalBooking.itemTitle}
                 </h4>
-              </div>
-              <span className="px-2 py-1 rounded-xl bg-white border border-[#EAE2D5] text-[#2C2720] font-mono text-[10px] font-extrabold flex-shrink-0">
-                {qrModalBooking.bookingRef}
-              </span>
-            </div>
-
-            {/* GRAND QR CODE VECTORIEL / SVG */}
-            <div className="flex flex-col items-center justify-center text-center space-y-2">
-              {renderQRCodeSVG(qrModalBooking.bookingRef, qrModalBooking.pinCode)}
-              <p className="text-[11px] text-[#6B6358] font-medium">
-                Présente ce QR Code à <strong>{qrModalBooking.ownerName}</strong> lors de la passation physique.
-              </p>
-            </div>
-
-            {/* CODE PIN DE SECOURS À 4 CHIFFRES */}
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] space-y-2 text-center">
-              <span className="text-[10px] font-extrabold text-[#8C8275] uppercase tracking-wider block">
-                Code PIN de Secours à 4 Chiffres
-              </span>
-
-              <div className="flex items-center justify-center gap-2">
-                {qrModalBooking.pinCode.split('').map((digit, i) => (
-                  <span
-                    key={i}
-                    className="w-10 h-11 rounded-xl bg-white border-2 border-[#52796F]/30 text-[#2C2720] text-lg font-mono font-extrabold flex items-center justify-center shadow-xs"
-                  >
-                    {digit}
-                  </span>
-                ))}
-              </div>
-
-              <div className="flex items-center justify-center gap-2 pt-1">
-                <p className="text-[10px] text-[#6B6358]">
-                  À communiquer au propriétaire si le scanner optique est indisponible.
+                <p className="text-[10px] text-[#6B6358] mt-0.5">
+                  📍 {qrModalBooking.pickupLocation} &bull; {qrModalBooking.ownerName}
                 </p>
+              </div>
+              <button
+                onClick={() => handleContactOwner(qrModalBooking.ownerName, qrModalBooking.ownerPhone)}
+                className="px-2.5 py-1 rounded-lg bg-white border border-[#EAE2D5] text-[#52796F] text-[10px] font-bold hover:bg-[#FAF8F5] flex items-center gap-1"
+              >
+                <i data-lucide="message-circle" className="w-3 h-3"></i>
+                <span>Message</span>
+              </button>
+            </div>
+
+            {/* QR CODE VECTORIEL SVG & PIN CODE */}
+            <div className="flex flex-col items-center justify-center py-1 space-y-2">
+              <div className="p-2 bg-white rounded-2xl border border-[#EAE2D5] shadow-inner">
+                {renderQRCodeSVG(qrModalBooking.bookingRef, qrModalBooking.pinCode)}
+              </div>
+
+              {/* Code PIN de secours */}
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-[10px] text-[#8C8275] font-bold">PIN :</span>
+                <span className="font-mono font-extrabold text-[#2C2720] bg-[#FAF8F5] px-2.5 py-0.5 rounded-lg border border-[#EAE2D5] tracking-widest text-sm">
+                  {qrModalBooking.pinCode}
+                </span>
                 <button
                   onClick={() => handleCopyPin(qrModalBooking.pinCode)}
-                  className="text-[10px] font-bold text-[#52796F] hover:underline flex items-center gap-0.5"
+                  className="text-[10px] text-[#52796F] font-bold hover:underline"
                 >
-                  <i data-lucide="copy" className="w-3 h-3"></i>
-                  {copyToast ? 'Copié !' : 'Copier'}
+                  {copyToast ? '✓ Copié' : 'Copier'}
                 </button>
               </div>
             </div>
 
-            {/* CHECKLIST DES ACCESSOIRES À VÉRIFIER ENSEMBLE */}
-            <div className="p-3.5 rounded-2xl bg-white border border-[#EAE2D5] space-y-2 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="font-extrabold text-[#2C2720] text-[11px] flex items-center gap-1.5">
-                  <i data-lucide="check-circle" className="w-3.5 h-3.5 text-[#52796F]"></i>
-                  Checklist de passation contradictoire :
-                </span>
-                <span className="text-[10px] font-bold text-[#52796F]">
-                  {Object.values(checkedAccessories).filter(Boolean).length} / {qrModalBooking.accessories.length}
-                </span>
-              </div>
-
-              <p className="text-[10px] text-[#6B6358]">
-                Vérifiez ensemble ces éléments avant de valider le prêt :
-              </p>
-
-              <div className="space-y-1.5 pt-1">
-                {qrModalBooking.accessories.map((acc, idx) => (
-                  <label
-                    key={idx}
-                    onClick={() => toggleAccessory(idx)}
-                    className={`p-2 rounded-xl border flex items-center gap-2.5 cursor-pointer transition select-none ${
-                      checkedAccessories[idx]
-                        ? 'bg-[#E6EFE6]/70 border-[#52796F]/40 text-[#2C2720]'
-                        : 'bg-[#FAF8F5] border-[#EAE2D5] text-[#8C8275]'
-                    }`}
-                  >
-                    <div
-                      className={`w-4 h-4 rounded-md flex items-center justify-center text-[10px] font-bold transition ${
-                        checkedAccessories[idx]
-                          ? 'bg-[#52796F] text-white'
-                          : 'border border-[#8C8275] bg-white'
-                      }`}
-                    >
-                      {checkedAccessories[idx] && '✓'}
-                    </div>
-                    <span className="text-[11px] font-semibold">{acc}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* CONTACT PROPRIÉTAIRE */}
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D5] flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2.5">
-                <img
-                  src={qrModalBooking.ownerAvatar}
-                  alt={qrModalBooking.ownerName}
-                  className="w-9 h-9 rounded-xl object-cover ring-2 ring-[#52796F]/20"
-                />
-                <div>
-                  <h5 className="font-extrabold text-[#2C2720] text-[11px]">
-                    {qrModalBooking.ownerName}
-                  </h5>
-                  <p className="text-[10px] text-[#6B6358]">{qrModalBooking.ownerPromo}</p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => handleContactOwner(qrModalBooking.ownerName, qrModalBooking.ownerPhone)}
-                className="px-3 py-1.5 rounded-xl bg-white border border-[#EAE2D5] text-[#2C2720] text-[10px] font-bold hover:bg-[#FAF8F5] transition flex items-center gap-1 shadow-2xs"
-              >
-                <i data-lucide="phone" className="w-3 h-3 text-[#52796F]"></i>
-                <span>Contacter</span>
-              </button>
-            </div>
-
-            {/* BOUTON D'ACTION INTERACTIF (SIMULATION CHECK-IN / RESTITUTION) */}
-            <div className="space-y-2 pt-1">
+            {/* BOUTON D'ACTION INTERACTIF (1-CLIC) */}
+            <div className="space-y-1.5 pt-1">
               {qrModalBooking.step === 2 && (
                 <button
                   onClick={() => advanceBookingStep(qrModalBooking.id)}
-                  className="w-full py-3 rounded-xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-xs flex items-center justify-center gap-2"
+                  className="w-full py-2.5 rounded-xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-xs flex items-center justify-center gap-1.5 active:scale-[0.98]"
                 >
-                  <i data-lucide="check" className="w-4 h-4"></i>
-                  <span>Valider le Retrait & Check-in (Jour J)</span>
+                  <i data-lucide="check" className="w-3.5 h-3.5"></i>
+                  <span>Valider le Retrait & Check-in</span>
                 </button>
               )}
 
@@ -876,18 +581,18 @@ window.CS.views.BookingsView = function BookingsView() {
                     advanceBookingStep(qrModalBooking.id);
                     setSubTab('history');
                   }}
-                  className="w-full py-3 rounded-xl bg-[#354F48] text-white text-xs font-bold hover:bg-[#2C2720] transition shadow-xs flex items-center justify-center gap-2"
+                  className="w-full py-2.5 rounded-xl bg-[#354F48] text-white text-xs font-bold hover:bg-[#2C2720] transition shadow-xs flex items-center justify-center gap-1.5 active:scale-[0.98]"
                 >
-                  <i data-lucide="shield-check" className="w-4 h-4"></i>
-                  <span>Restituer l'équipement & Libérer la Caution (0 €)</span>
+                  <i data-lucide="shield-check" className="w-3.5 h-3.5"></i>
+                  <span>Restituer le matériel (0 € débité)</span>
                 </button>
               )}
 
               <button
                 onClick={closeQrModal}
-                className="w-full py-2.5 rounded-xl bg-[#FAF8F5] text-[#6B6358] text-xs font-bold hover:bg-[#EAE2D5] transition"
+                className="w-full py-1.5 rounded-xl text-xs font-semibold text-[#8C8275] hover:text-[#2C2720] transition"
               >
-                Fermer le passeport
+                Fermer
               </button>
             </div>
 
