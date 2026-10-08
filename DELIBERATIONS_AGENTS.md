@@ -74,4 +74,28 @@ Ce journal consigne les discussions et arbitrages collégiaux entre les directeu
 * **@agent-architect :** *« Les règles sont désormais gravées dans la charte suprême `AGENTS.md` : parité stricte, sanctuarisation de `ItemsView.js` pour Mathys, mandat d'initiative et canaux de contact officiels (Discord, GitHub, e-mails promo). »*
 * **CEO IA :** *« Directive actée et déployée à 100%. »*
 
+---
+
+### 🎙️ Session n°4 — Directive Ergonomique : Épuration Radicale des Données & Fluidité Mobile
+
+#### Participants :
+* 🎩 **CEO Orchestrateur IA** (Médiateur)
+* 📐 **@agent-architect** (CTO PWA)
+* 🎨 **@agent-ui-design** (CPO Design Mobile)
+* 🔍 **@agent-renter** (Responsable Emprunteurs)
+* 🛡️ **@agent-trust** (Chief Trust & Security)
+
+#### 1. Constat du Co-Directeur Alban :
+* **Instruction d'Alban :** *« Il faut que tu laisses faire un peu, que ce soit plus fonctionnel. Peut-être découper plus en micro-tâches ou utiliser de bonnes méthodes de raisonnement. Je trouve qu'il y a trop de données, c'est pas assez fluide pour une application. »*
+
+#### 2. Délibération et Arbitrage Opérationnel :
+* **@agent-ui-design :** *« Alban a mis le doigt sur le défaut classique des prototypes universitaires : la surcharge administrative et textuelle. On avait 4 paragraphes de disjoncteurs légaux, des steppers géants à 4 ronds, et des cartes de 350px de hauteur ! L'utilisateur devait scroller pendant des kilomètres pour voir 2 objets. »*
+* **@agent-renter :** *« Nous avons appliqué une règle d'or Vinted / Airbnb :
+  1. Grille 2 colonnes dans Explorer : 4 à 6 objets visibles dès le premier regard sans scroller.
+  2. Cartes de passation compactes dans Locations : hauteur divisée par 2,5, suppression des blocs de texte légaux redondants.
+  3. Modale QR Code instantanée : affichage direct du QR SVG et du code PIN sans forcer à scroller dans une checklist de 10 éléments. »*
+* **@agent-trust :** *« La réassurance (caution 0 € débité) est conservée, mais sous forme d'un badge élégant et discret au lieu d'un pavé juridique imposant. »*
+* **CEO IA :** *« Résultat : -624 lignes de code superflu supprimées, application 100% fluide, santualisation de la partie de Mathys préservée. »*
+
+
 
