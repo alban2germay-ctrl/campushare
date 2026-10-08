@@ -5,7 +5,7 @@ Ce document est la **Single Source of Truth (SSOT)** des spécifications du prod
 ---
 
 ## 🎯 1. Vision Produit
-CampuShare est la Progressive Web App (PWA) fermée aux élèves de Toulouse INP - ENSEEIHT permettant de louer et d'emprunter du matériel de week-end (Soirée, Montagne/Outdoor, Bricolage) entre pairs, avec garantie par caution et remise physique en main propre sur le campus.
+CampuShare est la Progressive Web App (PWA) fermée aux élèves de Toulouse INP - ENSEEIHT permettant de louer et d'emprunter du matériel 7 jours sur 7 en totale flexibilité (location ponctuelle 24h en semaine, forfait week-end, semaine de vacances ou multi-jours) entre pairs, avec garantie par caution et remise physique en main propre sur le campus.
 
 ---
 
@@ -31,20 +31,22 @@ CampuShare est la Progressive Web App (PWA) fermée aux élèves de Toulouse INP
   "category": "party", // 'party' | 'outdoor' | 'diy' | 'tech'
   "categoryLabel": "Soirée & Convivialité",
   "categoryIcon": "🎉",
-  "weekendPrice": 12, // Prix du forfait Ven 17h -> Dim 20h
-  "depositAmount": 40, // Montant de la caution bloquée (sans débit)
+  "pricing": {
+    "perDay": 6.00, // Tarif par tranche de 24h (location en semaine)
+    "weekendPackage": 12.00, // Forfait avantageux Ven 17h -> Dim 20h
+    "weeklyPackage": 25.00 // Forfait semaine complète (7 jours)
+  },
+  "depositAmount": 40.00, // Montant de la caution bloquée (sans débit)
+  "minDuration": "24h", // Durée minimale
   "owner": {
     "name": "Mathys D.",
-    "school": "Toulouse INP - ENSEEIHT",
+    "school": "Toulouse INP • ENSEEIHT",
     "promo": "2A 3EA",
     "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80",
     "rating": 5.0,
     "verified": true
   },
   "pickupLocation": "Foyer N7 / Résidence R1",
-  "images": [
-    "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80"
-  ],
   "status": "available", // 'available' | 'rented' | 'reserved'
   "condition": "Comme neuf (testé et nettoyé)",
   "includedAccessories": ["8 poêlons", "8 spatules bois"]
@@ -55,5 +57,6 @@ CampuShare est la Progressive Web App (PWA) fermée aux élèves de Toulouse INP
 
 ## 🛡️ 4. Règles de Gestion & Confiance
 1. **Accès réservé :** Authentification obligatoire via courriel étudiant institutionnel.
-2. **Caution sécurisée :** Empreinte bancaire de pré-autorisation (non encaissée), levée automatiquement le dimanche soir dès confirmation de la restitution en bon état.
-3. **Paiement direct :** Versement de la part de location au propriétaire, moins une micro-commission plateforme pour couvrir les frais de fonctionnement.
+2. **Durée flexible 7j/7 :** Possibilité de louer 24h en semaine, un forfait week-end de 48h/72h ou plusieurs jours consécutifs.
+3. **Caution sécurisée :** Empreinte bancaire de pré-autorisation (non encaissée), levée automatiquement à la fin de la période dès confirmation de la restitution en bon état.
+4. **Paiement direct :** Versement de la part de location au propriétaire, moins une micro-commission plateforme pour couvrir les frais de fonctionnement.

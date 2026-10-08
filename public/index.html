@@ -319,132 +319,329 @@
               </div>
             </header>
 
-            {/* 3. CORPS TACTILE SCROLLABLE */}
+            {/* 3. CORPS TACTILE SCROLLABLE MULTI-ÉCRANS (Routage dynamique currentTab) */}
             <main className="flex-1 overflow-y-auto mobile-scroll-container p-4 space-y-4">
               
-              {/* Carte Statut Micro-tâche 1.1.2 Validée */}
-              <div className="p-4 rounded-3xl bg-white border border-[#EAE2D5] shadow-xs space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E6EFE6] text-[#354F48]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#52796F] animate-pulse"></span>
-                    Micro-tâche 1.1.2 Validée
-                  </span>
-                  <span className="text-[10px] text-[#8C8275] font-mono font-semibold">@agent-ui-design</span>
-                </div>
-                <h3 className="text-sm font-extrabold text-[#2C2720]">
-                  Header Campus & Widget Cagnotte Intégrés
-                </h3>
-                <p className="text-xs text-[#6B6358] leading-relaxed">
-                  Le bandeau supérieur affiche désormais le profil certifié de l'étudiant ({activeUserData.name}), son solde réel et son statut de confiance sans débit de caution.
-                </p>
-              </div>
-
-              {/* Aperçu du Rôle Actif */}
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-[#8C8275] uppercase tracking-wider">
-                    {userRole === 'renter' ? 'Chantier A : Parcours Emprunteur' : 'Chantier B : Parcours Propriétaire'}
-                  </span>
-                  <span className="text-[10px] text-[#52796F] font-bold">
-                    Toulouse INP • ENSEEIHT
-                  </span>
-                </div>
-
-                {userRole === 'renter' ? (
-                  /* Prévisualisation Découverte Emprunteur */
-                  <div className="p-4 rounded-3xl bg-gradient-to-br from-[#FAF8F5] to-[#F4EFE6] border border-[#EAE2D5] space-y-3">
+              {/* VUE 1 : EXPLORER (Feed Matériel & Disponibilité 7j/7) */}
+              {currentTab === 'explore' && (
+                <div className="space-y-4 animate-fade-in">
+                  {/* Bannière de liberté 7j/7 & Flexibilité */}
+                  <div className="p-4 rounded-3xl bg-gradient-to-br from-[#FAF8F5] to-[#F4EFE6] border border-[#EAE2D5] space-y-2.5 shadow-2xs">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[#2C2720] flex items-center gap-1.5">
-                        <span>🏔️</span>
-                        <span>Offre du week-end à l'N7</span>
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E6EFE6] text-[#354F48]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#52796F] animate-pulse"></span>
+                        Locations 7j/7 à l'N7
                       </span>
-                      <span className="px-2 py-0.5 rounded-full bg-[#52796F] text-white text-[10px] font-bold">
-                        Ven 17h &rarr; Dim 20h
+                      <span className="text-[10px] text-[#8C8275] font-semibold">Toute l'année</span>
+                    </div>
+                    <h3 className="text-sm font-extrabold text-[#2C2720] leading-snug">
+                      Loue du matériel n'importe quel jour, selon tes besoins
+                    </h3>
+                    <p className="text-xs text-[#6B6358] leading-relaxed">
+                      Que ce soit pour <strong>24h en semaine</strong> (bricolage, soirée crêpes), pour tout le <strong>week-end</strong> ou pour une <strong>semaine entière</strong>, choisis ta formule en toute liberté.
+                    </p>
+
+                    {/* Sélecteur express de formule temporelle */}
+                    <div className="grid grid-cols-3 gap-1.5 pt-1">
+                      <div className="p-2 rounded-xl bg-white/90 border border-[#EAE2D5] text-center">
+                        <span className="block text-[9px] text-[#8C8275] font-bold">24H SEMAINE</span>
+                        <span className="text-xs font-extrabold text-[#2C2720]">Dès 5 €</span>
+                      </div>
+                      <div className="p-2 rounded-xl bg-[#52796F] text-white text-center shadow-xs">
+                        <span className="block text-[9px] text-white/80 font-bold">WEEK-END</span>
+                        <span className="text-xs font-extrabold text-white">Ven &rarr; Dim</span>
+                      </div>
+                      <div className="p-2 rounded-xl bg-white/90 border border-[#EAE2D5] text-center">
+                        <span className="block text-[9px] text-[#8C8275] font-bold">SEMAINE (7J)</span>
+                        <span className="text-xs font-extrabold text-[#2C2720]">-30%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Catégories de matériel (Pills horizontaux) */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-[#8C8275] uppercase tracking-wider">Catégories Campus</span>
+                      <span className="text-[10px] text-[#52796F] font-bold">Voir tout (18)</span>
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+                      <button className="px-3 py-1.5 rounded-full bg-[#52796F] text-white text-xs font-bold whitespace-nowrap shadow-xs">
+                        🎉 Soirée & Fête
+                      </button>
+                      <button className="px-3 py-1.5 rounded-full bg-white border border-[#EAE2D5] text-[#6B6358] text-xs font-semibold whitespace-nowrap hover:bg-[#FAF8F5]">
+                        🏔️ Ski & Montagne
+                      </button>
+                      <button className="px-3 py-1.5 rounded-full bg-white border border-[#EAE2D5] text-[#6B6358] text-xs font-semibold whitespace-nowrap hover:bg-[#FAF8F5]">
+                        🔨 Bricolage & Déménagement
+                      </button>
+                      <button className="px-3 py-1.5 rounded-full bg-white border border-[#EAE2D5] text-[#6B6358] text-xs font-semibold whitespace-nowrap hover:bg-[#FAF8F5]">
+                        🍳 Convivialité
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Carte Objet Exemple 1 (Disponible 7j/7) */}
+                  <div className="p-3.5 rounded-3xl bg-white border border-[#EAE2D5] shadow-xs space-y-2.5">
+                    <div className="flex gap-3">
+                      <div className="w-20 h-20 rounded-2xl bg-[#FAF8F5] overflow-hidden flex-shrink-0 relative">
+                        <img
+                          src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=300&q=80"
+                          alt="Appareil Raclette"
+                          className="w-full h-full object-cover"
+                        />
+                        <span className="absolute bottom-1 left-1 bg-[#2C2720]/80 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-xs">
+                          7j/7
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-bold text-[#52796F] uppercase">Convivialité</span>
+                            <span className="text-[9px] font-semibold text-[#8C8275]">⭐ 5.0 (8 avis)</span>
+                          </div>
+                          <h4 className="font-extrabold text-xs text-[#2C2720] truncate">Appareil à Raclette 8p Tefal</h4>
+                          <p className="text-[10px] text-[#6B6358] truncate">Prêté par Mathys D. (2A 3EA)</p>
+                        </div>
+                        <div className="flex items-center justify-between pt-1 border-t border-[#F0EBE1]">
+                          <div>
+                            <span className="text-xs font-extrabold text-[#2C2720]">6,00 €</span>
+                            <span className="text-[9px] text-[#8C8275]"> /jour (ou 12€ WE)</span>
+                          </div>
+                          <span className="text-[9px] font-bold text-[#354F48] bg-[#E6EFE6] px-1.5 py-0.5 rounded-md">
+                            Caution : 40 €
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <button className="w-full py-2 rounded-xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-xs flex items-center justify-center gap-1.5">
+                      <i data-lucide="calendar" className="w-3.5 h-3.5"></i>
+                      <span>Choisir mes dates (Semaine ou WE)</span>
+                    </button>
+                  </div>
+
+                  {/* Carte Objet Exemple 2 */}
+                  <div className="p-3.5 rounded-3xl bg-white border border-[#EAE2D5] shadow-xs space-y-2.5">
+                    <div className="flex gap-3">
+                      <div className="w-20 h-20 rounded-2xl bg-[#FAF8F5] overflow-hidden flex-shrink-0 relative">
+                        <img
+                          src="https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=300&q=80"
+                          alt="Enceinte JBL"
+                          className="w-full h-full object-cover"
+                        />
+                        <span className="absolute bottom-1 left-1 bg-[#2C2720]/80 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-xs">
+                          7j/7
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-bold text-[#D87D4A] uppercase">Soirée & Fête</span>
+                            <span className="text-[9px] font-semibold text-[#8C8275]">⭐ 4.9 (14 avis)</span>
+                          </div>
+                          <h4 className="font-extrabold text-xs text-[#2C2720] truncate">Enceinte JBL Partybox 310</h4>
+                          <p className="text-[10px] text-[#6B6358] truncate">Prêté par Alban D. (2A SN)</p>
+                        </div>
+                        <div className="flex items-center justify-between pt-1 border-t border-[#F0EBE1]">
+                          <div>
+                            <span className="text-xs font-extrabold text-[#2C2720]">15,00 €</span>
+                            <span className="text-[9px] text-[#8C8275]"> /jour (ou 28€ WE)</span>
+                          </div>
+                          <span className="text-[9px] font-bold text-[#354F48] bg-[#E6EFE6] px-1.5 py-0.5 rounded-md">
+                            Caution : 120 €
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <button className="w-full py-2 rounded-xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-xs flex items-center justify-center gap-1.5">
+                      <i data-lucide="calendar" className="w-3.5 h-3.5"></i>
+                      <span>Choisir mes dates (Semaine ou WE)</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* VUE 2 : MES OBJETS (Gestion du matériel en prêt) */}
+              {currentTab === 'items' && (
+                <div className="space-y-4 animate-fade-in">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-extrabold text-[#2C2720]">Mon Matériel en Prêt</h3>
+                      <p className="text-[10px] text-[#6B6358]">{activeUserData.activeItems} objets actifs &bull; Prêt 7j/7</p>
+                    </div>
+                    <button className="px-3 py-1.5 rounded-xl bg-[#D87D4A] text-white text-xs font-bold shadow-xs flex items-center gap-1 hover:bg-[#C26B39] transition">
+                      <i data-lucide="plus" className="w-3.5 h-3.5"></i>
+                      <span>Ajouter</span>
+                    </button>
+                  </div>
+
+                  {/* Objet possédé */}
+                  <div className="p-3.5 rounded-3xl bg-white border border-[#EAE2D5] shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2 py-0.5 rounded-full bg-[#E6EFE6] text-[#354F48] text-[9px] font-bold flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#52796F]"></span>
+                        Disponible 7j/7
                       </span>
+                      <span className="text-[10px] text-[#8C8275] font-semibold">Gains : +45,00 €</span>
                     </div>
 
-                    <div className="bg-white/95 p-3 rounded-2xl border border-[#EAE2D5] flex items-center gap-3">
-                      <div className="w-14 h-14 rounded-xl bg-[#FAF8F5] overflow-hidden flex-shrink-0">
+                    <div className="flex items-center gap-3">
+                      <div className="w-14 h-14 rounded-2xl bg-[#FAF8F5] overflow-hidden flex-shrink-0">
                         <img
-                          src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=200&q=80"
+                          src={currentUser === 'alban' ? 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=200&q=80' : 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=200&q=80'}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-xs text-[#2C2720] truncate">Appareil Raclette 8p Tefal</h4>
-                        <span className="text-[10px] text-[#52796F] font-semibold block">Prêté par Mathys D. (2A 3EA)</span>
-                        <div className="flex items-center justify-between mt-1">
-                          <span className="font-extrabold text-xs text-[#2C2720]">12,00 € <span className="text-[9px] font-normal text-[#8C8275]">/we</span></span>
-                          <span className="text-[9px] font-bold text-[#354F48] bg-[#E6EFE6] px-1.5 py-0.2 rounded-md">Caution : 40€</span>
-                        </div>
+                        <h4 className="font-extrabold text-xs text-[#2C2720] truncate">
+                          {currentUser === 'alban' ? 'JBL Partybox 310' : 'Appareil Raclette Tefal 8p'}
+                        </h4>
+                        <p className="text-[10px] text-[#6B6358]">
+                          {currentUser === 'alban' ? '15€/jour &bull; 28€/we &bull; Caution 120€' : '6€/jour &bull; 12€/we &bull; Caution 40€'}
+                        </p>
                       </div>
-                    </div>
-                  </div>
-                ) : (
-                  /* Prévisualisation Découverte Propriétaire */
-                  <div className="p-4 rounded-3xl bg-gradient-to-br from-[#FEF9EF] to-[#F8EFE3] border border-[#F4E3C5] space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[#785E2F] flex items-center gap-1.5">
-                        <span>📸</span>
-                        <span>Mes Objets Listés ({activeUserData.activeItems})</span>
-                      </span>
-                      <span className="px-2 py-0.5 rounded-full bg-[#D87D4A] text-white text-[10px] font-bold">
-                        Prêt Express
-                      </span>
                     </div>
 
-                    <div className="bg-white/95 p-3 rounded-2xl border border-[#F4E3C5] flex items-center justify-between text-xs">
-                      <div>
-                        <h4 className="font-bold text-xs text-[#2C2720]">JBL Partybox 310 (240W)</h4>
-                        <span className="text-[10px] text-[#52796F] font-semibold">1 demande en attente (Hugo L.)</span>
-                      </div>
-                      <button className="px-2.5 py-1 rounded-xl bg-[#52796F] text-white text-[10px] font-bold">
-                        Accepter
+                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#F0EBE1]">
+                      <button className="py-1.5 rounded-xl border border-[#EAE2D5] text-[#2C2720] text-xs font-semibold hover:bg-[#FAF8F5]">
+                        Modifier tarifs
+                      </button>
+                      <button className="py-1.5 rounded-xl bg-[#FAF8F5] text-[#52796F] text-xs font-bold hover:bg-[#EAE2D5]">
+                        Disponibilités 7j/7
                       </button>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+
+              {/* VUE 3 : LOCATIONS (Réservations 7j/7, passations & historique) */}
+              {currentTab === 'bookings' && (
+                <div className="space-y-4 animate-fade-in">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-extrabold text-[#2C2720]">Mes Locations 7j/7</h3>
+                      <p className="text-[10px] text-[#6B6358]">Semaine, week-end ou multi-jours</p>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full bg-[#E6EFE6] text-[#354F48] text-[9px] font-bold">
+                      1 en cours
+                    </span>
+                  </div>
+
+                  {/* Réservation active */}
+                  <div className="p-4 rounded-3xl bg-white border border-[#EAE2D5] shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold text-[#52796F] uppercase tracking-wider flex items-center gap-1">
+                        <i data-lucide="check-circle" className="w-3 h-3"></i>
+                        Confirmée & Sécurisée
+                      </span>
+                      <span className="text-[10px] text-[#8C8275] font-semibold">Prêt en semaine</span>
+                    </div>
+
+                    <div className="bg-[#FAF8F5] p-3 rounded-2xl border border-[#EAE2D5] space-y-1.5">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="font-extrabold text-[#2C2720]">Perceuse sans fil Bosch 18V</span>
+                        <span className="font-extrabold text-[#52796F]">6,00 €</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[10px] text-[#6B6358]">
+                        <i data-lucide="clock" className="w-3 h-3 text-[#52796F]"></i>
+                        <span>Mardi 14h00 &rarr; Mercredi 14h00 (24h)</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[10px] text-[#6B6358]">
+                        <i data-lucide="map-pin" className="w-3 h-3 text-[#D87D4A]"></i>
+                        <span>Retrait : Foyer des élèves N7</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1 text-xs">
+                      <div className="flex items-center gap-1 text-[10px] text-[#354F48]">
+                        <i data-lucide="shield-check" className="w-3.5 h-3.5 text-[#52796F]"></i>
+                        <span>Caution 50 € <strong>non débitée</strong></span>
+                      </div>
+                      <button className="px-3 py-1 rounded-xl bg-[#52796F] text-white text-[10px] font-bold">
+                        Code Retrait QR
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* VUE 4 : MON COMPTE & SÉCURITÉ CAMPUS */}
+              {currentTab === 'profile' && (
+                <div className="space-y-4 animate-fade-in">
+                  <div className="p-4 rounded-3xl bg-white border border-[#EAE2D5] shadow-xs text-center space-y-2">
+                    <img
+                      src={activeUserData.avatar}
+                      alt={activeUserData.name}
+                      className="w-16 h-16 rounded-full mx-auto ring-4 ring-[#52796F]/20 object-cover shadow-sm"
+                    />
+                    <div>
+                      <h3 className="text-sm font-extrabold text-[#2C2720] flex items-center justify-center gap-1">
+                        <span>{activeUserData.name}</span>
+                        <span className="text-[#52796F] text-xs">✓</span>
+                      </h3>
+                      <p className="text-xs text-[#6B6358]">{activeUserData.promo} &bull; {activeUserData.school}</p>
+                      <p className="text-[10px] text-[#8C8275] font-mono mt-0.5">{currentUser}@enseeiht.fr</p>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-3xl bg-[#FAF8F5] border border-[#EAE2D5] space-y-2">
+                    <span className="text-[10px] font-bold text-[#8C8275] uppercase">Statut de Confiance Étudiant</span>
+                    <div className="grid grid-cols-2 gap-2 text-center text-xs">
+                      <div className="p-2.5 bg-white rounded-2xl border border-[#EAE2D5]">
+                        <span className="block text-sm font-extrabold text-[#52796F]">100 %</span>
+                        <span className="text-[9px] text-[#8C8275]">Matériel rendu intact</span>
+                      </div>
+                      <div className="p-2.5 bg-white rounded-2xl border border-[#EAE2D5]">
+                        <span className="block text-sm font-extrabold text-[#2C2720]">0</span>
+                        <span className="text-[9px] text-[#8C8275]">Litige signalé</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
             </main>
 
-            {/* 4. BOTTOM NAVIGATION BAR TACTILE (Micro-tâche 1.1.3 active) */}
-            <nav className="border-t border-[#EAE2D5] bg-white/95 backdrop-blur-md px-4 py-2 flex items-center justify-around flex-shrink-0 z-20 shadow-sm">
+            {/* 4. BOTTOM NAVIGATION BAR TACTILE (Micro-tâche 1.1.3 active & validée) */}
+            <nav className="border-t border-[#EAE2D5] bg-white/95 backdrop-blur-md px-2 py-1 flex items-center justify-around flex-shrink-0 z-20 shadow-sm">
               <button
                 onClick={() => setCurrentTab('explore')}
-                className={`flex flex-col items-center gap-0.5 transition ${
-                  currentTab === 'explore' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
+                className={`flex-1 min-h-[48px] flex flex-col items-center justify-center gap-1 transition ${
+                  currentTab === 'explore' ? 'text-[#52796F] font-bold' : 'text-[#8C8275] font-semibold hover:text-[#2C2720]'
                 }`}
+                title="Explorer le matériel 7j/7"
               >
                 <i data-lucide="compass" className="w-5 h-5"></i>
-                <span className="text-[10px] font-bold">Explorer</span>
+                <span className="text-[10px]">Explorer</span>
               </button>
               <button
                 onClick={() => setCurrentTab('items')}
-                className={`flex flex-col items-center gap-0.5 transition ${
-                  currentTab === 'items' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
+                className={`flex-1 min-h-[48px] flex flex-col items-center justify-center gap-1 transition ${
+                  currentTab === 'items' ? 'text-[#52796F] font-bold' : 'text-[#8C8275] font-semibold hover:text-[#2C2720]'
                 }`}
+                title="Gérer mes objets en prêt"
               >
                 <i data-lucide="package" className="w-5 h-5"></i>
-                <span className="text-[10px] font-semibold">Mes Objets</span>
+                <span className="text-[10px]">Mes Objets</span>
               </button>
               <button
                 onClick={() => setCurrentTab('bookings')}
-                className={`flex flex-col items-center gap-0.5 transition ${
-                  currentTab === 'bookings' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
+                className={`flex-1 min-h-[48px] flex flex-col items-center justify-center gap-1 transition ${
+                  currentTab === 'bookings' ? 'text-[#52796F] font-bold' : 'text-[#8C8275] font-semibold hover:text-[#2C2720]'
                 }`}
+                title="Locations en semaine ou week-end"
               >
                 <i data-lucide="calendar" className="w-5 h-5"></i>
-                <span className="text-[10px] font-semibold">Week-end</span>
+                <span className="text-[10px]">Locations</span>
               </button>
               <button
                 onClick={() => setCurrentTab('profile')}
-                className={`flex flex-col items-center gap-0.5 transition ${
-                  currentTab === 'profile' ? 'text-[#52796F]' : 'text-[#8C8275] hover:text-[#2C2720]'
+                className={`flex-1 min-h-[48px] flex flex-col items-center justify-center gap-1 transition ${
+                  currentTab === 'profile' ? 'text-[#52796F] font-bold' : 'text-[#8C8275] font-semibold hover:text-[#2C2720]'
                 }`}
+                title="Mon compte certifié N7"
               >
                 <i data-lucide="user" className="w-5 h-5"></i>
-                <span className="text-[10px] font-semibold">Compte</span>
+                <span className="text-[10px]">Compte</span>
               </button>
             </nav>
 

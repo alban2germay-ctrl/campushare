@@ -26,3 +26,29 @@ Ce journal consigne les discussions et arbitrages collégiaux entre les directeu
 * **@agent-trust :** *« Pour maximiser le sentiment de sécurité et de fierté d'école, le header mobile doit afficher clairement le badge promo certifié (ex: 'Alban D. • 2A SN' et 'Mathys D. • 2A 3EA'). »*
 * **@agent-ui-design :** *« Et ajoutons le widget de cagnotte étudiante : afficher le solde d'argent gagné grâce aux prêts (ex: 24,00 €) ainsi que le statut de garantie (0 caution débitée). Ça rend l'app immédiatement vivante et gratifiante. »*
 * **CEO IA :** *« Validé. Nous programmons ces éléments pour livraison immédiate au Conseil de Direction. »*
+
+---
+
+### 🎙️ Session n°2 — Directive Stratégique : Location Flexible 7j/7 Toute l'Année
+
+#### Participants :
+* 🎩 **CEO Orchestrateur IA** (Médiateur)
+* 📐 **@agent-architect** (CTO PWA)
+* 🎨 **@agent-ui-design** (CPO Design Mobile)
+* 🎒 **@agent-renter** (Responsable Emprunteurs)
+* 📦 **@agent-owner** (Responsable Propriétaires)
+* 🛡️ **@agent-trust** (Chief Trust & Security)
+
+#### 1. Directive du Directeur Alban :
+* **Question d'Alban :** *« Mais on veut pouvoir louer des objets tout le temps, pas que la semaine si ? »*
+
+#### 2. Délibération de l'équipe exécutive :
+* **@agent-renter :** *« Alban a 100% raison. Bloquer les locations uniquement au week-end était une vision trop restrictive. Un étudiant à l'N7 a besoin d'une perceuse un mardi après-midi pour monter une étagère, ou d'un appareil à crêpes un mercredi soir pour une raclette entre potes de promo ! Le service doit être disponible 7 jours sur 7. »*
+* **@agent-owner :** *« Côté propriétaires, c'est encore plus rentable : au lieu d'avoir leur matériel qui dort du lundi au vendredi, ils peuvent le rentabiliser toute la semaine avec un tarif journalier (ex: 5€ ou 6€/jour) et proposer des forfaits avantageux pour le week-end ou la semaine complète. »*
+* **@agent-architect :** *« D'un point de vue architecture technique :*
+  1. *L'onglet 3 de la barre de navigation est renommé en **'Locations'** (avec icône calendrier) au lieu de 'Week-end'.*
+  2. *Le modèle de données supporte désormais un tarif par jour (`perDay`), un forfait week-end (`weekendPackage`), et un forfait semaine complète (`weeklyPackage`).*
+  3. *Les 4 vues de la PWA (Explorer, Mes Objets, Locations, Compte) sont désormais dynamiques et opérationnelles.*
+* **@agent-trust :** *« La caution reste sécurisée de la même manière : une simple empreinte bancaire non débitée pendant la durée de la location (24h, 48h ou 7 jours), levée automatiquement dès la restitution en main propre. »*
+* **CEO IA :** *« Décision unanime. Les spécifications, le tableau de bord (BOARD.md), les issues GitHub et le code source de la PWA sont alignés immédiatement sur la directive d'Alban. »*
+
