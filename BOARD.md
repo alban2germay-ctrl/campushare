@@ -10,10 +10,10 @@ Il applique une décomposition cartésienne au niveau unitaire (nano-tâches). A
 | Phase | Intitulé | Total Micro-Tâches | Terminées | En Cours | Progression |
 | :---: | :--- | :---: | :---: | :--- | :---: |
 | **P1** | Socle Technique PWA & Navigation Mobile | 12 | 12 | 0 | **100 %** |
-| **P2** | Chantier A : Moteur Emprunteur (Découverte 7j/7) | 10 | 10 | 0 | **100 %** |
-| **P3** | Chantier B : Moteur Propriétaire (Matériel Express) | 10 | 10 | 0 | **100 %** |
+| **P2** | Chantier A : Moteur Emprunteur (Découverte 7j/7 - Alban) | 10 | 10 | 0 | **100 %** |
+| **P3** | Chantier B : Moteur Propriétaire (Matériel Express - Mathys) | 10 | 0 | 0 | **0 %** |
 | **P4** | Module Confiance, Cautions & Sécurité | 8 | 0 | 0 | **0 %** |
-| **TOTAL** | **Architecture Globale CampuShare** | **40** | **32** | **0** | **80.0 %** |
+| **TOTAL** | **Architecture Globale CampuShare** | **40** | **22** | **0** | **55.0 %** |
 
 ---
 
@@ -67,25 +67,25 @@ Il applique une décomposition cartésienne au niveau unitaire (nano-tâches). A
 
 ---
 
-## 🟢 PHASE 3 : CHANTIER B — MOTEUR PROPRIÉTAIRE (100% VALIDÉE - MATHYS)
+## ⚪ PHASE 3 : CHANTIER B — MOTEUR PROPRIÉTAIRE (EN ATTENTE DE MATHYS)
 
 ### Tâche 3.1 : Ajout d'Objet Mobile Express (< 60 secondes)
 | ID | Micro-Tâche Unitaire | Responsable | Fichier Impacté | Critère d'Acceptation Binaire (DoD) | Statut |
 | :--- | :--- | :---: | :--- | :--- | :---: |
-| `MT-3.1.1.1` | Déclencheur caméra smartphone via input HTML natif | `@agent-owner` | `public/js/views/ItemsView.js` | `<input type="file" accept="image/*" capture>` ouvrant l'appareil photo. | `[x]` |
-| `MT-3.1.1.2` | Prévisualisation instantanée de la photo prise | `@agent-ui` | `public/js/views/ItemsView.js` | Image affichée en miniature dans le formulaire avec bouton de suppression. | `[x]` |
-| `MT-3.1.1.3` | Formulaire compact à 3 champs (Titre, Catégorie, Valeur d'achat) | `@agent-owner` | `public/js/views/ItemsView.js` | Saisie ultra-rapide sans surcharge textuelle. | `[x]` |
-| `MT-3.1.1.4` | Algorithme de tarification suggérée (10-15% valeur neuf) | `@agent-arch` | `public/js/views/ItemsView.js` | Remplissage automatique du prix week-end et de la caution recommandée. | `[x]` |
-| `MT-3.1.1.5` | Bouton de publication immédiate dans l'inventaire | `@agent-owner` | `public/js/views/ItemsView.js` | Ajout immédiat de l'objet dans la liste du campus avec statut « Disponible ». | `[x]` |
+| `MT-3.1.1.1` | Déclencheur caméra smartphone via input HTML natif | `@agent-owner` | `public/js/views/ItemsView.js` | `<input type="file" accept="image/*" capture>` ouvrant l'appareil photo. | `[ ]` |
+| `MT-3.1.1.2` | Prévisualisation instantanée de la photo prise | `@agent-ui` | `public/js/views/ItemsView.js` | Image affichée en miniature dans le formulaire avec bouton de suppression. | `[ ]` |
+| `MT-3.1.1.3` | Formulaire compact à 3 champs (Titre, Catégorie, Valeur d'achat) | `@agent-owner` | `public/js/views/ItemsView.js` | Saisie ultra-rapide sans surcharge textuelle. | `[ ]` |
+| `MT-3.1.1.4` | Algorithme de tarification suggérée (10-15% valeur neuf) | `@agent-arch` | `public/js/views/ItemsView.js` | Remplissage automatique du prix week-end et de la caution recommandée. | `[ ]` |
+| `MT-3.1.1.5` | Bouton de publication immédiate dans l'inventaire | `@agent-owner` | `public/js/views/ItemsView.js` | Ajout immédiat de l'objet dans la liste du campus avec statut « Disponible ». | `[ ]` |
 
 ### Tâche 3.2 : Tableau de Bord Propriétaire & Demandes Entrantes
 | ID | Micro-Tâche Unitaire | Responsable | Fichier Impacté | Critère d'Acceptation Binaire (DoD) | Statut |
 | :--- | :--- | :---: | :--- | :--- | :---: |
-| `MT-3.2.1.1` | Liste des objets personnels avec pastille de statut | `@agent-owner` | `public/js/views/ItemsView.js` | Objets affichés avec statut vert (Dispo) ou orange (Demandé). | `[x]` |
-| `MT-3.2.1.2` | Carte de demande entrante d'un camarade de promo | `@agent-owner` | `public/js/views/ItemsView.js` | Affichage du prénom, promo et créneau de retrait demandé. | `[x]` |
-| `MT-3.2.1.3` | Bouton d'acceptation de la demande en 1 clic | `@agent-owner` | `public/js/views/ItemsView.js` | Clic valide la réservation et passe l'objet en « Réservé (dates confirmées) ». | `[x]` |
-| `MT-3.2.1.4` | Bouton de refus poli avec libération immédiate | `@agent-owner` | `public/js/views/ItemsView.js` | Clic décline la demande sans bloquer l'objet pour d'autres étudiants. | `[x]` |
-| `MT-3.2.1.5` | Compteur d'euros générés par le matériel | `@agent-trust` | `public/js/views/ItemsView.js` | Total cumulé des gains ajoutés au solde cagnotte du propriétaire. | `[x]` |
+| `MT-3.2.1.1` | Liste des objets personnels avec pastille de statut | `@agent-owner` | `public/js/views/ItemsView.js` | Objets affichés avec statut vert (Dispo) ou orange (Demandé). | `[ ]` |
+| `MT-3.2.1.2` | Carte de demande entrante d'un camarade de promo | `@agent-owner` | `public/js/views/ItemsView.js` | Affichage du prénom, promo et créneau de retrait demandé. | `[ ]` |
+| `MT-3.2.1.3` | Bouton d'acceptation de la demande en 1 clic | `@agent-owner` | `public/js/views/ItemsView.js` | Clic valide la réservation et passe l'objet en « Réservé (dates confirmées) ». | `[ ]` |
+| `MT-3.2.1.4` | Bouton de refus poli avec libération immédiate | `@agent-owner` | `public/js/views/ItemsView.js` | Clic décline la demande sans bloquer l'objet pour d'autres étudiants. | `[ ]` |
+| `MT-3.2.1.5` | Compteur d'euros générés par le matériel | `@agent-trust` | `public/js/views/ItemsView.js` | Total cumulé des gains ajoutés au solde cagnotte du propriétaire. | `[ ]` |
 
 ---
 

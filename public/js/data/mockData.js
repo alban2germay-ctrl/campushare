@@ -110,8 +110,56 @@ window.CS.data = {
         reviewsCount: 6
       },
       image: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=400&q=80',
-      status: 'rented',
+      status: 'available',
       pickupLocation: 'Résidence R2 / Salle de TP'
+    },
+    {
+      id: 'item-quechua',
+      title: 'Tente 3 Places Quechua Arpenaz',
+      category: 'outdoor',
+      categoryLabel: 'Ski & Montagne',
+      pricing: {
+        perDay: 8.00,
+        weekendPackage: 15.00,
+        weeklyPackage: 30.00
+      },
+      depositAmount: 45.00,
+      minDuration: '24h',
+      owner: {
+        name: 'Camille B.',
+        promo: '1A 3EA',
+        school: 'Toulouse INP • ENSEEIHT',
+        avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80',
+        rating: 4.8,
+        reviewsCount: 5
+      },
+      image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=400&q=80',
+      status: 'available',
+      pickupLocation: 'Foyer des élèves N7'
+    },
+    {
+      id: 'item-crepiere',
+      title: 'Crêpière Party Tefal 6 Mini-Crêpes',
+      category: 'kitchen',
+      categoryLabel: 'Convivialité',
+      pricing: {
+        perDay: 4.00,
+        weekendPackage: 8.00,
+        weeklyPackage: 16.00
+      },
+      depositAmount: 30.00,
+      minDuration: '24h',
+      owner: {
+        name: 'Lucas M.',
+        promo: '2A SN',
+        school: 'Toulouse INP • ENSEEIHT',
+        avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80',
+        rating: 5.0,
+        reviewsCount: 11
+      },
+      image: 'https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&w=400&q=80',
+      status: 'available',
+      pickupLocation: 'Résidence étudiante R1'
     }
   ],
 

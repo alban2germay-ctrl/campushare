@@ -1,7 +1,7 @@
 // ==============================================================================
 // 🎒 CampuShare — Vue ExploreView (Chantier A : Moteur Emprunteur & Découverte 7j/7)
 // Fichier : public/js/views/ExploreView.js
-// Responsable principal : Alban (Directeur SN)
+// Responsable exclusif : Alban (Co-directeur 2A SN)
 // ==============================================================================
 
 window.CS = window.CS || {};
@@ -11,38 +11,37 @@ window.CS.views.ExploreView = function ExploreView() {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedPeriod, setSelectedPeriod] = React.useState('24h'); // '24h' | 'weekend' | 'weekly' | 'custom'
-  const [activeModalItem, setActiveModalItem] = React.useState(null); // Objet ouvert en détail/réservation
-  const [bookingSuccess, setBookingSuccess] = React.useState(null); // Message de confirmation
+  
+  // NOUVEAUX ÉTATS OPTION A : TRI & FILTRES AVANCÉS CAMPUS
+  const [selectedSpot, setSelectedSpot] = React.useState('all'); // 'all' | 'Foyer' | 'R1' | 'R2'
+  const [maxBudget, setMaxBudget] = React.useState(0); // 0 = illimité, 6, 10, 20
+  const [sortBy, setSortBy] = React.useState('recommended'); // 'recommended' | 'price_asc' | 'price_desc' | 'rating'
+  const [showFilterDrawer, setShowFilterDrawer] = React.useState(false);
+
+  // Modale de réservation & Toast
+  const [activeModalItem, setActiveModalItem] = React.useState(null);
+  const [bookingSuccess, setBookingSuccess] = React.useState(null);
   const [customDays, setCustomDays] = React.useState(1);
   const [pickupSpot, setPickupSpot] = React.useState('Foyer des élèves N7');
 
   const categories = window.CS.data.categories || [];
   const items = window.CS.data.items || [];
 
-  // Re-déclencher les icônes Lucide à chaque mise à jour de vue
+  // Actualiser les icônes Lucide
   React.useEffect(() => {
     if (window.lucide) {
       window.lucide.createIcons();
     }
-  }, [selectedCategory, selectedPeriod, activeModalItem, bookingSuccess]);
+  }, [selectedCategory, selectedPeriod, selectedSpot, maxBudget, sortBy, showFilterDrawer, activeModalItem, bookingSuccess]);
 
-  // Filtrage des objets selon catégorie et recherche
-  const filteredItems = items.filter((item) => {
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          item.categoryLabel.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          item.owner.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  // Calcul du libellé et du prix selon la période active
+  // Calcul du badge de la formule temporelle
   const getPeriodBadge = () => {
     switch (selectedPeriod) {
       case 'weekend':
         return {
           label: 'Forfait Week-end',
           dates: 'Vendredi 17h00 → Dimanche 20h00',
-          desc: 'Idéal soirée, ski ou week-end détente',
+          desc: 'Idéal soirée, ski ou détente',
           tag: 'Ven-Dim'
         };
       case 'weekly':
@@ -54,7 +53,7 @@ window.CS.views.ExploreView = function ExploreView() {
         };
       case 'custom':
         return {
-          label: `Durée personnalisée (${customDays} jour${customDays > 1 ? 's' : ''})`,
+          label: `Durée personnalisée (${customDays}j)`,
           dates: `Location sur ${customDays * 24} heures`,
           desc: 'Dates sur-mesure au campus',
           tag: `${customDays}j`
@@ -72,12 +71,52 @@ window.CS.views.ExploreView = function ExploreView() {
 
   const periodInfo = getPeriodBadge();
 
-  // Calcul du prix estimé pour un objet donné selon la formule
+  // Calcul du prix estimé selon la formule
   const calculateItemPrice = (item) => {
     if (selectedPeriod === 'weekend') return item.pricing.weekendPackage;
     if (selectedPeriod === 'weekly') return item.pricing.weeklyPackage;
     if (selectedPeriod === 'custom') return item.pricing.perDay * customDays;
     return item.pricing.perDay; // 24h
+  };
+
+  // FILTRAGE ET TRI MULTI-CRITÈRES INTELLIGENT (Option A Alban)
+  const filteredAndSortedItems = items
+    .filter((item) => {
+      const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+      const matchesSearch =
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.categoryLabel.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.owner.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSpot =
+        selectedSpot === 'all' || item.pickupLocation.toLowerCase().includes(selectedSpot.toLowerCase());
+      const activeCost = calculateItemPrice(item);
+      const matchesBudget = maxBudget === 0 || activeCost <= maxBudget;
+
+      return matchesCategory && matchesSearch && matchesSpot && matchesBudget;
+    })
+    .sort((a, b) => {
+      const priceA = calculateItemPrice(a);
+      const priceB = calculateItemPrice(b);
+
+      if (sortBy === 'price_asc') return priceA - priceB;
+      if (sortBy === 'price_desc') return priceB - priceA;
+      if (sortBy === 'rating') return b.owner.rating - a.owner.rating;
+      return 0; // 'recommended'
+    });
+
+  // Compteur de filtres actifs
+  const activeFiltersCount =
+    (selectedCategory !== 'all' ? 1 : 0) +
+    (selectedSpot !== 'all' ? 1 : 0) +
+    (maxBudget > 0 ? 1 : 0) +
+    (sortBy !== 'recommended' ? 1 : 0);
+
+  const resetAllFilters = () => {
+    setSelectedCategory('all');
+    setSelectedSpot('all');
+    setMaxBudget(0);
+    setSortBy('recommended');
+    setSearchQuery('');
   };
 
   return (
@@ -97,7 +136,7 @@ window.CS.views.ExploreView = function ExploreView() {
         </div>
       )}
 
-      {/* 1. SÉLECTEUR DYNAMIQUE DE PÉRIODE 7J/7 (Micro-tâche MT-2.1.1.1) */}
+      {/* 1. SÉLECTEUR DYNAMIQUE DE PÉRIODE 7J/7 */}
       <div className="p-4 rounded-3xl bg-gradient-to-br from-[#FAF8F5] to-[#F4EFE6] border border-[#EAE2D5] space-y-3 shadow-2xs">
         <div className="flex items-center justify-between">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E6EFE6] text-[#354F48]">
@@ -112,7 +151,7 @@ window.CS.views.ExploreView = function ExploreView() {
           <p className="text-[11px] text-[#6B6358] mt-0.5">Choisis ta formule :</p>
         </div>
 
-        {/* Boutons tactiles interactifs des formules */}
+        {/* Boutons tactiles des formules */}
         <div className="grid grid-cols-3 gap-1.5">
           <button
             onClick={() => setSelectedPeriod('24h')}
@@ -125,7 +164,7 @@ window.CS.views.ExploreView = function ExploreView() {
             <span className={`block text-[9px] font-bold ${selectedPeriod === '24h' ? 'text-white/80' : 'text-[#8C8275]'}`}>
               24H SEMAINE
             </span>
-            <span className="text-xs font-extrabold block mt-0.5">Dès 5 €</span>
+            <span className="text-xs font-extrabold block mt-0.5">Dès 4 €</span>
             <span className={`text-[8px] block ${selectedPeriod === '24h' ? 'text-white/70' : 'text-[#8C8275]'}`}>
               Express
             </span>
@@ -166,7 +205,7 @@ window.CS.views.ExploreView = function ExploreView() {
           </button>
         </div>
 
-        {/* Bandeau d'information dynamique du créneau actif */}
+        {/* Rappel dynamique du créneau */}
         <div className="p-2.5 rounded-2xl bg-white border border-[#EAE2D5] flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-xl bg-[#E6EFE6] text-[#52796F] flex items-center justify-center font-bold text-xs flex-shrink-0">
@@ -183,32 +222,181 @@ window.CS.views.ExploreView = function ExploreView() {
         </div>
       </div>
 
-      {/* 2. RECHERCHE TEXTUELLE TEMPS RÉEL (Micro-tâche MT-2.1.1.2) */}
-      <div className="relative">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Rechercher appareil raclette, enceinte JBL, perceuse..."
-          className="w-full pl-9 pr-8 py-2.5 rounded-2xl bg-white border border-[#EAE2D5] text-xs text-[#2C2720] placeholder-[#A89F91] focus:outline-none focus:ring-2 focus:ring-[#52796F]/30 shadow-2xs"
-        />
-        <i data-lucide="search" className="w-4 h-4 text-[#8C8275] absolute left-3 top-3"></i>
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery('')}
-            className="absolute right-3 top-2.5 text-xs text-[#8C8275] hover:text-[#2C2720]"
-          >
-            ✕
-          </button>
-        )}
+      {/* 2. BARRE DE RECHERCHE + BOUTON FILTRES AVANCÉS */}
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher raclette, tente, perceuse, enceinte..."
+            className="w-full pl-9 pr-8 py-2.5 rounded-2xl bg-white border border-[#EAE2D5] text-xs text-[#2C2720] placeholder-[#A89F91] focus:outline-none focus:ring-2 focus:ring-[#52796F]/30 shadow-2xs"
+          />
+          <i data-lucide="search" className="w-4 h-4 text-[#8C8275] absolute left-3 top-3"></i>
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-2.5 text-xs text-[#8C8275] hover:text-[#2C2720]"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        {/* Bouton d'ouverture des filtres avancés */}
+        <button
+          onClick={() => setShowFilterDrawer(!showFilterDrawer)}
+          className={`px-3 py-2.5 rounded-2xl border text-xs font-bold flex items-center gap-1.5 transition shadow-2xs ${
+            showFilterDrawer || activeFiltersCount > 0
+              ? 'bg-[#52796F] text-white border-[#52796F]'
+              : 'bg-white text-[#2C2720] border-[#EAE2D5] hover:bg-[#FAF8F5]'
+          }`}
+          title="Filtres avancés"
+        >
+          <i data-lucide="sliders-horizontal" className="w-3.5 h-3.5"></i>
+          <span>Filtres</span>
+          {activeFiltersCount > 0 && (
+            <span className="w-4 h-4 rounded-full bg-white text-[#52796F] flex items-center justify-center text-[9px] font-bold">
+              {activeFiltersCount}
+            </span>
+          )}
+        </button>
       </div>
 
-      {/* 3. BARRE DE PILLS DE CATÉGORIES (Micro-tâche MT-2.1.1.3) */}
+      {/* 3. PANNEAU DE FILTRES AVANCÉS & TRI (OPTION A ALBAN) */}
+      {showFilterDrawer && (
+        <div className="p-4 rounded-3xl bg-white border border-[#EAE2D5] space-y-3.5 shadow-sm animate-fade-in text-xs">
+          <div className="flex items-center justify-between pb-2 border-b border-[#F0EBE1]">
+            <span className="font-extrabold text-[#2C2720] flex items-center gap-1.5">
+              <span>🎯</span>
+              <span>Filtres & Tri Avancés</span>
+            </span>
+            {activeFiltersCount > 0 && (
+              <button
+                onClick={resetAllFilters}
+                className="text-[10px] text-[#D87D4A] font-bold hover:underline"
+              >
+                Réinitialiser tout
+              </button>
+            )}
+          </div>
+
+          {/* Tri Intelligent */}
+          <div>
+            <label className="block text-[10px] font-bold text-[#8C8275] uppercase mb-1.5">
+              Trier les équipements par :
+            </label>
+            <div className="grid grid-cols-2 gap-1.5">
+              <button
+                onClick={() => setSortBy('recommended')}
+                className={`p-2 rounded-xl text-left text-[11px] font-semibold border transition ${
+                  sortBy === 'recommended'
+                    ? 'bg-[#E6EFE6] text-[#354F48] border-[#52796F] font-bold'
+                    : 'bg-[#FAF8F5] text-[#6B6358] border-[#EAE2D5]'
+                }`}
+              >
+                ✨ Recommandés
+              </button>
+              <button
+                onClick={() => setSortBy('price_asc')}
+                className={`p-2 rounded-xl text-left text-[11px] font-semibold border transition ${
+                  sortBy === 'price_asc'
+                    ? 'bg-[#E6EFE6] text-[#354F48] border-[#52796F] font-bold'
+                    : 'bg-[#FAF8F5] text-[#6B6358] border-[#EAE2D5]'
+                }`}
+              >
+                💶 Prix croissant
+              </button>
+              <button
+                onClick={() => setSortBy('price_desc')}
+                className={`p-2 rounded-xl text-left text-[11px] font-semibold border transition ${
+                  sortBy === 'price_desc'
+                    ? 'bg-[#E6EFE6] text-[#354F48] border-[#52796F] font-bold'
+                    : 'bg-[#FAF8F5] text-[#6B6358] border-[#EAE2D5]'
+                }`}
+              >
+                💎 Prix décroissant
+              </button>
+              <button
+                onClick={() => setSortBy('rating')}
+                className={`p-2 rounded-xl text-left text-[11px] font-semibold border transition ${
+                  sortBy === 'rating'
+                    ? 'bg-[#E6EFE6] text-[#354F48] border-[#52796F] font-bold'
+                    : 'bg-[#FAF8F5] text-[#6B6358] border-[#EAE2D5]'
+                }`}
+              >
+                ⭐ Mieux notés
+              </button>
+            </div>
+          </div>
+
+          {/* Filtre par Lieu de Retrait Campus */}
+          <div>
+            <label className="block text-[10px] font-bold text-[#8C8275] uppercase mb-1.5">
+              Lieu de retrait physique :
+            </label>
+            <div className="flex gap-1.5 flex-wrap">
+              {[
+                { id: 'all', label: 'Tous les lieux' },
+                { id: 'Foyer', label: '📍 Foyer N7' },
+                { id: 'R1', label: '📍 Résidence R1' },
+                { id: 'R2', label: '📍 Résidence R2' }
+              ].map((spot) => (
+                <button
+                  key={spot.id}
+                  onClick={() => setSelectedSpot(spot.id)}
+                  className={`px-2.5 py-1 rounded-xl text-[10px] font-semibold transition ${
+                    selectedSpot === spot.id
+                      ? 'bg-[#52796F] text-white font-bold shadow-2xs'
+                      : 'bg-[#FAF8F5] text-[#6B6358] border border-[#EAE2D5] hover:bg-[#F4EFE6]'
+                  }`}
+                >
+                  {spot.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Filtre Budget Maximum */}
+          <div>
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="text-[10px] font-bold text-[#8C8275] uppercase">
+                Budget maximum ({periodInfo.tag}) :
+              </label>
+              <span className="text-[10px] font-extrabold text-[#52796F]">
+                {maxBudget === 0 ? 'Illimité' : `Max ${maxBudget} €`}
+              </span>
+            </div>
+            <div className="grid grid-cols-4 gap-1">
+              {[
+                { val: 0, label: 'Tout' },
+                { val: 6, label: '< 6 €' },
+                { val: 12, label: '< 12 €' },
+                { val: 20, label: '< 20 €' }
+              ].map((b) => (
+                <button
+                  key={b.val}
+                  onClick={() => setMaxBudget(b.val)}
+                  className={`py-1.5 rounded-xl text-[10px] font-semibold transition ${
+                    maxBudget === b.val
+                      ? 'bg-[#52796F] text-white font-bold'
+                      : 'bg-[#FAF8F5] text-[#6B6358] border border-[#EAE2D5]'
+                  }`}
+                >
+                  {b.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. PILLS DE CATÉGORIES HORIZONTAUX */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-bold text-[#8C8275] uppercase tracking-wider">Catégories Campus</span>
           <span className="text-[10px] text-[#52796F] font-bold">
-            {filteredItems.length} objet{filteredItems.length > 1 ? 's' : ''}
+            {filteredAndSortedItems.length} disponible{filteredAndSortedItems.length > 1 ? 's' : ''}
           </span>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
@@ -238,9 +426,9 @@ window.CS.views.ExploreView = function ExploreView() {
         </div>
       </div>
 
-      {/* 4. GRILLE RÉACTIVE DES CARTES OBJETS (Micro-tâches MT-2.1.1.4 & MT-2.1.1.5) */}
+      {/* 5. LISTE DES CARTES D'ÉQUIPEMENTS */}
       <div className="space-y-3">
-        {filteredItems.map((item) => {
+        {filteredAndSortedItems.map((item) => {
           const activeCost = calculateItemPrice(item);
           return (
             <div
@@ -274,6 +462,9 @@ window.CS.views.ExploreView = function ExploreView() {
                     <p className="text-[10px] text-[#6B6358] truncate">
                       Prêté par {item.owner.name} ({item.owner.promo})
                     </p>
+                    <p className="text-[9px] text-[#8C8275] truncate mt-0.5">
+                      📍 {item.pickupLocation}
+                    </p>
                   </div>
                   
                   {/* Prix calculé selon la période sélectionnée */}
@@ -305,15 +496,21 @@ window.CS.views.ExploreView = function ExploreView() {
           );
         })}
 
-        {filteredItems.length === 0 && (
-          <div className="p-6 text-center text-xs text-[#8C8275] bg-white rounded-3xl border border-[#EAE2D5]">
-            <p className="font-bold text-[#2C2720]">Aucun objet trouvé</p>
-            <p className="text-[11px] mt-1">Essaie une autre recherche ou une autre catégorie.</p>
+        {filteredAndSortedItems.length === 0 && (
+          <div className="p-6 text-center text-xs text-[#8C8275] bg-white rounded-3xl border border-[#EAE2D5] space-y-2">
+            <p className="font-bold text-[#2C2720] text-sm">Aucun équipement ne correspond à tes filtres</p>
+            <p className="text-[11px]">Essaie d'élargir ton budget ou de chercher sur un autre lieu de retrait.</p>
+            <button
+              onClick={resetAllFilters}
+              className="mt-2 px-3 py-1.5 rounded-xl bg-[#52796F] text-white text-xs font-bold shadow-xs hover:bg-[#43665D]"
+            >
+              Réinitialiser tous les filtres
+            </button>
           </div>
         )}
       </div>
 
-      {/* 5. MODALE BOTTOMSHEET FICHE OBJET 360° & VALIDATION RÉSERVATION */}
+      {/* 6. MODALE BOTTOMSHEET FICHE OBJET 360° & VALIDATION RÉSERVATION */}
       {activeModalItem && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
           <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl border border-[#EAE2D5] max-h-[90vh] overflow-y-auto">
@@ -406,7 +603,6 @@ window.CS.views.ExploreView = function ExploreView() {
               onClick={() => {
                 const confirmedItem = activeModalItem;
                 const cost = calculateItemPrice(confirmedItem);
-                // Ajouter la réservation dans les données partagées
                 window.CS.data.bookings.unshift({
                   id: `book-${Date.now()}`,
                   itemTitle: confirmedItem.title,
