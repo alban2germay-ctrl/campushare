@@ -1,22 +1,22 @@
 # 🟦 Espace de Travail — Alban
 
-Cet espace est dédié aux réflexions, notes de recherche et propositions d'Alban. 
+Cet espace est dédié aux réflexions, notes de recherche et propositions d'Alban (Co-directeur 2A SN).
 L'agent IA lit ce fichier pour intégrer les décisions d'Alban dans le projet global.
 
 ---
 
-## 🎯 Ma Mission Active : Phase 1 — Cadrage de l'Offre & Caution (Micro-tâche 1.1.1)
+## 🎯 Mon Chantier de Code Prioritaire : Chantier A (Moteur Emprunteur & Découverte 7j/7)
 
-### 1. Mes Objets Personnels Prêtables ce Week-end
-* *Objet 1 :* [Ex: Appareil à raclette 8 personnes - Valeur d'achat : 45€]
-* *Objet 2 :* [Ex: Enceinte Bluetooth puissante - Valeur d'achat : 130€]
-* *Objet 3 :* [Ex: Boîte à outils / Perceuse - Valeur d'achat : 70€]
+### 📂 Mon Fichier Dédié (Zéro Conflit Git avec Mathys) :
+👉 [`public/js/views/ExploreView.js`](file:///Users/albandegermay/.gemini/antigravity/scratch/campushare/public/js/views/ExploreView.js)
 
-### 2. Ma Réflexion sur la Caution & la Confiance
-* **Quel montant me rassurerait à 100 % ?**
-  * *Réponse :* 
-* **Comment formaliser la garantie simplement sans banque compliquée au début ?**
-  * *Idées :* (Ex: caution Lydia non encaissée, photo de la carte d'étudiant, formulaire signé)
+### 📋 Mes Tâches Unitaires Actives (Phase 2 du BOARD.md) :
+1. **`MT-2.1.1.1`** : Sélecteur dynamique de période de location (24h semaine, week-end, semaine entière).
+2. **`MT-2.1.1.2`** : Filtre de recherche textuelle temps réel (nom de l'objet, catégorie, camarade).
+3. **`MT-2.1.1.3`** : Pills de catégories interactifs (🎉 Soirée, 🏔️ Montagne, 🔨 Bricolage, 🍳 Convivialité).
+4. **`MT-2.2.1.1`** : Modale BottomSheet de détail de l'objet avec calcul transparent du coût (prix durée vs caution non débitée).
 
-### 3. Mes Notes Libres pour le Projet
-* [Dépose ici toutes tes idées de design, de fonctionnalités ou de partenariats]
+---
+
+## 💡 Mes Notes Libres pour le Projet
+* [Dépose ici toutes tes idées de design, de fonctionnalités ou de partenariats campus]
