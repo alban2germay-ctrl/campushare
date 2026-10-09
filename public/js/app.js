@@ -79,7 +79,13 @@ function App() {
 
         {/* CORPS TACTILE SCROLLABLE MULTI-ÉCRANS */}
         <main className="flex-1 overflow-y-auto mobile-scroll-container p-4 space-y-4">
-          {currentTab === 'explore' && <ExploreView onNavigateTab={setCurrentTab} />}
+          {currentTab === 'explore' && (
+            <ExploreView
+              onNavigateTab={setCurrentTab}
+              activeUserData={activeUserData}
+              currentUser={currentUser}
+            />
+          )}
           {currentTab === 'items' && <ItemsView activeUserData={activeUserData} currentUser={currentUser} />}
           {currentTab === 'bookings' && <BookingsView />}
           {currentTab === 'profile' && <ProfileView activeUserData={activeUserData} currentUser={currentUser} />}

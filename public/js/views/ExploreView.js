@@ -7,7 +7,7 @@
 window.CS = window.CS || {};
 window.CS.views = window.CS.views || {};
 
-window.CS.views.ExploreView = function ExploreView({ onNavigateTab }) {
+window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserData, currentUser }) {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedPeriod, setSelectedPeriod] = React.useState('24h'); // '24h' | 'weekend' | 'weekly' | 'custom'
@@ -424,7 +424,12 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab }) {
           return (
             <div
               key={item.id}
-              onClick={() => setActiveModalItem(item)}
+              onClick={() => {
+                setActiveModalItem(item);
+                if (item.pickupLocation) {
+                  setPickupSpot(item.pickupLocation.split('/')[0].trim());
+                }
+              }}
               className="group cursor-pointer rounded-2xl bg-white border border-[#EAE2D5] overflow-hidden shadow-2xs hover:shadow-md hover:border-[#52796F]/40 transition flex flex-col active:scale-[0.98]"
             >
               {/* Photo avec badge prix intégré */}
@@ -539,10 +544,41 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab }) {
                 </select>
               </div>
 
-              {/* Garantie Caution Minimaliste */}
-              <div className="p-2 rounded-xl bg-[#E6EFE6] text-[#354F48] text-[10px] flex items-center justify-between font-semibold">
-                <span>🛡️ Caution {activeModalItem.depositAmount} € bloquée</span>
-                <span className="font-extrabold text-[#52796F]">0 € débité</span>
+              {/* Accessoires inclus vérifiés (Option Lucas) */}
+              {activeModalItem.includedAccessories && activeModalItem.includedAccessories.length > 0 && (
+                <div className="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#EAE2D5] space-y-1.5 text-xs">
+                  <div className="flex items-center justify-between text-[10px] font-bold text-[#8C8275] uppercase">
+                    <span className="flex items-center gap-1">
+                      <span>🎒</span>
+                      <span>Accessoires inclus vérifiés :</span>
+                    </span>
+                    <span className="text-[#52796F] font-extrabold">{activeModalItem.includedAccessories.length} éléments</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {activeModalItem.includedAccessories.map((acc, i) => (
+                      <span
+                        key={i}
+                        className="px-2 py-0.5 rounded-lg bg-white border border-[#EAE2D5] text-[10px] text-[#2C2720] font-medium flex items-center gap-1 shadow-2xs"
+                      >
+                        <span className="text-[#52796F] font-bold">✓</span> {acc}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Garantie Caution avec Réassurance Sans Débit */}
+              <div className="p-2.5 rounded-xl bg-[#E6EFE6] text-[#354F48] text-[10px] space-y-1 border border-[#CCE0CC]">
+                <div className="flex items-center justify-between font-semibold">
+                  <span className="flex items-center gap-1">
+                    <i data-lucide="shield-check" className="w-3.5 h-3.5 text-[#52796F]"></i>
+                    <span>Caution {activeModalItem.depositAmount} € garantie</span>
+                  </span>
+                  <span className="font-extrabold text-[#52796F] text-xs">0,00 € débité</span>
+                </div>
+                <p className="text-[9px] text-[#52796F] font-medium leading-tight">
+                  Empreinte bancaire sécurisée sans débit ni blocage de ton plafond étudiant.
+                </p>
               </div>
 
               {/* Bouton direct 1-clic */}
@@ -552,6 +588,7 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab }) {
                   const cost = calculateItemPrice(confirmedItem);
                   const newBookingRef = `CS-N7-2026-${Math.floor(100 + Math.random() * 900)}`;
                   const newPinCode = `${Math.floor(1000 + Math.random() * 9000)}`;
+                  const renterFullName = activeUserData?.name || (currentUser === 'mathys' ? 'Mathys D.' : 'Alban D.');
                   window.CS.data.bookings.unshift({
                     id: `book-${Date.now()}`,
                     bookingRef: newBookingRef,
@@ -563,9 +600,9 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab }) {
                     type: periodInfo.tag,
                     pickupLocation: pickupSpot,
                     status: 'confirmed',
-                    step: 1,
+                    step: 2, // Immédiatement prêt pour le Retrait & Check-in QR
                     pinCode: newPinCode,
-                    renterName: 'Alban D.',
+                    renterName: renterFullName,
                     ownerName: confirmedItem.owner.name,
                     ownerPromo: confirmedItem.owner.promo || '2A ENSEEIHT',
                     ownerAvatar: confirmedItem.owner.avatar,

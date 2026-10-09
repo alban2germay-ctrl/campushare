@@ -182,7 +182,7 @@ window.CS.views.BookingsView = function BookingsView() {
     const updated = bookingsList.map((b) => {
       if (b.id === bookingId) {
         const currentStep = b.step || 2;
-        if (currentStep === 2) {
+        if (currentStep <= 2) {
           return { ...b, step: 3, status: 'in_progress' };
         } else if (currentStep === 3) {
           return {
@@ -565,7 +565,7 @@ window.CS.views.BookingsView = function BookingsView() {
 
             {/* BOUTON D'ACTION INTERACTIF (1-CLIC) */}
             <div className="space-y-1.5 pt-1">
-              {qrModalBooking.step === 2 && (
+              {qrModalBooking.step <= 2 && (
                 <button
                   onClick={() => advanceBookingStep(qrModalBooking.id)}
                   className="w-full py-2.5 rounded-xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-xs flex items-center justify-center gap-1.5 active:scale-[0.98]"
