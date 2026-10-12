@@ -140,6 +140,16 @@ window.CS = window.CS || {};
       return true;
     },
 
+    // Ce qui attend une action de l'utilisateur : demandes à traiter sur ses objets
+    // (onglet Mes Objets) et QR de retrait disponibles (onglet Locations)
+    todoFor(userId) {
+      const bookings = data().bookings || [];
+      return {
+        requests: bookings.filter((b) => b.ownerId === userId && b.status === 'pending').length,
+        readyToPickup: bookings.filter((b) => b.renterId === userId && b.status === 'confirmed').length
+      };
+    },
+
     // Réservation qui bloque un objet (acceptée ou en cours d'utilisation)
     activeBookingForItem(itemId) {
       return (data().bookings || []).find(

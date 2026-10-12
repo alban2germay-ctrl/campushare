@@ -10,13 +10,13 @@
 //    outils/sync_app.py à chaque `collab.sh save` / `collab.ps1 save`.
 // ==============================================================================
 
-const CACHE_VERSION = 'campushare-a17d800a';
+const CACHE_VERSION = 'campushare-7db14107';
 
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
-  './js/loader.js?v=d58561b7',
+  './js/loader.js?v=ea56b904',
   './js/data/mockData.js?v=20261012',
   './js/data/store.js?v=20261012',
   './js/data/format.js?v=20261012',
@@ -43,11 +43,13 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_VERSION).then(async (cache) => {
       await cache.addAll(APP_SHELL);
-      // Les CDN sont mis en cache un par un : un échec ne bloque pas l'installation
+      // Les CDN sont mis en cache un par un : un échec ne bloque pas l'installation.
+      // ⚠️ En mode 'cors' (jamais 'no-cors') : React est chargé avec l'attribut
+      // crossorigin, et une copie « opaque » serait rejetée → écran vide.
       await Promise.all(
         CDN_LIBS.map((url) =>
-          fetch(url, { mode: 'no-cors' })
-            .then((res) => cache.put(url, res))
+          fetch(url, { mode: 'cors' })
+            .then((res) => (res.ok ? cache.put(url, res) : null))
             .catch(() => {})
         )
       );
@@ -83,23 +85,26 @@ self.addEventListener('fetch', (event) => {
           return res;
         })
         .catch(() =>
-          caches.match(req).then((cached) => cached || (req.mode === 'navigate' ? caches.match('./index.html') : undefined))
+          caches.match(req).then((cached) => cached || (req.mode === 'navigate' ? caches.match('./index.html') : Response.error()))
         )
     );
   } else {
-    // Cache d'abord pour les CDN et images
+    // Cache d'abord pour les CDN et images. Une copie « opaque » (sans CORS)
+    // ne peut servir qu'à une requête du même type, sinon le navigateur la
+    // rejette (ERR_FAILED) : dans ce cas on repasse par le réseau.
     event.respondWith(
       caches.match(req).then((cached) => {
-        if (cached) return cached;
+        const usable = cached && (cached.type !== 'opaque' || req.mode === 'no-cors');
+        if (usable) return cached;
         return fetch(req)
           .then((res) => {
-            if (res.ok || res.type === 'opaque') {
+            if (res.ok || (res.type === 'opaque' && req.mode === 'no-cors')) {
               const copy = res.clone();
               caches.open(CACHE_VERSION).then((cache) => cache.put(req, copy));
             }
             return res;
           })
-          .catch(() => cached);
+          .catch(() => (usable ? cached : Response.error()));
       })
     );
   }

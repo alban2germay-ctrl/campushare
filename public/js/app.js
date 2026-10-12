@@ -103,7 +103,7 @@ function App() {
         </main>
 
         {/* BOTTOM NAVIGATION BAR TACTILE (4 Onglets 7j/7) */}
-        <BottomNav currentTab={currentTab} setCurrentTab={setCurrentTab} />
+        <BottomNav currentTab={currentTab} setCurrentTab={setCurrentTab} activeUserData={activeUserData} />
 
       </div>
     </div>

@@ -12,7 +12,10 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
   const { useState, useEffect, useRef } = React;
 
   // 1. ÉTAT DES ONGLETS LOCAUX : "Mes Objets & Gains" vs "Demandes Reçues"
-  const [activeSection, setActiveSection] = useState('inventory'); // 'inventory' | 'requests'
+  // S'ouvre sur les demandes reçues s'il y en a à traiter
+  const [activeSection, setActiveSection] = useState(() =>
+    window.CS.actions.todoFor(activeUserData.id).requests > 0 ? 'requests' : 'inventory'
+  ); // 'inventory' | 'requests'
 
   // 2. MODALE D'AJOUT RAPIDE (< 60 secondes)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -223,7 +226,7 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
     <div className="space-y-4 pb-24 animate-fade-in text-left">
       {/* TOAST FLOTTANT DE NOTIFICATION */}
       {toastMessage && (
-        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 bg-[#2C2720] text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-semibold flex items-center gap-2 border border-white/10 animate-bounce">
+        <div className="fixed top-14 inset-x-0 mx-auto z-[60] !mt-0 w-[90%] max-w-sm bg-[#2C2720] text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-semibold flex items-center gap-2 border border-white/10 animate-fade-in">
           <i data-lucide="bell" className="w-4 h-4 text-[#D87D4A]"></i>
           <span>{toastMessage}</span>
         </div>

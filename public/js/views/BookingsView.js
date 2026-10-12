@@ -153,13 +153,9 @@ window.CS.views.BookingsView = function BookingsView({ currentUser, activeUserDa
     }
   };
 
-  const handleContactOwner = (ownerName, phone) => {
-    setContactNotification({
-      name: ownerName,
-      phone: phone,
-      message: `Message envoyé à ${ownerName} : « Salut ! Je suis devant le lieu de retrait pour la passation de l'équipement CampuShare. »`
-    });
-    setTimeout(() => setContactNotification(null), 4000);
+  // Pas encore de messagerie : on le dit franchement au lieu de simuler un SMS
+  const handleContactOwner = (ownerName) => {
+    showToast(`💬 Messagerie bientôt dispo : retrouve ${ownerName.split(' ')[0]} au lieu de retrait à l'heure prévue.`);
   };
 
   // ⭐ MT-4.1.1.5 : SOUMISSION DE LA NOTATION MUTUELLE
@@ -264,22 +260,12 @@ window.CS.views.BookingsView = function BookingsView({ currentUser, activeUserDa
     <div className="space-y-4 pb-20 animate-fade-in text-left">
       {/* Toast de confirmation */}
       {toastMessage && (
-        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 bg-[#2C2720] text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-semibold flex items-center gap-2 border border-white/10 animate-bounce">
+        <div className="fixed top-14 inset-x-0 mx-auto z-[60] !mt-0 w-[90%] max-w-sm bg-[#2C2720] text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-semibold flex items-center gap-2 border border-white/10 animate-fade-in">
           <i data-lucide="check-circle" className="w-4 h-4 text-[#52796F]"></i>
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Notification de contact */}
-      {contactNotification && (
-        <div className="p-3 bg-[#E8F1EE] border border-[#52796F]/30 rounded-2xl text-xs text-[#52796F] font-medium animate-fade-in flex items-start gap-2 shadow-xs">
-          <i data-lucide="send" className="w-4 h-4 mt-0.5 flex-shrink-0"></i>
-          <div>
-            <span className="font-extrabold">{contactNotification.name}</span> notifié(e) par SMS campus ({contactNotification.phone}) :
-            <p className="text-[11px] text-[#2C2720] mt-0.5 italic">« Salut ! Je suis devant le lieu de retrait pour la passation. »</p>
-          </div>
-        </div>
-      )}
 
       {/* 1. HEADER DU BOARDING PASS AVEC SOUS-ONGLETS */}
       <div className="p-4 rounded-3xl bg-white border border-[#EAE2D5] shadow-xs space-y-3">
@@ -640,11 +626,12 @@ window.CS.views.BookingsView = function BookingsView({ currentUser, activeUserDa
                 CONVENTION DE PRÊT ENTRE ÉTUDIANTS N7
               </div>
               <div><strong>Objet :</strong> {contractModalBooking.itemTitle}</div>
-              <div><strong>Propriétaire :</strong> {contractModalBooking.ownerName} ({contractModalBooking.ownerPromo})</div>
-              <div><strong>Emprunteur :</strong> Alban D. (2A SN • Toulouse INP)</div>
-              <div><strong>Période :</strong> 7j/7 • Lieu de retrait : {contractModalBooking.pickupLocation}</div>
+              <div><strong>Propriétaire :</strong> {contractModalBooking.ownerName} ({contractModalBooking.ownerPromo.split(' ').slice(0, 2).join(' ')})</div>
+              <div><strong>Emprunteur :</strong> {contractModalBooking.renterName || activeUserData.name} ({(contractModalBooking.renterPromo || activeUserData.promo).split(' ').slice(0, 2).join(' ')})</div>
+              <div><strong>Période :</strong> {contractModalBooking.periodLabel || '24h'}</div>
+              <div><strong>Lieu de retrait :</strong> {contractModalBooking.pickupLocation}</div>
               <div><strong>Montant location :</strong> {window.CS.formatPrice(Number(contractModalBooking.itemPrice))} (Réglé)</div>
-              <div><strong>Caution garantie :</strong> {contractModalBooking.depositAmount}.00 € (Empreinte non débitée)</div>
+              <div><strong>Caution garantie :</strong> {window.CS.formatPrice(contractModalBooking.depositAmount)} (0,00 € débité)</div>
               <div className="p-2 bg-white rounded-xl border border-[#EAE2D5] text-[9px] text-[#52796F]">
                 🛡️ En validant par QR Code ou PIN {contractModalBooking.pinCode}, les parties attestent du bon fonctionnement des accessoires contradictoires. En cas de litige, la médiation officielle du BDE ENSEEIHT fait foi.
               </div>
@@ -653,7 +640,34 @@ window.CS.views.BookingsView = function BookingsView({ currentUser, activeUserDa
             <div className="flex gap-2 pt-1">
               <button
                 onClick={() => {
-                  showToast('📄 Contrat téléchargé au format texte !');
+                  // Vrai fichier texte téléchargé sur le téléphone
+                  const c = contractModalBooking;
+                  const text = [
+                    'CONVENTION DE PRÊT ENTRE ÉTUDIANTS — CampuShare (Toulouse INP • ENSEEIHT)',
+                    'Référence : ' + c.bookingRef,
+                    '',
+                    'Objet : ' + c.itemTitle,
+                    'Propriétaire : ' + c.ownerName,
+                    'Emprunteur : ' + (c.renterName || activeUserData.name),
+                    'Période : ' + (c.periodLabel || '24h'),
+                    'Lieu de retrait : ' + c.pickupLocation,
+                    'Montant de la location : ' + window.CS.formatPrice(c.itemPrice),
+                    'Caution garantie : ' + window.CS.formatPrice(c.depositAmount) + ' (0,00 € débité)',
+                    'Accessoires : ' + (c.accessories || []).join(', '),
+                    '',
+                    'Le retrait et le retour sont validés par QR code ou code PIN, après vérification',
+                    'des accessoires par les deux étudiants. En cas de litige, la médiation du BDE',
+                    'ENSEEIHT fait foi.'
+                  ].join('\n');
+                  const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'contrat-' + c.bookingRef + '.txt';
+                  document.body.appendChild(a);
+                  a.click();
+                  a.remove();
+                  setTimeout(() => URL.revokeObjectURL(url), 1000);
+                  showToast('📄 Contrat enregistré sur ton téléphone');
                   setContractModalBooking(null);
                 }}
                 className="flex-1 py-2.5 rounded-xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition flex items-center justify-center gap-1.5"

@@ -150,11 +150,12 @@ window.CS.views.ProfileView = function ProfileView({ activeUserData, currentUser
         <p className="text-[10px] text-[#6B6358] leading-relaxed">
           Gains perçus directement sur tes prêts de matériel. Caution restituée sans frais bancaires.
         </p>
+        {/* Pas de faux virement : il arrivera avec le paiement en ligne */}
         <button
-          onClick={() => alert(`Demande de virement de ${window.CS.formatPrice(activeUserData.wallet)} vers ton compte bancaire envoyée !`)}
-          className="w-full py-2 rounded-xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-xs"
+          disabled
+          className="w-full py-2 rounded-xl bg-[#EAE2D5] text-[#8C8275] text-xs font-bold cursor-not-allowed"
         >
-          Transférer vers mon compte bancaire
+          Virement bancaire : bientôt disponible
         </button>
       </div>
 
@@ -182,9 +183,9 @@ window.CS.views.ProfileView = function ProfileView({ activeUserData, currentUser
                 <div className="w-10 h-10 rounded-full bg-[#52796F] text-white flex items-center justify-center mx-auto text-lg">
                   ✓
                 </div>
-                <h4 className="font-extrabold text-xs text-[#2C2720]">Dossier transmis au BDE</h4>
+                <h4 className="font-extrabold text-xs text-[#2C2720]">Signalement noté</h4>
                 <p className="text-[10px] text-[#6B6358]">
-                  La caution reste consignée sans débit. Un médiateur étudiant de promo prendra contact sous 24h.
+                  Rien n'est débité. L'envoi automatique au BDE arrive avec la version en ligne : en attendant, contacte directement le BDE de l'N7.
                 </p>
               </div>
             ) : (

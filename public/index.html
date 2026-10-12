@@ -79,11 +79,47 @@
   </style>
 </head>
 <body class="h-full w-full bg-[#E8E2D5] flex flex-col items-center justify-center font-sans antialiased selection:bg-[#E6EFE6] selection:text-[#354F48] p-0 sm:p-4">
-  <div id="root" class="h-full w-full flex flex-col items-center justify-center"></div>
+  <div id="root" class="h-full w-full flex flex-col items-center justify-center">
+    <!-- Écran de chargement (remplacé par l'app dès qu'elle est prête) -->
+    <div id="cs-loading" style="text-align:center;font-family:Inter,sans-serif;color:#52796F;padding:24px">
+      <div style="font-size:44px">🎒</div>
+      <p style="font-weight:800;font-size:18px;margin:6px 0 2px;color:#2C2720">CampuShare</p>
+      <p style="font-size:12px;margin:0;color:#8C8275">Chargement du matériel du campus…</p>
+    </div>
+  </div>
 
   <!-- MODULES DE L'APPLICATION CAMPUSHARE -->
   <!-- La liste des fichiers (données, composants, vues, app.js) est dans js/loader.js -->
-  <script src="js/loader.js?v=d58561b7"></script>
+  <script src="js/loader.js?v=ea56b904"></script>
+
+  <!-- Filet de sécurité : si l'app n'a pas démarré en 12 s (réseau coupé, cache
+       hors ligne abîmé…), proposer de réparer au lieu de laisser un écran figé -->
+  <script>
+    window.csRepair = function () {
+      var done = function () { location.reload(); };
+      var jobs = [];
+      if ('serviceWorker' in navigator) {
+        jobs.push(navigator.serviceWorker.getRegistrations().then(function (regs) {
+          return Promise.all(regs.map(function (r) { return r.unregister(); }));
+        }));
+      }
+      if (window.caches) {
+        jobs.push(caches.keys().then(function (keys) {
+          return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+        }));
+      }
+      Promise.all(jobs).then(done, done);
+    };
+    setTimeout(function () {
+      var box = document.getElementById('cs-loading');
+      if (!box) return; // l'app a démarré
+      box.innerHTML =
+        '<div style="font-size:40px">📡</div>' +
+        '<p style="font-weight:800;color:#2C2720;margin:8px 0 4px">Le chargement est bloqué</p>' +
+        '<p style="font-size:13px;color:#6B6358;margin:0 0 16px">Vérifie ton wifi ou ta 4G, puis réessaie.</p>' +
+        '<button onclick="csRepair()" style="background:#52796F;color:#fff;border:0;border-radius:14px;padding:12px 20px;font-weight:700;font-size:13px">Réparer et réessayer</button>';
+    }, 12000);
+  </script>
 
   <!-- 5. Service Worker (PWA installable & hors ligne) -->
   <script>

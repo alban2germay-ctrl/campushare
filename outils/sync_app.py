@@ -118,7 +118,8 @@ sw = read(SW)
 sw_new = re.sub(r'(const APP_SHELL = \[).*?(\n\];)',
                 lambda mm: mm.group(1) + '\n' + ',\n'.join('  ' + s for s in shell) + mm.group(2),
                 sw, flags=re.S)
-# Empreinte de tous les fichiers de l'app (sauf sw.js) : change dès qu'un fichier change
+# Empreinte de tous les fichiers de l'app, sw.js compris (sans sa ligne CACHE_VERSION,
+# sinon elle changerait à chaque calcul) : change dès qu'un fichier change
 app_files = sorted(f for f in glob.glob(os.path.join(PUBLIC, '**', '*'), recursive=True)
                    if os.path.isfile(f) and f != SW)
 digest = hashlib.sha1()
@@ -126,6 +127,7 @@ for f in app_files:
     digest.update(rel(f).encode('utf-8'))
     with open(f, 'rb') as fh:
         digest.update(fh.read())
+digest.update(re.sub(r"const CACHE_VERSION = '[^']*';", '', sw_new).encode('utf-8'))
 cache_version = 'campushare-' + digest.hexdigest()[:8]
 sw_new = re.sub(r"const CACHE_VERSION = '[^']*';", "const CACHE_VERSION = '%s';" % cache_version, sw_new)
 sw_changed = write_if_changed(SW, sw, sw_new)

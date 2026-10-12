@@ -364,9 +364,9 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
             <div className="grid grid-cols-4 gap-1">
               {[
                 { val: 0, label: 'Tout' },
-                { val: 6, label: '< 6 €' },
-                { val: 12, label: '< 12 €' },
-                { val: 20, label: '< 20 €' }
+                { val: 6, label: '≤ 6 €' },
+                { val: 12, label: '≤ 12 €' },
+                { val: 20, label: '≤ 20 €' }
               ].map((b) => (
                 <button
                   key={b.val}

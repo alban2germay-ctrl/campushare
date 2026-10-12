@@ -205,3 +205,27 @@ Ce journal consigne les discussions et arbitrages collégiaux entre les directeu
 
 #### 5. Limite connue :
 * Les données vivent dans le navigateur : la démo se fait sur **un seul appareil** en changeant de profil (sélecteur en haut sur ordi). Pour que deux vrais téléphones se parlent, il faudra une base de données en ligne (prochaine grande étape).
+
+---
+
+### 🎙️ Session n°10 — Dernière vérification « dans la peau d'un étudiant » (12 octobre 2026)
+
+#### 1. Demande d'Alban :
+* *« Mets-toi à la place de l'utilisateur et fais une dernière vérif de l'app. »*
+
+#### 2. Problèmes trouvés et corrigés :
+* **🚨 Écran vide à la 2ᵉ visite (bloquant, introduit en session 5) :** le service worker mettait React en cache en mode `no-cors` (copie « opaque »). React étant chargé avec `crossorigin`, le navigateur rejetait cette copie → `React is not defined` → écran beige vide. **Corrigé** dans `sw.js` (cache en mode `cors`, une copie opaque n'est jamais servie à une requête CORS). L'app n'étant pas encore en ligne, aucun utilisateur réel n'a été touché. `sync_app.py` inclut désormais `sw.js` dans l'empreinte `CACHE_VERSION` (une modif de `sw.js` seule ne changeait pas la version).
+* **Écran vide pendant le chargement / en cas de panne :** écran de chargement CampuShare ; CDN de secours (jsDelivr) si unpkg ne répond pas (testé : l'app démarre avec unpkg cassé) ; si rien ne démarre en 12 s, bouton **« Réparer et réessayer »** qui vide le cache hors ligne et recharge (testé).
+* **Cloche inutile :** elle compte maintenant ce qui attend une action (demandes reçues + QR de retrait prêts) et y mène directement ; pastilles sur « Mes Objets » et « Locations » dans la barre du bas ; « Mes Objets » s'ouvre sur les demandes s'il y en a.
+* **Fausses confirmations supprimées (@agent-trust : ne jamais faire croire à l'utilisateur qu'une action a eu lieu) :**
+  * « Contrat téléchargé ! » sans fichier → **vrai téléchargement** `contrat-CS-N7-….txt`, avec les vraies infos (emprunteur, période, caution en « 50,00 € » ; avant : emprunteur écrit en dur « Alban D. », période « 7j/7 », « 40.00 € »).
+  * « Demande de virement envoyée ! » → bouton grisé « Virement bancaire : bientôt disponible ».
+  * « Message envoyé / notifié par SMS campus » (et caché derrière la fenêtre du QR) → message honnête au premier plan.
+  * « Dossier transmis au BDE, un médiateur vous contacte sous 24h » → « Signalement noté… contacte directement le BDE ».
+* **Petits défauts :** toasts décalés hors de l'écran (l'animation « rebond » annulait le centrage) → centrés, simple fondu ; filtres budget « < 6 € » incluaient 6 € → libellés « ≤ 6 € ».
+
+#### 3. Vérifié et correct :
+* Recherche (insensible à la casse), écran « aucun résultat », filtres et tri, notation d'un camarade, formulaire de signalement.
+
+#### 4. Limite de l'environnement de test :
+* Le navigateur intégré de l'éditeur ne laisse pas le service worker accéder au réseau : le mode hors ligne et la mise à jour du service worker restent à valider sur un vrai téléphone, une fois l'app en ligne.

@@ -51,6 +51,44 @@
     catch (e) { /* quota plein : on recompilera la prochaine fois */ }
   };
 
+  // Secours si un CDN est injoignable (wifi de campus capricieux)
+  const FALLBACK_LIBS = [
+    ['React', 'https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js'],
+    ['ReactDOM', 'https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js'],
+    ['lucide', 'https://cdn.jsdelivr.net/npm/lucide@1.55.0/dist/umd/lucide.min.js']
+  ];
+
+  const loadScript = (src) => new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+
+  const ensureLibs = async () => {
+    for (const [name, url] of FALLBACK_LIBS) {
+      if (!window[name]) {
+        console.warn('[CampuShare] ' + name + ' absent, chargement du CDN de secours');
+        await loadScript(url).catch(() => {});
+      }
+    }
+    return !!(window.React && window.ReactDOM);
+  };
+
+  // Message clair au lieu d'un écran vide si l'app ne peut pas démarrer
+  const showStartupError = () => {
+    const root = document.getElementById('root');
+    if (!root) return;
+    root.innerHTML =
+      '<div style="text-align:center;padding:24px;font-family:Inter,sans-serif;color:#2C2720;max-width:320px">' +
+      '<div style="font-size:40px">📡</div>' +
+      '<p style="font-weight:800;margin:8px 0 4px">Connexion trop faible</p>' +
+      "<p style=\"font-size:13px;color:#6B6358;margin:0 0 16px\">CampuShare n'a pas pu se charger. Vérifie ton wifi ou ta 4G puis réessaie.</p>" +
+      '<button onclick="(window.csRepair || location.reload.bind(location))()" style="background:#52796F;color:#fff;border:0;border-radius:14px;padding:12px 20px;font-weight:700;font-size:13px">Réessayer</button>' +
+      '</div>';
+  };
+
   let babelPromise = null;
   const loadBabel = () => {
     if (window.Babel) return Promise.resolve(window.Babel);
@@ -94,6 +132,11 @@
       )
     );
 
+    if (!(await ensureLibs())) {
+      showStartupError();
+      return;
+    }
+
     // Exécution dans l'ordre (mockData → store → composants → vues → app)
     for (let i = 0; i < SOURCES.length; i++) {
       const path = SOURCES[i];
@@ -111,6 +154,7 @@
         run(path, code);
       } catch (e) {
         console.error('[CampuShare] Échec du chargement de ' + path + ' :', e);
+        if (path === 'js/app.js') showStartupError();
       }
     }
   })();

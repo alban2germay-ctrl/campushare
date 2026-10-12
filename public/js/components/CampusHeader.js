@@ -50,16 +50,29 @@ window.CS.components.CampusHeader = function CampusHeader({
         <div className="flex items-center gap-1.5">
           {/* Emprunter / Prêter : retiré d'ici, la barre du bas (Explorer / Mes Objets) fait déjà ce rôle, à portée de pouce */}
 
-          <button
-            onClick={() => setActiveNotification(!activeNotification)}
-            className="relative p-1.5 rounded-xl bg-[#FAF8F5] text-[#4A443A] hover:bg-[#F4EFE6] transition border border-[#EAE2D5]"
-            title="Alertes campus"
-          >
-            <i data-lucide="bell" className="w-3.5 h-3.5 text-[#52796F]"></i>
-            {activeNotification && (
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#D87D4A] ring-2 ring-white"></span>
-            )}
-          </button>
+          {/* Cloche : mène directement à ce qui attend une action */}
+          {(() => {
+            const todo = window.CS.actions.todoFor(activeUserData.id);
+            const count = todo.requests + todo.readyToPickup;
+            return (
+              <button
+                onClick={() => {
+                  if (!setCurrentTab) return;
+                  if (todo.requests > 0) setCurrentTab('items');
+                  else if (todo.readyToPickup > 0) setCurrentTab('bookings');
+                }}
+                className="relative p-1.5 rounded-xl bg-[#FAF8F5] text-[#4A443A] hover:bg-[#F4EFE6] transition border border-[#EAE2D5]"
+                title={count > 0 ? `${count} action(s) en attente` : 'Rien en attente'}
+              >
+                <i data-lucide="bell" className="w-3.5 h-3.5 text-[#52796F]"></i>
+                {count > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-[#D87D4A] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white">
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })()}
         </div>
       </div>
 
