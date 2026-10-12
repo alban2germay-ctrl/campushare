@@ -31,7 +31,10 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
   const fileInputRef = useRef(null);
 
   // 4. ÉTAT DES DEMANDES ENTRANTES (Initialisé avec une demande simulée pour le matériel de Mathys)
+  // 💾 Persistance : l'état du tableau de bord est stocké dans window.CS.data.ownerDashboard (sauvegardé par store.js)
+  const savedDashboard = (window.CS.data.ownerDashboard || {})[currentUser] || {};
   const [pendingRequests, setPendingRequests] = useState(() => {
+    if (savedDashboard.pendingRequests) return savedDashboard.pendingRequests;
     return [
       {
         id: 'req-001',
@@ -74,7 +77,15 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
   });
 
   // 6. TOTAL DES GAINS CUMULÉS DU MATÉRIEL
-  const [totalEarnings, setTotalEarnings] = useState(38.50);
+  const [totalEarnings, setTotalEarnings] = useState(
+    typeof savedDashboard.totalEarnings === 'number' ? savedDashboard.totalEarnings : 38.50
+  );
+
+  // 💾 Recopie des demandes et des gains dans les données partagées à chaque changement
+  useEffect(() => {
+    window.CS.data.ownerDashboard = window.CS.data.ownerDashboard || {};
+    window.CS.data.ownerDashboard[currentUser] = { pendingRequests, totalEarnings };
+  }, [pendingRequests, totalEarnings, currentUser]);
 
   // Message toast pour actions rapides (Accepté, Refusé, Ajouté)
   const [toastMessage, setToastMessage] = useState(null);

@@ -99,3 +99,17 @@ Ce journal consigne les discussions et arbitrages collégiaux entre les directeu
 
 
 
+
+---
+
+### 🎙️ Session n°5 — Persistance des données & PWA hors ligne (12 octobre 2026)
+
+#### 1. Constat :
+* Aucune donnée n'était conservée : un simple rechargement effaçait réservations, objets ajoutés, cagnottes, demandes et gains.
+* Le `manifest.json` existait, mais sans service worker : l'app n'était ni vraiment installable ni utilisable hors ligne (QR de retrait au Foyer sans réseau).
+
+#### 2. Arbitrage :
+* **@agent-architect :** nouvelle couche `public/js/data/store.js` (localStorage) qui restaure puis sauvegarde automatiquement `users`, `items`, `bookings` et `ownerDashboard`. Les vues continuent de lire/écrire `window.CS.data` comme avant.
+* **@agent-architect :** `public/sw.js` — app en « réseau d'abord » (les modifs restent visibles immédiatement), CDN en « cache d'abord ». Bouton « ↺ Reset démo » ajouté à la StudioBar.
+* **@agent-owner — ⚠️ intervention dans `ItemsView.js`, autorisée par Alban :** modification minimale, sans toucher à l'interface ni à la logique. Les demandes entrantes et le total des gains sont désormais recopiés dans `window.CS.data.ownerDashboard[currentUser]`, et relus au montage. Effet : ils survivent au rechargement **et** au changement d'onglet (auparavant ils revenaient à 38,50 € à chaque retour sur « Mes Objets »).
+* **À valider par Mathys :** relire le diff de `ItemsView.js` (≈15 lignes, blocs commentés 💾).

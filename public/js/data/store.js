@@ -12,7 +12,7 @@
 (function () {
   const STORAGE_KEY = 'campushare:data';
   const SCHEMA_VERSION = 1; // ⚠️ Incrémenter si la forme de mockData.js change
-  const PERSISTED_KEYS = ['users', 'items', 'bookings'];
+  const PERSISTED_KEYS = ['users', 'items', 'bookings', 'ownerDashboard'];
   const SAVE_INTERVAL_MS = 1000;
 
   const data = window.CS.data;
@@ -71,7 +71,10 @@
     // Remet les données de démo et recharge (utile avant une démo / un test)
     reset: () => {
       safeRemove();
-      PERSISTED_KEYS.forEach((k) => { data[k] = JSON.parse(JSON.stringify(defaults[k])); });
+      PERSISTED_KEYS.forEach((k) => {
+        if (defaults[k] === undefined) delete data[k];
+        else data[k] = JSON.parse(JSON.stringify(defaults[k]));
+      });
       lastSaved = snapshot();
       window.location.reload();
     }

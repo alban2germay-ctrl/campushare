@@ -9,7 +9,7 @@
 // ⚠️ Incrémenter CACHE_VERSION à chaque changement de la liste APP_SHELL.
 // ==============================================================================
 
-const CACHE_VERSION = 'campushare-v1';
+const CACHE_VERSION = 'campushare-v2';
 
 const APP_SHELL = [
   './',
