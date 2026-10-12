@@ -48,35 +48,7 @@ window.CS.components.CampusHeader = function CampusHeader({
 
         {/* Switcher & Cloche */}
         <div className="flex items-center gap-1.5">
-          {/* Switcher Emprunt / Prêt synchronisé avec les onglets */}
-          <div className="flex bg-[#FAF8F5] p-0.5 rounded-xl border border-[#EAE2D5]">
-            <button
-              onClick={() => {
-                setUserRole('renter');
-                if (setCurrentTab) setCurrentTab('explore');
-              }}
-              className={`px-2 py-1 rounded-lg text-[9px] font-bold transition ${
-                currentTab === 'explore'
-                  ? 'bg-[#52796F] text-white shadow-xs'
-                  : 'text-[#6B6358] hover:text-[#2C2720]'
-              }`}
-            >
-              Emprunter
-            </button>
-            <button
-              onClick={() => {
-                setUserRole('owner');
-                if (setCurrentTab) setCurrentTab('items');
-              }}
-              className={`px-2 py-1 rounded-lg text-[9px] font-bold transition ${
-                currentTab === 'items'
-                  ? 'bg-[#D87D4A] text-white shadow-xs'
-                  : 'text-[#6B6358] hover:text-[#2C2720]'
-              }`}
-            >
-              Prêter
-            </button>
-          </div>
+          {/* Emprunter / Prêter : retiré d'ici, la barre du bas (Explorer / Mes Objets) fait déjà ce rôle, à portée de pouce */}
 
           <button
             onClick={() => setActiveNotification(!activeNotification)}
@@ -98,7 +70,7 @@ window.CS.components.CampusHeader = function CampusHeader({
             <div>
               <span className="text-[8px] text-[#8C8275] block font-semibold uppercase">Cagnotte dispo</span>
               <span className="font-extrabold text-xs text-[#2C2720]">
-                {activeUserData.wallet.toFixed(2)} €
+                {window.CS.formatPrice(activeUserData.wallet)}
               </span>
             </div>
             <div className="w-6 h-6 rounded-lg bg-[#E6EFE6] text-[#52796F] flex items-center justify-center font-bold text-[10px]">

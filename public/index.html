@@ -67,12 +67,14 @@
       scrollbar-width: thin;
       scrollbar-color: #EAE2D5 transparent;
     }
+    /* Fondu SANS transform : un transform sur un écran décalerait les
+       fenêtres (fixed) par rapport à la liste au lieu de l'écran du téléphone */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     .animate-fade-in {
-      animation: fadeIn 0.2s ease-out forwards;
+      animation: fadeIn 0.2s ease-out;
     }
   </style>
 </head>
@@ -81,7 +83,7 @@
 
   <!-- MODULES DE L'APPLICATION CAMPUSHARE -->
   <!-- La liste des fichiers (données, composants, vues, app.js) est dans js/loader.js -->
-  <script src="js/loader.js?v=36a265d7"></script>
+  <script src="js/loader.js?v=7d6fc0d8"></script>
 
   <!-- 5. Service Worker (PWA installable & hors ligne) -->
   <script>

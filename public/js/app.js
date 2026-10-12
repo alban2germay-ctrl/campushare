@@ -52,10 +52,14 @@ function App() {
       />
 
       {/* 2. CONTENEUR DE L'APPLICATION SMARTPHONE */}
-      <div className={`relative bg-[#FAF8F5] overflow-hidden flex flex-col transition-all duration-300 ${getDeviceContainerClass()}`}>
+      {/* translateZ(0) : les fenêtres (fixed inset-0) couvrent exactement l'écran du téléphone */}
+      <div
+        className={`relative bg-[#FAF8F5] overflow-hidden flex flex-col transition-all duration-300 pt-[env(safe-area-inset-top)] ${getDeviceContainerClass()}`}
+        style={{ transform: 'translateZ(0)' }}
+      >
         
-        {/* STATUS BAR SYSTÈME (Encoche ou Dynamic Island) */}
-        <div className="pt-2 px-6 flex items-center justify-between text-xs font-semibold text-[#2C2720] flex-shrink-0 select-none">
+        {/* STATUS BAR SIMULÉE (Encoche ou Dynamic Island) : seulement sur ordi, un vrai téléphone a la sienne */}
+        <div className="hidden sm:flex pt-2 px-6 items-center justify-between text-xs font-semibold text-[#2C2720] flex-shrink-0 select-none">
           <span>09:41</span>
           {deviceMode !== 'fullscreen' && (
             <div className="w-24 h-4 bg-[#2C2720] rounded-full mx-auto"></div>

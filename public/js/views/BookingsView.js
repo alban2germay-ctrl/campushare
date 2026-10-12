@@ -104,13 +104,13 @@ window.CS.views.BookingsView = function BookingsView() {
   };
 
   const openQrModal = (booking) => {
-    const initialChecks = {};
-    booking.accessories.forEach((_, idx) => {
-      initialChecks[idx] = true;
-    });
-    setCheckedAccessories(initialChecks);
+    // Rien de coché d'office : on coche en vérifiant vraiment avec le camarade
+    setCheckedAccessories({});
     setQrModalBooking(booking);
   };
+
+  const allAccessoriesChecked = !!qrModalBooking &&
+    qrModalBooking.accessories.every((_, idx) => checkedAccessories[idx]);
 
   const closeQrModal = () => {
     setQrModalBooking(null);
@@ -154,11 +154,14 @@ window.CS.views.BookingsView = function BookingsView() {
     window.CS.data.bookings = updated;
     setBookingsList(updated);
 
-    if (qrModalBooking && qrModalBooking.id === bookingId) {
-      const match = updated.find((x) => x.id === bookingId);
-      if (match) {
-        setQrModalBooking(normalizeBooking(match, 0));
-      }
+    // La checklist sera refaite au moment du retour
+    setCheckedAccessories({});
+    const match = updated.find((x) => x.id === bookingId);
+    if (match && match.step === 3) {
+      setQrModalBooking(null);
+      showToast("✅ Objet récupéré ! Rouvre ton QR au moment de le rendre.");
+    } else if (qrModalBooking && qrModalBooking.id === bookingId && match) {
+      setQrModalBooking(normalizeBooking(match, 0));
     }
   };
 
@@ -294,13 +297,10 @@ window.CS.views.BookingsView = function BookingsView() {
               🎫
             </div>
             <div>
-              <h3 className="font-extrabold text-sm text-[#2C2720]">Boarding Pass Campus</h3>
-              <p className="text-[11px] text-[#6B6358]">Passations 7j/7 & Cautions levées à 0 €</p>
+              <h3 className="font-extrabold text-sm text-[#2C2720]">Mes locations</h3>
+              <p className="text-[11px] text-[#6B6358]">Montre ton QR au retrait • 0,00 € débité</p>
             </div>
           </div>
-          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#E8F1EE] text-[#52796F] border border-[#52796F]/20">
-            N7 Certifié
-          </span>
         </div>
 
         {/* Sous-onglets Actives vs Historique */}
@@ -371,7 +371,7 @@ window.CS.views.BookingsView = function BookingsView() {
                 </div>
                 <div className="text-right flex-shrink-0">
                   <span className="text-xs font-extrabold text-[#52796F]">
-                    {Number(booking.itemPrice).toFixed(2)} €
+                    {window.CS.formatPrice(Number(booking.itemPrice))}
                   </span>
                   <span className="text-[9px] text-[#8C8275] block">
                     Caution {booking.depositAmount} €
@@ -406,7 +406,7 @@ window.CS.views.BookingsView = function BookingsView() {
                       className="flex-1 py-2 rounded-xl bg-[#52796F] text-white text-[11px] font-bold hover:bg-[#43665D] transition shadow-2xs flex items-center justify-center gap-1.5 active:scale-[0.98]"
                     >
                       <i data-lucide="qr-code" className="w-3.5 h-3.5"></i>
-                      <span>QR Code & Check-in</span>
+                      <span>{booking.step === 3 ? "Rendre l'objet" : 'Mon QR de retrait'}</span>
                     </button>
                     <button
                       onClick={() => setContractModalBooking(booking)}
@@ -462,12 +462,12 @@ window.CS.views.BookingsView = function BookingsView() {
             </div>
             <h4 className="font-extrabold text-[#2C2720] text-sm">
               {subTab === 'active'
-                ? 'Aucune passation active en ce moment'
+                ? 'Aucune location en cours'
                 : 'Aucun historique de location pour le moment'}
             </h4>
             <p className="text-[11px] max-w-xs mx-auto leading-relaxed">
               {subTab === 'active'
-                ? 'Choisis un équipement dans l\'onglet Explorer pour le réserver et obtenir instantanément ton billet de passation QR Code !'
+                ? 'Choisis un équipement dans l\'onglet Explorer pour le réserver : ton QR de retrait apparaîtra ici.'
                 : 'Tes prêts terminés et attestations de caution levée s\'archiveront automatiquement ici.'}
             </p>
           </div>
@@ -476,8 +476,8 @@ window.CS.views.BookingsView = function BookingsView() {
 
       {/* 3. MODALE "PASSEPORT QR CODE DE RETRAIT & CHECKLIST" */}
       {qrModalBooking && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-4 space-y-3 shadow-2xl border border-[#EAE2D5] max-h-[92vh] overflow-y-auto">
+        <div className="fixed inset-0 !mt-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-4 space-y-3 shadow-2xl border border-[#EAE2D5] max-h-[92%] overflow-y-auto">
             
             <div className="flex items-center justify-between pb-2 border-b border-[#F0EBE1]">
               <div className="flex items-center gap-1.5">
@@ -485,7 +485,9 @@ window.CS.views.BookingsView = function BookingsView() {
                   🎫
                 </span>
                 <div>
-                  <h3 className="font-extrabold text-xs text-[#2C2720]">Passation Campus</h3>
+                  <h3 className="font-extrabold text-xs text-[#2C2720]">
+                    {qrModalBooking.step === 3 ? "Rendre l'objet" : "Récupérer l'objet"}
+                  </h3>
                   <p className="text-[9px] font-mono text-[#8C8275]">{qrModalBooking.bookingRef}</p>
                 </div>
               </div>
@@ -538,7 +540,7 @@ window.CS.views.BookingsView = function BookingsView() {
             {/* CHECKLIST DES ACCESSOIRES (MT-4.1.1.2) */}
             <div className="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#EAE2D5] space-y-1.5 text-xs">
               <span className="text-[10px] font-extrabold uppercase text-[#6B6358] block">
-                📋 Checklist contradictoire des accessoires :
+                📋 Vérifiez ensemble, cochez chaque accessoire :
               </span>
               <div className="space-y-1">
                 {qrModalBooking.accessories.map((acc, idx) => (
@@ -547,7 +549,7 @@ window.CS.views.BookingsView = function BookingsView() {
                       type="checkbox"
                       checked={!!checkedAccessories[idx]}
                       onChange={() => toggleAccessory(idx)}
-                      className="rounded border-[#EAE2D5] text-[#52796F] focus:ring-[#52796F]"
+                      className="w-4 h-4 rounded accent-[#52796F]"
                     />
                     <span>{acc}</span>
                   </label>
@@ -557,13 +559,20 @@ window.CS.views.BookingsView = function BookingsView() {
 
             {/* BOUTONS D'ACTION */}
             <div className="space-y-1.5 pt-1">
+              {!allAccessoriesChecked && qrModalBooking.step <= 3 && (
+                <p className="text-center text-[10px] font-semibold text-[#D87D4A]">
+                  Coche les {qrModalBooking.accessories.length} accessoires pour valider
+                </p>
+              )}
+
               {qrModalBooking.step <= 2 && (
                 <button
                   onClick={() => advanceBookingStep(qrModalBooking.id)}
-                  className="w-full py-2.5 rounded-xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-xs flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                  disabled={!allAccessoriesChecked}
+                  className="w-full py-2.5 rounded-xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-xs flex items-center justify-center gap-1.5 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
                 >
                   <i data-lucide="check" className="w-3.5 h-3.5"></i>
-                  <span>Valider le Retrait & Check-in</span>
+                  <span>J'ai bien récupéré l'objet</span>
                 </button>
               )}
 
@@ -573,7 +582,8 @@ window.CS.views.BookingsView = function BookingsView() {
                     advanceBookingStep(qrModalBooking.id);
                     setSubTab('history');
                   }}
-                  className="w-full py-2.5 rounded-xl bg-[#354F48] text-white text-xs font-bold hover:bg-[#2C2720] transition shadow-xs flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                  disabled={!allAccessoriesChecked}
+                  className="w-full py-2.5 rounded-xl bg-[#354F48] text-white text-xs font-bold hover:bg-[#2C2720] transition shadow-xs flex items-center justify-center gap-1.5 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
                 >
                   <i data-lucide="shield-check" className="w-3.5 h-3.5"></i>
                   <span>Restituer le matériel (0 € débité)</span>
@@ -594,8 +604,8 @@ window.CS.views.BookingsView = function BookingsView() {
 
       {/* 4. MODALE CONTRAT DE PRÊT INSTANTANÉ (MT-4.1.1.7) */}
       {contractModalBooking && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-4 space-y-3 shadow-2xl border border-[#EAE2D5] max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 !mt-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-4 space-y-3 shadow-2xl border border-[#EAE2D5] max-h-[92%] overflow-y-auto">
             <div className="flex items-center justify-between pb-2 border-b border-[#EAE2D5]">
               <div className="flex items-center gap-2">
                 <span className="w-6 h-6 rounded-lg bg-[#E8F1EE] text-[#52796F] flex items-center justify-center text-xs font-bold">
@@ -623,7 +633,7 @@ window.CS.views.BookingsView = function BookingsView() {
               <div><strong>Propriétaire :</strong> {contractModalBooking.ownerName} ({contractModalBooking.ownerPromo})</div>
               <div><strong>Emprunteur :</strong> Alban D. (2A SN • Toulouse INP)</div>
               <div><strong>Période :</strong> 7j/7 • Lieu de retrait : {contractModalBooking.pickupLocation}</div>
-              <div><strong>Montant location :</strong> {Number(contractModalBooking.itemPrice).toFixed(2)} € (Réglé)</div>
+              <div><strong>Montant location :</strong> {window.CS.formatPrice(Number(contractModalBooking.itemPrice))} (Réglé)</div>
               <div><strong>Caution garantie :</strong> {contractModalBooking.depositAmount}.00 € (Empreinte non débitée)</div>
               <div className="p-2 bg-white rounded-xl border border-[#EAE2D5] text-[9px] text-[#52796F]">
                 🛡️ En validant par QR Code ou PIN {contractModalBooking.pinCode}, les parties attestent du bon fonctionnement des accessoires contradictoires. En cas de litige, la médiation officielle du BDE ENSEEIHT fait foi.
@@ -648,7 +658,7 @@ window.CS.views.BookingsView = function BookingsView() {
 
       {/* 5. MODALE NOTATION MUTUELLE (1 à 5 ÉTOILES) (MT-4.1.1.5) */}
       {reviewModalBooking && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+        <div className="fixed inset-0 !mt-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
           <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-4 space-y-3.5 shadow-2xl border border-[#EAE2D5]">
             <div className="flex items-center justify-between pb-2 border-b border-[#EAE2D5]">
               <div className="flex items-center gap-2">

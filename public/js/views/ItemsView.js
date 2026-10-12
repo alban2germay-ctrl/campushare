@@ -243,7 +243,7 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
 
     window.CS.data.bookings = [newBooking, ...(window.CS.data.bookings || [])];
 
-    showToast(`✅ Demande de ${request.renterName} acceptée ! (+${request.offeredEarnings.toFixed(2)} € crédités)`);
+    showToast(`✅ Demande de ${request.renterName} acceptée ! (+${window.CS.formatPrice(request.offeredEarnings)} crédités)`);
   };
 
   // ❌ REFUS POLI SANS BLOCAGE (MT-3.2.1.4)
@@ -275,8 +275,8 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
           <div className="flex items-center gap-3">
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=120&q=80"
-                alt="Mathys"
+                src={activeUserData.avatar}
+                alt={activeUserData.name}
                 className="w-12 h-12 rounded-2xl object-cover ring-2 ring-[#D87D4A]/40 shadow-xs"
               />
               <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#52796F] text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
@@ -287,7 +287,7 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
               <div className="flex items-center gap-1.5">
                 <h3 className="font-extrabold text-sm text-[#2C2720]">Espace Propriétaire</h3>
                 <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-[#D87D4A]/10 text-[#D87D4A] border border-[#D87D4A]/20">
-                  Mathys • 3EA
+                  {activeUserData.name.split(' ')[0]} • {activeUserData.promo.split(' ')[1]}
                 </span>
               </div>
               <p className="text-[11px] text-[#6B6358]">Toulouse INP - ENSEEIHT</p>
@@ -312,7 +312,7 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
               <span>Gains générés par votre matériel</span>
             </div>
             <div className="flex items-baseline gap-1 mt-0.5">
-              <span className="text-xl font-black text-[#52796F]">{totalEarnings.toFixed(2)} €</span>
+              <span className="text-xl font-black text-[#52796F]">{window.CS.formatPrice(totalEarnings)}</span>
               <span className="text-[10px] text-[#8C8275] font-medium">• solde sécurisé</span>
             </div>
           </div>
@@ -467,7 +467,7 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
                   </div>
 
                   <span className="font-black text-xs text-[#52796F] bg-[#E8F1EE] px-2.5 py-1 rounded-full border border-[#52796F]/20">
-                    +{req.offeredEarnings.toFixed(2)} €
+                    +{window.CS.formatPrice(req.offeredEarnings)}
                   </span>
                 </div>
 
@@ -506,7 +506,7 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
                       className="flex-2 py-2 rounded-xl bg-[#52796F] hover:bg-[#43645c] text-white font-extrabold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 active:scale-95"
                     >
                       <i data-lucide="check" className="w-3.5 h-3.5"></i>
-                      <span>Accepter (+{req.offeredEarnings.toFixed(2)} €)</span>
+                      <span>Accepter (+{window.CS.formatPrice(req.offeredEarnings)})</span>
                     </button>
                   </div>
                 ) : req.status === 'accepted' ? (
@@ -530,8 +530,8 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
 
       {/* 5. MODALE FORMULAIRE EXPRESS EN MOINS DE 60s (MT-3.1.1.1 à MT-3.1.1.5) */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 animate-fade-in">
-          <div className="w-full sm:max-w-[400px] max-h-[92vh] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#EAE2D5] flex flex-col overflow-hidden animate-slide-up">
+        <div className="fixed inset-0 !mt-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 animate-fade-in">
+          <div className="w-full sm:max-w-[400px] max-h-[92%] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#EAE2D5] flex flex-col overflow-hidden animate-slide-up">
             
             {/* Barre de titre & Fermeture */}
             <div className="p-4 border-b border-[#EAE2D5] flex items-center justify-between bg-[#FAF8F5]">

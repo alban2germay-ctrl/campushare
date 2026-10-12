@@ -124,7 +124,7 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
       
       {/* 1. POPUP DE SUCCÈS MODALE : CÉLÉBRATION & ACCÈS DIRECT AU QR CODE */}
       {bookingSuccess && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
+        <div className="fixed inset-0 !mt-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
           <div className="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl border border-[#EAE2D5] text-center space-y-3.5">
             <div className="w-14 h-14 rounded-full bg-[#E6EFE6] text-[#52796F] flex items-center justify-center text-2xl mx-auto shadow-xs">
               🎉
@@ -482,11 +482,11 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
 
       {/* 6. FICHE PRODUIT ÉPURÉE & RÉSERVATION 1-CLIC */}
       {activeModalItem && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#EAE2D5] overflow-hidden flex flex-col">
+        <div className="fixed inset-0 !mt-0 z-50 bg-black/50 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+          <div className="w-full max-w-sm max-h-[92%] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#EAE2D5] overflow-hidden flex flex-col">
             
-            {/* Header photo épuré */}
-            <div className="relative aspect-video w-full bg-[#FAF8F5]">
+            {/* Header photo épuré (hauteur fixe : le bouton reste visible sans défiler) */}
+            <div className="relative h-40 w-full flex-shrink-0 bg-[#FAF8F5]">
               <img
                 src={activeModalItem.image}
                 alt={activeModalItem.title}
@@ -503,8 +503,8 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
               </span>
             </div>
 
-            {/* Contenu aéré sans pavés inutiles */}
-            <div className="p-4 space-y-3">
+            {/* Contenu aéré sans pavés inutiles (défile si l'écran est petit) */}
+            <div className="p-4 space-y-3 overflow-y-auto">
               <div>
                 <div className="flex justify-between items-start">
                   <h3 className="font-extrabold text-sm text-[#2C2720] leading-tight flex-1">
@@ -512,7 +512,7 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
                   </h3>
                   <div className="text-right pl-2">
                     <span className="font-extrabold text-base text-[#52796F]">
-                      {calculateItemPrice(activeModalItem).toFixed(2)} €
+                      {window.CS.formatPrice(calculateItemPrice(activeModalItem))}
                     </span>
                     <span className="text-[9px] text-[#8C8275] block -mt-0.5">
                       {periodInfo.tag}
@@ -581,7 +581,10 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
                 </p>
               </div>
 
-              {/* Bouton direct 1-clic */}
+            </div>
+
+            {/* Bouton direct 1-clic, toujours visible sous le pouce (Sticky Bottom CTA) */}
+            <div className="p-4 pt-3 border-t border-[#F0EBE1] flex-shrink-0">
               <button
                 onClick={() => {
                   const confirmedItem = activeModalItem;
@@ -620,7 +623,7 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
                 }}
                 className="w-full py-3 rounded-2xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-md flex items-center justify-center gap-2 active:scale-[0.98]"
               >
-                <span>Confirmer l'emprunt ({calculateItemPrice(activeModalItem).toFixed(2)} €)</span>
+                <span>Confirmer l'emprunt ({window.CS.formatPrice(calculateItemPrice(activeModalItem))})</span>
                 <i data-lucide="arrow-right" className="w-3.5 h-3.5"></i>
               </button>
             </div>

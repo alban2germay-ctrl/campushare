@@ -15,7 +15,7 @@ window.CS.components.BottomNav = function BottomNav({ currentTab, setCurrentTab 
   ];
 
   return (
-    <nav className="border-t border-[#EAE2D5] bg-white/95 backdrop-blur-md px-2 py-1 flex items-center justify-around flex-shrink-0 z-20 shadow-sm">
+    <nav className="border-t border-[#EAE2D5] bg-white/95 backdrop-blur-md px-2 pt-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] flex items-center justify-around flex-shrink-0 z-20 shadow-sm">
       {tabs.map((tab) => {
         const isActive = currentTab === tab.id;
         return (

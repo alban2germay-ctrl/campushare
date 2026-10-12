@@ -94,7 +94,7 @@ window.CS.components.StudioBar = function StudioBar({
 
       {/* Accès Direct au Hub Roadmap & Preuves */}
       <a
-        href="/roadmap.html"
+        href="roadmap.html"
         className="px-2.5 py-1.5 rounded-xl bg-[#E6EFE6] text-[#354F48] border border-[#52796F]/30 text-[10px] font-bold hover:bg-[#52796F] hover:text-white transition flex items-center gap-1.5 shadow-2xs"
         title="Ouvrir la Roadmap & Hub de Preuves"
       >

@@ -10,15 +10,16 @@
 //    outils/sync_app.py à chaque `collab.sh save` / `collab.ps1 save`.
 // ==============================================================================
 
-const CACHE_VERSION = 'campushare-3405bf27';
+const CACHE_VERSION = 'campushare-91c302d4';
 
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
-  './js/loader.js?v=36a265d7',
+  './js/loader.js?v=7d6fc0d8',
   './js/data/mockData.js?v=20261012',
   './js/data/store.js?v=20261012',
+  './js/data/format.js?v=20261012',
   './js/components/StudioBar.js?v=20261012',
   './js/components/CampusHeader.js?v=20261012',
   './js/components/BottomNav.js?v=20261012',

@@ -147,3 +147,33 @@ Ce journal consigne les discussions et arbitrages collégiaux entre les directeu
   4. recalcule `CACHE_VERSION` (empreinte des fichiers de l'app) et le `?v=` de `loader.js`.
 * ⚠️ **Impact pour Mathys :** `collab.ps1 save` lance désormais `python outils\sync_app.py` (même commande `python` que `collab.ps1 start`). Aucune autre action à faire, `ItemsView.js` non modifié.
 * Les règles « incrémenter `CACHE_VERSION` » et « ajouter le fichier à `loader.js` » deviennent automatiques.
+
+---
+
+### 🎙️ Session n°8 — Audit visuel complet au format téléphone (12 octobre 2026)
+
+#### Participants :
+* 🎩 **CEO IA** (Médiateur) • 📐 **@agent-architect** • 🎨 **@agent-ui-design** • 🔍 **@agent-renter** • 📸 **@agent-owner** • 🛡️ **@agent-trust**
+
+#### 1. Question d'Alban :
+* *« Tout est fait là, tu es sûr ? Au niveau du visuel, front etc. c'est fluide, clair ? N'hésite pas à prendre des décisions et à discuter avec tous les spécialistes. »*
+
+#### 2. Constats (testés écran par écran en 390×844) :
+* **@agent-architect — bug n°1 (bloquant) :** toutes les fenêtres (fiche produit, QR, contrat, notation, ajout d'objet) se positionnaient par rapport à la **liste défilante** au lieu de l'écran. Cause : l'animation `fadeIn` laissait un `transform` actif sur chaque écran, plus la marge automatique `space-y` de Tailwind. Effet : photo coupée sous l'en-tête, fond sombre incomplet, et avec un long catalogue la fiche pouvait s'ouvrir hors de l'écran.
+* **@agent-renter :** le bouton « Confirmer l'emprunt » n'était pas visible sans défiler (photo trop haute).
+* **@agent-ui-design :** la fausse barre d'état iPhone (« 09:41 », encoche, wifi) s'affichait **aussi sur un vrai téléphone**, par-dessus la vraie. Prix au format anglais (« 6.00 € »). Sélecteur Emprunter/Prêter en double avec la barre du bas, en haut de l'écran (loin du pouce), et surligné nulle part sur 2 onglets sur 4. Jargon : « Boarding Pass », « Check-in », « Checklist contradictoire ».
+* **@agent-trust :** la checklist des accessoires était **pré-cochée** : elle ne servait à rien. On pouvait valider le retrait sans rien vérifier.
+* **@agent-owner :** « Mes Objets » affichait toujours « Mathys • 3EA » et sa photo, même connecté en Alban.
+
+#### 3. Décisions appliquées :
+* **Fenêtres :** le cadre du téléphone devient la référence (`translateZ(0)` dans `app.js`), fondu sans transform (`index.html`), `!mt-0` sur toutes les fenêtres, hauteur max en % du téléphone (et non de la fenêtre du navigateur).
+* **Fiche produit :** photo à hauteur fixe, contenu qui défile, bouton « Confirmer » **toujours visible en bas** (Sticky Bottom CTA).
+* **Vrai téléphone :** fausse barre d'état visible seulement sur ordi ; marges pour l'encoche et la barre d'accueil iPhone (`safe-area`).
+* **Prix :** nouveau `public/js/data/format.js` → `window.CS.formatPrice(6)` = « 6,00 € », utilisé partout.
+* **En-tête :** sélecteur Emprunter/Prêter retiré (la barre du bas Explorer / Mes Objets fait déjà ce rôle).
+* **Locations :** « Mes locations », « Mon QR de retrait » / « Rendre l'objet », « J'ai bien récupéré l'objet ». Checklist **vide à l'ouverture**, bouton bloqué tant que tout n'est pas coché, checklist refaite au retour, fenêtre fermée + message après le retrait.
+* **Compte :** carte « Roadmap & Matrice » retirée (outil de dev, toujours accessible dans la StudioBar). Lien roadmap en chemin relatif (compatible mise en ligne).
+* **@agent-owner — ⚠️ intervention dans `ItemsView.js` (mandat d'Alban) :** uniquement de l'affichage, aucune logique touchée : en-tête avec l'utilisateur connecté (photo, prénom, filière), prix via `formatPrice`, `!mt-0` et `max-h-[92%]` sur la fenêtre d'ajout.
+
+#### 4. Point ouvert pour Mathys :
+* Connecté en Alban, « Mes Objets » liste encore les objets et demandes de démo de Mathys (raclette, perceuse). Faut-il filtrer par propriétaire (`item.owner`) ? C'est son chantier : à lui de trancher.

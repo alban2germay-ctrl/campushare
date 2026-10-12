@@ -144,14 +144,14 @@ window.CS.views.ProfileView = function ProfileView({ activeUserData, currentUser
         <div className="flex items-center justify-between">
           <span className="text-xs font-extrabold text-[#2C2720]">Solde de la Cagnotte</span>
           <span className="text-base font-black text-[#52796F]">
-            {activeUserData.wallet.toFixed(2)} €
+            {window.CS.formatPrice(activeUserData.wallet)}
           </span>
         </div>
         <p className="text-[10px] text-[#6B6358] leading-relaxed">
           Gains perçus directement sur tes prêts de matériel. Caution restituée sans frais bancaires.
         </p>
         <button
-          onClick={() => alert(`Demande de virement de ${activeUserData.wallet.toFixed(2)} € vers ton compte bancaire envoyée !`)}
+          onClick={() => alert(`Demande de virement de ${window.CS.formatPrice(activeUserData.wallet)} vers ton compte bancaire envoyée !`)}
           className="w-full py-2 rounded-xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-xs"
         >
           Transférer vers mon compte bancaire
@@ -160,7 +160,7 @@ window.CS.views.ProfileView = function ProfileView({ activeUserData, currentUser
 
       {/* 4. MODALE DE SIGNALEMENT DE LITIGE (MT-4.1.1.6) */}
       {isDisputeModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+        <div className="fixed inset-0 !mt-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
           <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-4 space-y-3.5 shadow-2xl border border-[#EAE2D5]">
             <div className="flex items-center justify-between pb-2 border-b border-[#EAE2D5]">
               <div className="flex items-center gap-2">
@@ -234,7 +234,7 @@ window.CS.views.ProfileView = function ProfileView({ activeUserData, currentUser
 
       {/* 5. MODALE TEST SÉCURITÉ DOMAINE ENSEEIHT (MT-4.1.1.8) */}
       {isDomainModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+        <div className="fixed inset-0 !mt-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
           <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-4 space-y-3.5 shadow-2xl border border-[#EAE2D5]">
             <div className="flex items-center justify-between pb-2 border-b border-[#EAE2D5]">
               <div className="flex items-center gap-2">
@@ -289,22 +289,6 @@ window.CS.views.ProfileView = function ProfileView({ activeUserData, currentUser
         </div>
       )}
 
-      {/* 6. LIEN VERS LA ROADMAP OFFICIELLE */}
-      <a
-        href="/roadmap.html"
-        className="p-3.5 rounded-3xl bg-white border border-[#EAE2D5] shadow-xs flex items-center justify-between hover:border-[#52796F] transition block"
-      >
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-[#E6EFE6] text-[#52796F] flex items-center justify-center font-bold text-xs flex-shrink-0">
-            🗺️
-          </div>
-          <div>
-            <h4 className="font-extrabold text-xs text-[#2C2720]">Roadmap & Matrice Opérationnelle</h4>
-            <p className="text-[10px] text-[#6B6358]">Suivi cartésien des 40 micro-tâches unitaires</p>
-          </div>
-        </div>
-        <span className="text-xs text-[#52796F] font-bold">→</span>
-      </a>
     </div>
   );
 };
