@@ -67,8 +67,9 @@ Pour assurer une liaison permanente entre les fondateurs et leurs agents respect
 | **CEO Opérationnel IA** | **Antigravity AI** | Agent Principal & Sous-agents | Cloud / Local | Orchestration, Synthèse & Qualité |
 
 ### 📡 Canaux de Communication Actifs :
-1. **Canal Discord Automatique (Webhook)** :
-   * Chaque exécution de `./collab.sh save "..."` déclenche un webhook Discord immédiat notifiant toute l'équipe du commit, de l'auteur et de la description de la tâche.
+1. **Canal Discord (Webhook, optionnel)** :
+   * Après un push réussi, `./collab.sh save "..."` (et `collab.ps1 save`) envoie l'auteur, la branche et le message du commit sur Discord **si un webhook est configuré**.
+   * Configuration (une fois par machine) : coller l'URL du webhook dans un fichier `.discord_webhook` à la racine du projet (ignoré par Git, jamais poussé), ou dans la variable d'environnement `DISCORD_WEBHOOK_URL`. Sans webhook, le script le signale et n'envoie rien.
 2. **Dépôt GitHub Centralisé** :
    * URL : [`https://github.com/alban2germay-ctrl/campushare`](https://github.com/alban2germay-ctrl/campushare)
    * Suivi des 4 Issues officielles (`#1 Socle`, `#2 Emprunteur`, `#3 Propriétaire`, `#4 Confiance/Sécurité`).
@@ -85,7 +86,7 @@ Pour assurer une liaison permanente entre les fondateurs et leurs agents respect
 Chaque agent intervenant sur le code adopte l'une des 5 casquettes spécialisées :
 
 ### 📐 1. `@agent-architect` — Architecture Système & Contrats de Données
-* **Mission :** Modularité des scripts Babel, respect du namespace global `window.CS`, performance 60fps sans framework lourd, intégrité du `mockData.js`.
+* **Mission :** Modularité des scripts JSX (chargés et mis en cache par `public/js/loader.js`), respect du namespace global `window.CS`, performance 60fps sans framework lourd, intégrité du `mockData.js`.
 
 ### 🎨 2. `@agent-ui-design` — Designer Mobile & Ergonomie « One-Thumb »
 * **Mission :** Palette douce pastel N7 (`#FAF8F5`, `#52796F`, `#D87D4A`), adaptation au pouce (hauteur min 44px), élimination du scroll superflu, composants fixes (*Sticky Bottom CTA*).
@@ -106,6 +107,6 @@ Chaque agent intervenant sur le code adopte l'une des 5 casquettes spécialisée
 Tout agent ou développeur doit utiliser les commandes standards pour éviter toute désynchronisation :
 
 * `📥 ./collab.sh pull` : Récupère les dernières avancées du binôme depuis GitHub.
-* `💾 ./collab.sh save "Message"` : Enregistre, crée le commit, pousse sur `main` et alerte le serveur Discord.
+* `💾 ./collab.sh save "Message"` : Enregistre, crée le commit, pousse sur la branche courante et notifie Discord si un webhook est configuré.
 * `📱 ./collab.sh start` : Lance le serveur local sur `http://localhost:3000`.
 * `📊 ./collab.sh status` : Affiche l'état des fichiers modifiés localement.

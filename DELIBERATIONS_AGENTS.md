@@ -113,3 +113,24 @@ Ce journal consigne les discussions et arbitrages collégiaux entre les directeu
 * **@agent-architect :** `public/sw.js` — app en « réseau d'abord » (les modifs restent visibles immédiatement), CDN en « cache d'abord ». Bouton « ↺ Reset démo » ajouté à la StudioBar.
 * **@agent-owner — ⚠️ intervention dans `ItemsView.js`, autorisée par Alban :** modification minimale, sans toucher à l'interface ni à la logique. Les demandes entrantes et le total des gains sont désormais recopiés dans `window.CS.data.ownerDashboard[currentUser]`, et relus au montage. Effet : ils survivent au rechargement **et** au changement d'onglet (auparavant ils revenaient à 38,50 € à chaque retour sur « Mes Objets »).
 * **À valider par Mathys :** relire le diff de `ItemsView.js` (≈15 lignes, blocs commentés 💾).
+
+---
+
+### 🎙️ Session n°6 — Performance mobile, Discord & liens de la roadmap (12 octobre 2026)
+
+#### 1. Constat :
+* React était chargé en version *development* et Babel (~3 Mo) recompilait les ~3 100 lignes de JSX **à chaque ouverture** : démarrage lent sur smartphone.
+* Le script `collab.sh` affichait « Le Discord a sonné » sans jamais envoyer de webhook.
+* Les liens de `ROADMAP.md` (et `ESPACE_ALBAN.md`) pointaient vers l'ancien dossier `~/.gemini/antigravity/scratch/campushare`.
+
+#### 2. Arbitrage :
+* **@agent-architect — pas d'étape de build :** ni Alban ni Mathys n'ont Node installé, et un build obligatoire compliquerait le flux `collab.sh`/`collab.ps1`. On garde donc l'édition directe des fichiers JSX, mais avec un nouveau chargeur `public/js/loader.js` qui :
+  * télécharge les fichiers de l'app en parallèle (revalidés auprès du serveur : chaque modif est vue au rechargement) ;
+  * réutilise la version compilée stockée dans `localStorage` si le contenu n'a pas changé (empreinte du fichier) ;
+  * ne télécharge et n'exécute Babel **que** si un fichier a changé depuis la dernière visite.
+  * Mesuré sur le serveur local : 2ᵉ ouverture sans aucune requête Babel, DOM prêt en ~80 ms.
+* React/ReactDOM passent en build **production** 18.3.1, Lucide figé en 1.55.0 et Babel en 7.26.4 (fini les `@latest` qui peuvent casser l'app du jour au lendemain). `sw.js` passe en `campushare-v3`.
+* ⚠️ **Impact pour Mathys :** rien ne change dans `ItemsView.js`. Seule règle nouvelle : un **nouveau** fichier JS doit être ajouté à la liste `SOURCES` de `loader.js` (et à `APP_SHELL` dans `sw.js`). Pour voir les avertissements React détaillés en debug, remettre temporairement `react.development.js` dans `index.html`.
+* **Discord :** webhook réellement branché dans `collab.sh` **et `collab.ps1`** (script de Mathys, modification additive : nouvelle fonction appelée après le push). Il est optionnel : URL à coller dans `.discord_webhook` (ajouté au nouveau `.gitignore`, donc jamais poussé publiquement). `AGENTS.md` décrit désormais le comportement réel.
+* **Roadmap :** liens `file:///…/.gemini/…` remplacés par des chemins relatifs dans `ROADMAP.md` et `ESPACE_ALBAN.md`.
+* **Hors périmètre, à prévoir :** `public/roadmap.html` charge toujours React dev + Babel (page secondaire) ; Tailwind passe encore par le CDN « play », qui compile le CSS dans le navigateur.

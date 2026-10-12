@@ -9,12 +9,13 @@
 // ⚠️ Incrémenter CACHE_VERSION à chaque changement de la liste APP_SHELL.
 // ==============================================================================
 
-const CACHE_VERSION = 'campushare-v2';
+const CACHE_VERSION = 'campushare-v3';
 
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
+  './js/loader.js?v=20261012c',
   './js/data/mockData.js?v=20261012',
   './js/data/store.js?v=20261012',
   './js/components/StudioBar.js?v=20261012',
@@ -29,10 +30,10 @@ const APP_SHELL = [
 
 const CDN_LIBS = [
   'https://cdn.tailwindcss.com',
-  'https://unpkg.com/react@18/umd/react.development.js',
-  'https://unpkg.com/react-dom@18/umd/react-dom.development.js',
-  'https://unpkg.com/@babel/standalone/babel.min.js',
-  'https://unpkg.com/lucide@latest'
+  'https://unpkg.com/react@18.3.1/umd/react.production.min.js',
+  'https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js',
+  'https://unpkg.com/@babel/standalone@7.26.4/babel.min.js', // seulement si un fichier a changé
+  'https://unpkg.com/lucide@1.55.0/dist/umd/lucide.min.js'
 ];
 
 self.addEventListener('install', (event) => {

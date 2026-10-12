@@ -8,7 +8,7 @@ L'agent IA lit ce fichier pour intégrer les décisions d'Alban dans le projet g
 ## 🎯 Mon Chantier de Code Prioritaire : Chantier A (Moteur Emprunteur & Découverte 7j/7)
 
 ### 📂 Mon Fichier Dédié (Zéro Conflit Git avec Mathys) :
-👉 [`public/js/views/ExploreView.js`](file:///Users/albandegermay/.gemini/antigravity/scratch/campushare/public/js/views/ExploreView.js)
+👉 [`public/js/views/ExploreView.js`](public/js/views/ExploreView.js)
 
 ### 📋 Mes Tâches Unitaires Actives (Phase 2 du BOARD.md) :
 1. **`MT-2.1.1.1`** : Sélecteur dynamique de période de location (24h semaine, week-end, semaine entière).

@@ -7,7 +7,9 @@ Développer pas à pas la Progressive Web App (PWA) **CampuShare** pour Alban (2
 
 ## 🏛️ Architecture & Organisation des Fichiers
 Le projet est une PWA modulaire pure Vanilla JS / React (sans build step lourd) :
-* `public/index.html` : Point d'entrée PWA avec balises de cache-busting `?v=...`
+* `public/index.html` : Point d'entrée PWA (React production + Lucide, versions figées)
+* `public/js/loader.js` : Charge les fichiers JSX dans l'ordre et garde leur version compilée en cache (Babel téléchargé seulement si un fichier a changé). **Nouveau fichier JS → l'ajouter à `SOURCES` dans `loader.js` et à `APP_SHELL` dans `sw.js`.**
+* `public/sw.js` : Service worker hors ligne (incrémenter `CACHE_VERSION` quand les fichiers de l'app changent)
 * `public/js/app.js` : Orchestrateur principal & routeur d'onglets
 * `public/js/data/mockData.js` : Contrat de données partagé (utilisateurs, catégories, objets, réservations)
 * `public/js/components/` : Composants partagés (`CampusHeader.js`, `BottomNav.js`, `StudioBar.js`)
@@ -31,7 +33,7 @@ Le projet est une PWA modulaire pure Vanilla JS / React (sans build step lourd) 
 ## 🧪 Commandes & Lancement
 * **Lancer le serveur local :** `python3 -m http.server 3000 --directory public`
 * **Vérifier l'intégrité de la syntaxe JS :**
-  `python3 -c "import glob; [assert open(f).read().count('(') == open(f).read().count(')') and open(f).read().count('{') == open(f).read().count('}') for f in glob.glob('public/js/**/*.js')]; print('Syntaxe 100% OK')"`
+  `python3 -c "import glob,sys; bad=[f for f in glob.glob('public/js/**/*.js',recursive=True)+['public/sw.js'] if any((t:=open(f,encoding='utf-8').read()).count(a)!=t.count(b) for a,b in ('()','{}','[]'))]; print('KO :',bad) if bad else print('Syntaxe 100% OK'); sys.exit(bool(bad))"`
 
 ---
 
