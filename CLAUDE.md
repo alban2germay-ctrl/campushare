@@ -12,7 +12,9 @@ Le projet est une PWA modulaire pure Vanilla JS / React (sans build step lourd) 
 * `public/sw.js` : Service worker hors ligne (`APP_SHELL` et `CACHE_VERSION` mis à jour automatiquement)
 * `outils/sync_app.py` : lancé par `collab.sh save` / `collab.ps1 save` → vérifie la syntaxe (bloque l'envoi si erreur), puis met à jour `SOURCES`, `APP_SHELL`, `CACHE_VERSION` et le `?v=` de `loader.js`. Lancement manuel : `python3 outils/sync_app.py`
 * `public/js/app.js` : Orchestrateur principal & routeur d'onglets
-* `public/js/data/mockData.js` : Contrat de données partagé (utilisateurs, catégories, objets, réservations)
+* `public/js/data/mockData.js` : Contrat de données partagé (utilisateurs, catégories, objets avec `ownerId`, réservations avec `renterId`/`ownerId`/`status`)
+* `public/js/data/actions.js` : Règles du prêt (`window.CS.actions` : `requestBooking`, `acceptBooking`, `declineBooking`, `advanceBooking`, `addItem`, `removeItem`). Chaque action déclenche `cs:change` → l'app se redessine. **Ne jamais modifier une réservation ou un objet sans passer par là.**
+* `public/js/data/format.js` : `window.CS.formatPrice(6)` → « 6,00 € »
 * `public/js/components/` : Composants partagés (`CampusHeader.js`, `BottomNav.js`, `StudioBar.js`)
 * `public/js/views/` :
   - `ExploreView.js` : Chantier A d'Alban (Moteur Emprunteur & Recherche 7j/7)

@@ -177,3 +177,31 @@ Ce journal consigne les discussions et arbitrages collégiaux entre les directeu
 
 #### 4. Point ouvert pour Mathys :
 * Connecté en Alban, « Mes Objets » liste encore les objets et demandes de démo de Mathys (raclette, perceuse). Faut-il filtrer par propriétaire (`item.owner`) ? C'est son chantier : à lui de trancher.
+
+---
+
+### 🎙️ Session n°9 — Application réellement fonctionnelle : le circuit complet du prêt (12 octobre 2026)
+
+#### 1. Directive d'Alban :
+* *« Je te laisse faire les modifs côté Mathys pour vraiment avancer sur sa partie, je veux que l'application soit fonctionnelle. »*
+
+#### 2. Constat (@agent-architect) — les deux côtés ne se parlaient pas :
+* Une réservation dans Explorer était confirmée d'office : le propriétaire ne recevait **jamais** de demande.
+* Les demandes reçues (Thomas, Léa) étaient écrites en dur dans `ItemsView.js` ; les accepter créait un billet qui apparaissait… dans les Locations d'Alban.
+* « Mes Objets » = toujours les objets de Mathys ; un objet déposé appartenait toujours à Mathys, quel que soit l'utilisateur connecté.
+* Locations affichait toutes les réservations, quel que soit l'utilisateur ; les gains n'arrivaient jamais dans la cagnotte.
+
+#### 3. Arbitrage :
+* **@agent-architect :** une seule source de vérité. Nouveau fichier commun `public/js/data/actions.js` qui porte le circuit :
+  `pending` (demande) → `confirmed` (acceptée, QR débloqué) ou `declined` → `in_progress` (retrait validé) → `completed` (retour, **cagnotte du propriétaire créditée**). Chaque action émet `cs:change` : `app.js` redessine tous les écrans immédiatement.
+* **@agent-architect :** `mockData.js` : `ownerId` sur chaque objet, `renterId`/`ownerId`/`itemId` sur chaque réservation. Les demandes de Thomas et Léa (objets de Mathys) et une nouvelle demande de Hugo (enceinte JBL d'Alban) sont de vraies réservations `pending`. `store.js` : schéma v2 (les anciennes sauvegardes sont remises à zéro automatiquement), `ownerDashboard` supprimé (les gains sont recalculés).
+* **@agent-renter (Explorer) :** « Demander à Mathys (6,00 €) » crée une vraie demande ; fenêtre « 📨 Demande envoyée ». Impossible d'emprunter son propre objet. Les objets de camarades **sans compte** (Camille, Lucas : données de démo) sont acceptés automatiquement pour que le parcours reste testable seul.
+* **@agent-trust (Locations) :** chacun ne voit que **ses** emprunts. Nouveaux états « ⏳ En attente de Mathys » (sans QR) et « Refusée » (historique, « rien n'a été débité »).
+* **@agent-owner — ⚠️ `ItemsView.js` (mandat explicite d'Alban) :** l'interface de Mathys est conservée, mais branchée sur les vraies données : demandes réelles, objets de l'utilisateur connecté avec statut réel (Disponible / Demande reçue / Réservé / Chez X), bouton **Retirer** (bloqué si l'objet est réservé ou prêté), gains encaissés + « à venir », nouveau champ « Accessoires inclus » (→ checklist du retrait), photo réduite à 600 px (une photo de téléphone brute saturait la sauvegarde : 1,4 Mo → 96 Ko mesuré).
+
+#### 4. Vérifié dans le navigateur (scénario complet en changeant de profil) :
+* Alban demande la raclette → Mathys la voit (« à l'instant ») → accepte → Alban a son QR → checklist → récupère (la raclette passe « Chez Alban D. » chez Mathys) → rend → **cagnotte de Mathys 18 € → 24 €**, gains 12 € → 18 €.
+* Mathys dépose un objet → Alban le voit dans Explorer avec les bons accessoires ; Mathys ne peut pas l'emprunter lui-même ; refus de Thomas ; retrait d'objet (refusé pour un objet réservé) ; tout est conservé après rechargement.
+
+#### 5. Limite connue :
+* Les données vivent dans le navigateur : la démo se fait sur **un seul appareil** en changeant de profil (sélecteur en haut sur ordi). Pour que deux vrais téléphones se parlent, il faudra une base de données en ligne (prochaine grande étape).

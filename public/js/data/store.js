@@ -11,8 +11,8 @@
 
 (function () {
   const STORAGE_KEY = 'campushare:data';
-  const SCHEMA_VERSION = 1; // ⚠️ Incrémenter si la forme de mockData.js change
-  const PERSISTED_KEYS = ['users', 'items', 'bookings', 'ownerDashboard'];
+  const SCHEMA_VERSION = 2; // ⚠️ Incrémenter si la forme de mockData.js change
+  const PERSISTED_KEYS = ['users', 'items', 'bookings'];
   const SAVE_INTERVAL_MS = 1000;
 
   const data = window.CS.data;

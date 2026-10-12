@@ -16,6 +16,7 @@
     'js/data/mockData.js',
     'js/data/store.js',
     'js/data/format.js',
+    'js/data/actions.js',
     'js/components/StudioBar.js',
     'js/components/CampusHeader.js',
     'js/components/BottomNav.js',

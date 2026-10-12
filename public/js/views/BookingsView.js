@@ -8,7 +8,7 @@
 window.CS = window.CS || {};
 window.CS.views = window.CS.views || {};
 
-window.CS.views.BookingsView = function BookingsView() {
+window.CS.views.BookingsView = function BookingsView({ currentUser, activeUserData }) {
   const { useState, useEffect } = React;
 
   // 1. ÉTAT DES SOUS-ONGLETS : "En cours (Actives)" vs "Historique (Terminées)"
@@ -89,6 +89,8 @@ window.CS.views.BookingsView = function BookingsView() {
       ];
 
     const isCompleted = booking.status === 'completed' || booking.step >= 4;
+    const isPending = booking.status === 'pending';
+    const isDeclined = booking.status === 'declined';
 
     return {
       ...booking,
@@ -99,7 +101,9 @@ window.CS.views.BookingsView = function BookingsView() {
       ownerAvatar,
       ownerPhone,
       accessories,
-      isCompleted
+      isCompleted,
+      isPending,
+      isDeclined
     };
   };
 
@@ -133,25 +137,9 @@ window.CS.views.BookingsView = function BookingsView() {
 
   // Avancement de l'étape du prêt
   const advanceBookingStep = (bookingId) => {
-    const updated = bookingsList.map((b) => {
-      if (b.id === bookingId) {
-        const currentStep = b.step || 2;
-        if (currentStep <= 2) {
-          return { ...b, step: 3, status: 'in_progress' };
-        } else if (currentStep === 3) {
-          return {
-            ...b,
-            step: 4,
-            status: 'completed',
-            returnedAt: "Aujourd'hui à " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            depositReleased: true
-          };
-        }
-      }
-      return b;
-    });
-
-    window.CS.data.bookings = updated;
+    // Règles communes (js/data/actions.js) : au retour, le propriétaire est payé
+    window.CS.actions.advanceBooking(bookingId);
+    const updated = [...window.CS.data.bookings];
     setBookingsList(updated);
 
     // La checklist sera refaite au moment du retour
@@ -263,9 +251,13 @@ window.CS.views.BookingsView = function BookingsView() {
     );
   };
 
-  const normalized = bookingsList.map(normalizeBooking);
-  const activeBookings = normalized.filter((b) => !b.isCompleted);
-  const historyBookings = normalized.filter((b) => b.isCompleted);
+  // Seulement MES emprunts (les prêts de mes objets sont dans « Mes Objets »)
+  const myId = activeUserData && activeUserData.id;
+  const normalized = bookingsList
+    .filter((b) => !b.renterId || b.renterId === myId)
+    .map(normalizeBooking);
+  const activeBookings = normalized.filter((b) => !b.isCompleted && !b.isDeclined);
+  const historyBookings = normalized.filter((b) => b.isCompleted || b.isDeclined);
   const displayedBookings = subTab === 'active' ? activeBookings : historyBookings;
 
   return (
@@ -345,7 +337,15 @@ window.CS.views.BookingsView = function BookingsView() {
                 <span className="font-mono text-[10px] font-bold text-[#8C8275] bg-[#FAF8F5] px-2 py-0.5 rounded-lg border border-[#EAE2D5]">
                   {booking.bookingRef}
                 </span>
-                {isDone ? (
+                {booking.isDeclined ? (
+                  <span className="text-[10px] font-bold text-[#8C8275] bg-[#F4EFE6] px-2 py-0.5 rounded-full border border-[#EAE2D5]">
+                    Refusée
+                  </span>
+                ) : booking.isPending ? (
+                  <span className="text-[10px] font-bold text-[#8C8275] bg-[#FAF8F5] px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#EAE2D5]">
+                    ⏳ En attente de {booking.ownerName.split(' ')[0]}
+                  </span>
+                ) : isDone ? (
                   <span className="text-[10px] font-bold text-[#52796F] bg-[#E8F1EE] px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#52796F]/20">
                     ✓ Caution 0€ levée
                   </span>
@@ -380,26 +380,36 @@ window.CS.views.BookingsView = function BookingsView() {
               </div>
 
               {/* Stepper horizontal épuré (MT-4.1.1.3) */}
+              {!booking.isDeclined && (
               <div className="space-y-1">
                 <div className="flex justify-between text-[9px] font-bold text-[#8C8275]">
                   <span>Progression</span>
                   <span className="text-[#52796F]">
-                    {isDone ? 'Terminé (4/4)' : booking.step === 3 ? 'En usage (3/4)' : 'Retrait en attente (2/4)'}
+                    {isDone ? 'Terminé (4/4)' : booking.step === 3 ? 'En usage (3/4)' : booking.isPending ? 'Demande envoyée (1/4)' : 'Retrait en attente (2/4)'}
                   </span>
                 </div>
                 <div className="w-full bg-[#FAF8F5] h-1.5 rounded-full overflow-hidden border border-[#EAE2D5]">
                   <div
                     className="bg-[#52796F] h-full transition-all duration-300 rounded-full"
                     style={{
-                      width: isDone ? '100%' : booking.step === 3 ? '75%' : '50%'
+                      width: isDone ? '100%' : booking.step === 3 ? '75%' : booking.isPending ? '25%' : '50%'
                     }}
                   ></div>
                 </div>
               </div>
+              )}
 
               {/* Actions & Boutons (MT-4.1.1.5, MT-4.1.1.7) */}
               <div className="pt-1 space-y-1.5">
-                {!isDone ? (
+                {booking.isPending ? (
+                  <div className="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#EAE2D5] text-[11px] text-[#6B6358] text-center">
+                    {booking.ownerName.split(' ')[0]} doit accepter ta demande. Ton QR de retrait apparaîtra ici.
+                  </div>
+                ) : booking.isDeclined ? (
+                  <div className="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#EAE2D5] text-[11px] text-[#6B6358] text-center">
+                    {booking.ownerName.split(' ')[0]} n'est pas dispo sur ce créneau. Rien n'a été débité : essaie un autre objet dans Explorer.
+                  </div>
+                ) : !isDone ? (
                   <div className="flex gap-2">
                     <button
                       onClick={() => openQrModal(booking)}

@@ -38,5 +38,17 @@ Tu peux coder dans ce fichier en toute indépendance ! Alban travaille dans son 
 
 ---
 
+## 🆕 Ce qui a changé dans `ItemsView.js` (12 octobre 2026, à la demande d'Alban)
+Ton écran est maintenant branché sur les vraies données, plus rien n'est simulé :
+* **Demandes reçues** = les vraies demandes faites dans Explorer sur tes objets. « Accepter » donne son QR à l'emprunteur, « Décliner » le prévient.
+* **Mes Objets** = les objets dont tu es propriétaire (celui ou celle connecté·e), avec leur statut réel : Disponible / Demande reçue / Réservé / Chez Thomas…, et un bouton **Retirer**.
+* **Gains** = encaissés quand l'objet est rendu (ta cagnotte est créditée), plus le montant « à venir ».
+* **Déposer** : nouveau champ « Accessoires inclus » (ils deviennent la checklist du retrait), photo réduite automatiquement à 600 px.
+* Les règles du prêt sont dans `public/js/data/actions.js` (fichier commun) : regarde-le pour comprendre le circuit complet.
+* Pour tester : sur ordi, utilise le sélecteur **Profil : Alban / Mathys** en haut, et **↺ Reset démo** pour repartir de zéro.
+* Détails et justification : session n°9 de `DELIBERATIONS_AGENTS.md`.
+
+---
+
 ## 💡 Tes Notes & Suggestions Libres
 * [Écris ici tout ce qui te passe par la tête : retours d'élèves de l'N7, idées de matos à prêter, etc.]

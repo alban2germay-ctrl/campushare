@@ -50,9 +50,11 @@ Pour éviter tout conflit Git et respecter le rythme d'apprentissage de chaque c
 1. **Le fichier `public/js/views/ItemsView.js` est 100% réservé à Mathys et à son agent.**
    * L'agent d'Alban ne doit **JAMAIS** écrire dans `ItemsView.js`.
    * Ce fichier reste une toile d'accueil accueillante pour que Mathys réalise lui-même ses micro-tâches (Phase 3 du `BOARD.md`).
+   * **Exception actée par Alban (12 octobre 2026, sessions 5, 8 et 9 de `DELIBERATIONS_AGENTS.md`) :** l'agent d'Alban a été autorisé à modifier `ItemsView.js` pour rendre l'application fonctionnelle. Chaque intervention y est consignée et résumée dans `ESPACE_MATHYS.md`.
 2. **Les fichiers `public/js/views/ExploreView.js` et `BookingsView.js` sont gérés par Alban et son agent.**
 3. **Le fichier `public/js/data/mockData.js` sert de contrat commun.**
    * Tout ajout de champ (ex: `bookingRef`, `pinCode`, `accessories`) doit être compatible avec les deux chantiers.
+4. **Le fichier `public/js/data/actions.js` contient les règles du prêt** (demande → acceptation/refus → retrait → retour → paiement). Toute vue qui modifie une réservation ou un objet passe par `window.CS.actions` au lieu d'écrire directement dans `window.CS.data`.
 
 ---
 

@@ -23,69 +23,70 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
     category: 'diy',
     estimatedValue: '', // Valeur d'achat / à neuf (€)
     pickupLocation: 'Foyer des élèves N7',
-    condition: 'Très bon état'
+    condition: 'Très bon état',
+    accessories: '' // Liste séparée par des virgules → checklist du retrait
   });
   const [photoPreview, setPhotoPreview] = useState(null);
   const [photoError, setPhotoError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const fileInputRef = useRef(null);
 
-  // 4. ÉTAT DES DEMANDES ENTRANTES (Initialisé avec une demande simulée pour le matériel de Mathys)
-  // 💾 Persistance : l'état du tableau de bord est stocké dans window.CS.data.ownerDashboard (sauvegardé par store.js)
-  const savedDashboard = (window.CS.data.ownerDashboard || {})[currentUser] || {};
-  const [pendingRequests, setPendingRequests] = useState(() => {
-    if (savedDashboard.pendingRequests) return savedDashboard.pendingRequests;
-    return [
-      {
-        id: 'req-001',
-        itemTitle: 'Perceuse sans fil Bosch 18V',
-        itemId: 'item-bosch',
-        renterName: 'Thomas P.',
-        renterPromo: '2A SN',
-        renterAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80',
-        periodLabel: 'Samedi 09h00 → Dimanche 18h00 (Week-end)',
-        durationDays: 2,
-        offeredEarnings: 9.00,
-        depositCoverage: 50.00,
-        pickupPlace: 'Foyer des élèves N7',
-        status: 'pending', // 'pending' | 'accepted' | 'declined'
-        createdAt: 'Il y a 12 min'
-      },
-      {
-        id: 'req-002',
-        itemTitle: 'Appareil à Raclette 8p Tefal',
-        itemId: 'item-raclette',
-        renterName: 'Léa M.',
-        renterPromo: '1A 3EA',
-        renterAvatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80',
-        periodLabel: 'Vendredi soir 19h00 → Samedi midi (24h)',
-        durationDays: 1,
-        offeredEarnings: 6.00,
-        depositCoverage: 40.00,
-        pickupPlace: 'Résidence étudiante R1',
-        status: 'pending',
-        createdAt: 'Il y a 45 min'
-      }
-    ];
-  });
+  // 4. DONNÉES RÉELLES PARTAGÉES (règles du prêt : js/data/actions.js)
+  // Tout est recalculé à chaque affichage depuis window.CS.data : une demande faite
+  // dans Explorer apparaît ici, et l'acceptation débloque le QR de l'emprunteur.
+  const myId = activeUserData.id;
+  const allBookings = window.CS.data.bookings || [];
 
-  // 5. SYNCHRONISATION LOCALE DES OBJETS DÉPOSÉS PAR MATHYS
-  const [ownerItems, setOwnerItems] = useState(() => {
-    const all = window.CS.data.items || [];
-    // Filtrer les objets appartenant à Mathys ou nouvellement ajoutés
-    return all.filter(it => it.owner && (it.owner.name.includes('Mathys') || it.ownerId === 'usr-mathys'));
-  });
+  // 5. MES OBJETS (ceux dont je suis propriétaire)
+  const ownerItems = (window.CS.data.items || []).filter((it) => it.ownerId === myId);
 
-  // 6. TOTAL DES GAINS CUMULÉS DU MATÉRIEL
-  const [totalEarnings, setTotalEarnings] = useState(
-    typeof savedDashboard.totalEarnings === 'number' ? savedDashboard.totalEarnings : 38.50
-  );
+  // Demandes reçues sur mes objets (en attente d'abord), au format affiché ci-dessous
+  const timeAgo = (ts) => {
+    if (!ts) return 'récemment';
+    const min = Math.round((Date.now() - ts) / 60000);
+    if (min < 1) return "à l'instant";
+    if (min < 60) return `il y a ${min} min`;
+    const h = Math.round(min / 60);
+    return h < 24 ? `il y a ${h} h` : `il y a ${Math.round(h / 24)} j`;
+  };
+  const statusOrder = { pending: 0, confirmed: 1, in_progress: 2, declined: 3 };
+  const pendingRequests = allBookings
+    .filter((b) => b.ownerId === myId && b.status !== 'completed')
+    .sort((a, b) => statusOrder[a.status] - statusOrder[b.status])
+    .map((b) => ({
+      id: b.id,
+      itemTitle: b.itemTitle,
+      renterName: b.renterName,
+      renterPromo: b.renterPromo,
+      renterAvatar: b.renterAvatar,
+      periodLabel: b.periodLabel,
+      offeredEarnings: Number(b.itemPrice),
+      depositCoverage: b.depositAmount,
+      pickupPlace: b.pickupLocation,
+      status: b.status === 'pending' ? 'pending' : b.status === 'declined' ? 'declined' : 'accepted',
+      step: b.step,
+      createdAt: timeAgo(b.createdAt)
+    }));
 
-  // 💾 Recopie des demandes et des gains dans les données partagées à chaque changement
-  useEffect(() => {
-    window.CS.data.ownerDashboard = window.CS.data.ownerDashboard || {};
-    window.CS.data.ownerDashboard[currentUser] = { pendingRequests, totalEarnings };
-  }, [pendingRequests, totalEarnings, currentUser]);
+  // 6. GAINS : encaissés au retour de l'objet, « à venir » pour les prêts acceptés
+  const sumPrices = (list) => Math.round(list.reduce((t, b) => t + Number(b.itemPrice || 0), 0) * 100) / 100;
+  const totalEarnings = sumPrices(allBookings.filter((b) => b.ownerId === myId && b.status === 'completed'));
+  const upcomingEarnings = sumPrices(allBookings.filter((b) => b.ownerId === myId && (b.status === 'confirmed' || b.status === 'in_progress')));
+
+  // Statut affiché sur chaque objet
+  const itemStatus = (item) => {
+    const active = window.CS.actions.activeBookingForItem(item.id);
+    if (active && active.status === 'in_progress') return { label: `Chez ${active.renterName}`, tone: 'orange' };
+    if (active) return { label: 'Réservé', tone: 'orange' };
+    if (allBookings.some((b) => b.itemId === item.id && b.status === 'pending')) return { label: 'Demande reçue', tone: 'orange' };
+    return { label: 'Disponible', tone: 'green' };
+  };
+
+  const handleRemoveItem = (item) => {
+    if (!window.confirm(`Retirer « ${item.title} » du catalogue ?`)) return;
+    if (window.CS.actions.removeItem(item.id)) showToast('Objet retiré du catalogue.');
+    else showToast("⚠️ Impossible : l'objet est réservé ou prêté en ce moment.");
+  };
 
   // Message toast pour actions rapides (Accepté, Refusé, Ajouté)
   const [toastMessage, setToastMessage] = useState(null);
@@ -126,9 +127,21 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
         return;
       }
       setPhotoError(null);
+      // Photo réduite (600 px max, JPEG) : une photo de téléphone brute (3-5 Mo)
+      // saturerait la sauvegarde du navigateur
       const reader = new FileReader();
       reader.onload = (event) => {
-        setPhotoPreview(event.target.result);
+        const img = new Image();
+        img.onload = () => {
+          const scale = Math.min(1, 600 / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          setPhotoPreview(canvas.toDataURL('image/jpeg', 0.75));
+        };
+        img.onerror = () => setPhotoError('Image illisible, essayez une autre photo.');
+        img.src = event.target.result;
       };
       reader.readAsDataURL(file);
     }
@@ -152,41 +165,26 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
       kitchen: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80'
     };
 
-    const newItem = {
-      id: 'item-' + Date.now(),
-      title: formData.title,
+    const category = (window.CS.data.categories || []).find((c) => c.id === formData.category);
+    const accessories = formData.accessories.split(',').map((a) => a.trim()).filter(Boolean);
+
+    // Publié au nom de l'utilisateur connecté, visible tout de suite dans Explorer
+    window.CS.actions.addItem({
+      title: formData.title.trim(),
       category: formData.category,
-      categoryLabel: formData.category === 'diy' ? 'Bricolage' : formData.category === 'party' ? 'Soirée' : formData.category === 'outdoor' ? 'Montagne' : 'Convivialité',
+      categoryLabel: category ? category.label : 'Bricolage & Déménagement',
       pricing: {
         perDay: pricing.perDay,
         weekendPackage: pricing.weekend,
         weeklyPackage: Math.round(pricing.weekend * 1.8)
       },
       depositAmount: pricing.deposit,
-      minDuration: '24h',
-      ownerId: 'usr-mathys',
-      owner: {
-        name: 'Mathys D.',
-        promo: '2A 3EA',
-        school: 'Toulouse INP • ENSEEIHT',
-        avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=120&q=80',
-        rating: 5.0,
-        reviewsCount: 1
-      },
       image: photoPreview || defaultImages[formData.category] || defaultImages.diy,
-      status: 'available',
       pickupLocation: formData.pickupLocation,
       condition: formData.condition,
-      includedAccessories: ['Accessoires complets fournis par Mathys', 'Câblage / housse de protection d\'origine'],
-      specs: ['Matériel vérifié fonctionnel', 'Contrôle avant passation campus'],
-      reviews: []
-    };
-
-    // Injecter dans les données globales partagées window.CS.data.items pour synchroniser ExploreView
-    window.CS.data.items = [newItem, ...(window.CS.data.items || [])];
-
-    // Mettre à jour l'état local
-    setOwnerItems(prev => [newItem, ...prev]);
+      includedAccessories: accessories.length ? accessories : ['Objet complet, comme sur la photo'],
+      specs: ['Matériel vérifié fonctionnel']
+    }, activeUserData);
 
     // Notification et réinitialisation rapide
     setSubmitSuccess(true);
@@ -200,61 +198,23 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
         category: 'diy',
         estimatedValue: '',
         pickupLocation: 'Foyer des élèves N7',
-        condition: 'Très bon état'
+        condition: 'Très bon état',
+        accessories: ''
       });
       setPhotoPreview(null);
     }, 1200);
   };
 
-  // ✅ ACCEPTATION D'UNE DEMANDE EN 1 CLIC (MT-3.2.1.3 & MT-3.2.1.5)
+  // ✅ ACCEPTATION D'UNE DEMANDE EN 1 CLIC (MT-3.2.1.3) → l'emprunteur reçoit son QR
   const handleAcceptRequest = (request) => {
-    // 1. Mettre à jour la liste des demandes
-    setPendingRequests(prev => prev.map(req => {
-      if (req.id === request.id) {
-        return { ...req, status: 'accepted' };
-      }
-      return req;
-    }));
-
-    // 2. Créditer les gains du matériel dans la cagnotte
-    setTotalEarnings(prev => Number((prev + request.offeredEarnings).toFixed(2)));
-
-    // 3. Créer automatiquement une réservation confirmée dans window.CS.data.bookings
-    const newBooking = {
-      id: 'book-' + Date.now(),
-      bookingRef: 'CS-N7-' + Math.floor(1000 + Math.random() * 9000),
-      itemTitle: request.itemTitle,
-      itemCategory: 'Matériel Prêté',
-      itemPrice: request.offeredEarnings,
-      depositAmount: request.depositCoverage,
-      periodLabel: request.periodLabel,
-      type: 'Confirmé campus',
-      pickupLocation: request.pickupPlace,
-      status: 'confirmed',
-      step: 2, // Retrait & Check-in
-      pinCode: String(Math.floor(1000 + Math.random() * 9000)),
-      renterName: request.renterName,
-      ownerName: 'Mathys D.',
-      ownerPromo: '2A 3EA (Électronique/Énergie)',
-      ownerAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=120&q=80',
-      ownerPhone: '06 42 78 91 23',
-      accessories: ['Matériel complet prêté par Mathys', 'Cordon & accessoires vérifiés']
-    };
-
-    window.CS.data.bookings = [newBooking, ...(window.CS.data.bookings || [])];
-
-    showToast(`✅ Demande de ${request.renterName} acceptée ! (+${window.CS.formatPrice(request.offeredEarnings)} crédités)`);
+    window.CS.actions.acceptBooking(request.id);
+    showToast(`✅ Acceptée ! ${request.renterName} reçoit son QR de retrait.`);
   };
 
   // ❌ REFUS POLI SANS BLOCAGE (MT-3.2.1.4)
   const handleDeclineRequest = (request) => {
-    setPendingRequests(prev => prev.map(req => {
-      if (req.id === request.id) {
-        return { ...req, status: 'declined' };
-      }
-      return req;
-    }));
-    showToast(`Demande de ${request.renterName} déclinée poliment. Matériel libéré.`);
+    window.CS.actions.declineBooking(request.id);
+    showToast(`Demande de ${request.renterName} déclinée. Rien n'est débité.`);
   };
 
   const pendingCount = pendingRequests.filter(r => r.status === 'pending').length;
@@ -286,7 +246,7 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
             <div>
               <div className="flex items-center gap-1.5">
                 <h3 className="font-extrabold text-sm text-[#2C2720]">Espace Propriétaire</h3>
-                <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-[#D87D4A]/10 text-[#D87D4A] border border-[#D87D4A]/20">
+                <span className="px-1.5 py-0.5 rounded-full whitespace-nowrap text-[9px] font-black uppercase tracking-wider bg-[#D87D4A]/10 text-[#D87D4A] border border-[#D87D4A]/20">
                   {activeUserData.name.split(' ')[0]} • {activeUserData.promo.split(' ')[1]}
                 </span>
               </div>
@@ -311,9 +271,11 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
               <i data-lucide="piggy-bank" className="w-3.5 h-3.5 text-[#52796F]"></i>
               <span>Gains générés par votre matériel</span>
             </div>
-            <div className="flex items-baseline gap-1 mt-0.5">
-              <span className="text-xl font-black text-[#52796F]">{window.CS.formatPrice(totalEarnings)}</span>
-              <span className="text-[10px] text-[#8C8275] font-medium">• solde sécurisé</span>
+            <div className="mt-0.5">
+              <span className="text-xl font-black text-[#52796F] whitespace-nowrap">{window.CS.formatPrice(totalEarnings)}</span>
+              <span className="block text-[10px] text-[#8C8275] font-medium">
+                {upcomingEarnings > 0 ? `+${window.CS.formatPrice(upcomingEarnings)} à venir` : 'Versés au retour des objets'}
+              </span>
             </div>
           </div>
           <div className="text-right">
@@ -396,10 +358,19 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
                       <h5 className="font-extrabold text-xs text-[#2C2720] truncate">
                         {item.title}
                       </h5>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#E8F1EE] text-[#52796F] border border-[#52796F]/20 flex-shrink-0">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#52796F]"></span>
-                        Disponible
-                      </span>
+                      {(() => {
+                        const st = itemStatus(item);
+                        return (
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold flex-shrink-0 border ${
+                            st.tone === 'green'
+                              ? 'bg-[#E8F1EE] text-[#52796F] border-[#52796F]/20'
+                              : 'bg-[#FFF3EB] text-[#D87D4A] border-[#D87D4A]/20'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${st.tone === 'green' ? 'bg-[#52796F]' : 'bg-[#D87D4A]'}`}></span>
+                            {st.label}
+                          </span>
+                        );
+                      })()}
                     </div>
 
                     <div className="flex items-center gap-2 mt-1 text-[11px] text-[#6B6358]">
@@ -409,9 +380,17 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
                       <span>Caution : {item.depositAmount || 40} €</span>
                     </div>
 
-                    <div className="flex items-center gap-1.5 mt-1 text-[10px] text-[#8C8275] truncate">
-                      <i data-lucide="map-pin" className="w-3 h-3 text-[#D87D4A] flex-shrink-0"></i>
-                      <span className="truncate">{item.pickupLocation || 'Foyer N7'}</span>
+                    <div className="flex items-center justify-between gap-2 mt-1 text-[10px] text-[#8C8275]">
+                      <span className="flex items-center gap-1.5 min-w-0">
+                        <i data-lucide="map-pin" className="w-3 h-3 text-[#D87D4A] flex-shrink-0"></i>
+                        <span className="truncate">{item.pickupLocation || 'Foyer N7'}</span>
+                      </span>
+                      <button
+                        onClick={() => handleRemoveItem(item)}
+                        className="flex-shrink-0 px-2 py-0.5 rounded-lg text-[10px] font-bold text-[#8C8275] hover:text-[#D87D4A] border border-[#EAE2D5]"
+                      >
+                        Retirer
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -513,13 +492,15 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
                   <div className="p-2.5 rounded-xl bg-[#E8F1EE] text-[#52796F] font-bold text-xs flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
                       <i data-lucide="check-circle-2" className="w-4 h-4"></i>
-                      Prêt confirmé & billet généré
+                      {req.step === 3 ? `Objet chez ${req.renterName.split(' ')[0]}` : 'Acceptée • retrait à venir'}
                     </span>
-                    <span className="text-[10px] underline">Voir dans Locations</span>
+                    <span className="text-[10px] font-semibold">
+                      {req.step === 3 ? 'Payé au retour' : `${req.renterName.split(' ')[0]} a son QR`}
+                    </span>
                   </div>
                 ) : (
                   <div className="p-2 rounded-xl bg-gray-100 text-[#8C8275] text-[11px] font-semibold text-center">
-                    Demande déclinée poliment
+                    Demande déclinée • rien n'a été débité
                   </div>
                 )}
               </div>
@@ -621,6 +602,20 @@ window.CS.views.ItemsView = function ItemsView({ activeUserData, currentUser }) 
                   placeholder="Ex : Appareil à Raclette, Enceinte JBL, Tente..."
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="w-full p-2.5 rounded-xl bg-[#FAF8F5] border border-[#EAE2D5] focus:outline-none focus:ring-2 focus:ring-[#D87D4A] text-xs font-semibold text-[#2C2720]"
+                />
+              </div>
+
+              {/* CHAMP 2 bis : ACCESSOIRES → checklist cochée au retrait et au retour */}
+              <div>
+                <label className="block font-bold text-[#2C2720] mb-1">
+                  Accessoires inclus <span className="font-medium text-[#8C8275]">(séparés par des virgules)</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex : chargeur, 2 batteries, mallette"
+                  value={formData.accessories}
+                  onChange={(e) => setFormData({ ...formData, accessories: e.target.value })}
                   className="w-full p-2.5 rounded-xl bg-[#FAF8F5] border border-[#EAE2D5] focus:outline-none focus:ring-2 focus:ring-[#D87D4A] text-xs font-semibold text-[#2C2720]"
                 />
               </div>

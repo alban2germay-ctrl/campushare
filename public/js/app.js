@@ -11,6 +11,13 @@ function App() {
   const [currentUser, setCurrentUser] = useState('alban'); // 'alban' ou 'mathys'
   const [userRole, setUserRole] = useState('renter'); // 'renter' (Emprunteur) ou 'owner' (Propriétaire)
   const [activeNotification, setActiveNotification] = useState(true);
+  // Redessine toute l'app dès qu'une action modifie les données (demande, acceptation, retour…)
+  const [dataVersion, setDataVersion] = useState(0);
+  useEffect(() => {
+    const onChange = () => setDataVersion((v) => v + 1);
+    window.addEventListener('cs:change', onChange);
+    return () => window.removeEventListener('cs:change', onChange);
+  }, []);
 
   const users = window.CS.data.users;
   const activeUserData = users[currentUser];
@@ -19,7 +26,7 @@ function App() {
     if (window.lucide) {
       window.lucide.createIcons();
     }
-  }, [currentTab, deviceMode, currentUser, userRole, activeNotification]);
+  }, [currentTab, deviceMode, currentUser, userRole, activeNotification, dataVersion]);
 
   // Calcul des largeurs selon le mode choisi par les directeurs
   const getDeviceContainerClass = () => {
@@ -91,7 +98,7 @@ function App() {
             />
           )}
           {currentTab === 'items' && <ItemsView activeUserData={activeUserData} currentUser={currentUser} />}
-          {currentTab === 'bookings' && <BookingsView />}
+          {currentTab === 'bookings' && <BookingsView currentUser={currentUser} activeUserData={activeUserData} />}
           {currentTab === 'profile' && <ProfileView activeUserData={activeUserData} currentUser={currentUser} />}
         </main>
 

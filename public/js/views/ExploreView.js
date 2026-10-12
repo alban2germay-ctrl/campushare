@@ -25,6 +25,7 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
   const [pickupSpot, setPickupSpot] = React.useState('Foyer des élèves N7');
 
   const categories = window.CS.data.categories || [];
+  const isOwnItem = !!activeModalItem && !!activeUserData && activeModalItem.ownerId === activeUserData.id;
   const items = window.CS.data.items || [];
 
   // Actualiser les icônes Lucide
@@ -127,18 +128,20 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
         <div className="fixed inset-0 !mt-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
           <div className="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl border border-[#EAE2D5] text-center space-y-3.5">
             <div className="w-14 h-14 rounded-full bg-[#E6EFE6] text-[#52796F] flex items-center justify-center text-2xl mx-auto shadow-xs">
-              🎉
+              {bookingSuccess.isPending ? '📨' : '🎉'}
             </div>
 
             <div>
               <span className="px-2.5 py-0.5 rounded-full bg-[#E6EFE6] text-[#354F48] text-[9px] font-extrabold uppercase tracking-wide">
-                Réservation Confirmée
+                {bookingSuccess.isPending ? `Demande envoyée à ${bookingSuccess.ownerName.split(' ')[0]}` : 'Réservation confirmée'}
               </span>
               <h3 className="font-extrabold text-base text-[#2C2720] mt-1.5 leading-snug">
                 {bookingSuccess.title}
               </h3>
               <p className="text-xs text-[#6B6358] mt-0.5">
-                Prêté par <strong>{bookingSuccess.ownerName}</strong>
+                {bookingSuccess.isPending
+                  ? <>Ton QR de retrait apparaîtra dès que <strong>{bookingSuccess.ownerName}</strong> accepte.</>
+                  : <>Prêté par <strong>{bookingSuccess.ownerName}</strong></>}
               </p>
             </div>
 
@@ -175,7 +178,7 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
                 }}
                 className="w-full py-3 rounded-2xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-md flex items-center justify-center gap-2 active:scale-[0.98]"
               >
-                <span>👉 Voir mon Billet & QR Code de retrait</span>
+                <span>{bookingSuccess.isPending ? '👉 Suivre ma demande' : '👉 Voir mon QR de retrait'}</span>
               </button>
 
               <button
@@ -480,7 +483,7 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
         )}
       </div>
 
-      {/* 6. FICHE PRODUIT ÉPURÉE & RÉSERVATION 1-CLIC */}
+      {/* 6. FICHE PRODUIT ÉPURÉE & DEMANDE 1-CLIC */}
       {activeModalItem && (
         <div className="fixed inset-0 !mt-0 z-50 bg-black/50 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
           <div className="w-full max-w-sm max-h-[92%] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#EAE2D5] overflow-hidden flex flex-col">
@@ -588,43 +591,36 @@ window.CS.views.ExploreView = function ExploreView({ onNavigateTab, activeUserDa
               <button
                 onClick={() => {
                   const confirmedItem = activeModalItem;
-                  const cost = calculateItemPrice(confirmedItem);
-                  const newBookingRef = `CS-N7-2026-${Math.floor(100 + Math.random() * 900)}`;
-                  const newPinCode = `${Math.floor(1000 + Math.random() * 9000)}`;
-                  const renterFullName = activeUserData?.name || (currentUser === 'mathys' ? 'Mathys D.' : 'Alban D.');
-                  window.CS.data.bookings.unshift({
-                    id: `book-${Date.now()}`,
-                    bookingRef: newBookingRef,
-                    itemTitle: confirmedItem.title,
-                    itemCategory: confirmedItem.categoryLabel,
-                    itemPrice: cost,
-                    depositAmount: confirmedItem.depositAmount,
+                  // Demande envoyée au propriétaire (règles communes : js/data/actions.js)
+                  const booking = window.CS.actions.requestBooking({
+                    item: confirmedItem,
+                    renter: activeUserData,
+                    price: calculateItemPrice(confirmedItem),
                     periodLabel: periodInfo.dates,
-                    type: periodInfo.tag,
-                    pickupLocation: pickupSpot,
-                    status: 'confirmed',
-                    step: 2, // Immédiatement prêt pour le Retrait & Check-in QR
-                    pinCode: newPinCode,
-                    renterName: renterFullName,
-                    ownerName: confirmedItem.owner.name,
-                    ownerPromo: confirmedItem.owner.promo || '2A ENSEEIHT',
-                    ownerAvatar: confirmedItem.owner.avatar,
-                    ownerPhone: '06 42 78 91 23',
-                    accessories: confirmedItem.includedAccessories || ['Accessoire officiel vérifié']
+                    periodTag: periodInfo.tag,
+                    pickupLocation: pickupSpot
                   });
                   setBookingSuccess({
                     title: confirmedItem.title,
                     dates: periodInfo.dates,
                     spot: pickupSpot,
-                    bookingRef: newBookingRef,
-                    ownerName: confirmedItem.owner.name
+                    bookingRef: booking.bookingRef,
+                    ownerName: confirmedItem.owner.name,
+                    isPending: booking.status === 'pending'
                   });
                   setActiveModalItem(null);
                 }}
-                className="w-full py-3 rounded-2xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-md flex items-center justify-center gap-2 active:scale-[0.98]"
+                disabled={isOwnItem}
+                className="w-full py-3 rounded-2xl bg-[#52796F] text-white text-xs font-bold hover:bg-[#43665D] transition shadow-md flex items-center justify-center gap-2 active:scale-[0.98] disabled:bg-[#EAE2D5] disabled:text-[#8C8275] disabled:shadow-none disabled:pointer-events-none"
               >
-                <span>Confirmer l'emprunt ({window.CS.formatPrice(calculateItemPrice(activeModalItem))})</span>
-                <i data-lucide="arrow-right" className="w-3.5 h-3.5"></i>
+                {isOwnItem ? (
+                  <span>C'est ton objet : gère-le dans « Mes Objets »</span>
+                ) : (
+                  <>
+                    <span>Demander à {activeModalItem.owner.name.split(' ')[0]} ({window.CS.formatPrice(calculateItemPrice(activeModalItem))})</span>
+                    <i data-lucide="arrow-right" className="w-3.5 h-3.5"></i>
+                  </>
+                )}
               </button>
             </div>
 
