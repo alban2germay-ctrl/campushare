@@ -82,20 +82,30 @@
 
   <!-- MODULES MODULAIRES DE L'APPLICATION CAMPUSHARE -->
   <!-- 1. Données partagées (Contrat Alban & Mathys) -->
-  <script type="text/babel" src="js/data/mockData.js?v=20261009"></script>
+  <script type="text/babel" src="js/data/mockData.js?v=20261012"></script>
+  <script type="text/babel" src="js/data/store.js?v=20261012"></script>   <!-- Persistance localStorage -->
 
   <!-- 2. Composants d'interface partagés -->
-  <script type="text/babel" src="js/components/StudioBar.js?v=20261009"></script>
-  <script type="text/babel" src="js/components/CampusHeader.js?v=20261009"></script>
-  <script type="text/babel" src="js/components/BottomNav.js?v=20261009"></script>
+  <script type="text/babel" src="js/components/StudioBar.js?v=20261012"></script>
+  <script type="text/babel" src="js/components/CampusHeader.js?v=20261012"></script>
+  <script type="text/babel" src="js/components/BottomNav.js?v=20261012"></script>
 
   <!-- 3. Vues indépendantes (Chantiers autonomes) -->
-  <script type="text/babel" src="js/views/ExploreView.js?v=20261009"></script>   <!-- Chantier A (Alban) -->
-  <script type="text/babel" src="js/views/ItemsView.js?v=20261009"></script>     <!-- Chantier B (Mathys) -->
-  <script type="text/babel" src="js/views/BookingsView.js?v=20261009"></script>  <!-- Chantier C (Locations 7j/7) -->
-  <script type="text/babel" src="js/views/ProfileView.js?v=20261009"></script>   <!-- Chantier D (Compte & Confiance) -->
+  <script type="text/babel" src="js/views/ExploreView.js?v=20261012"></script>   <!-- Chantier A (Alban) -->
+  <script type="text/babel" src="js/views/ItemsView.js?v=20261012"></script>     <!-- Chantier B (Mathys) -->
+  <script type="text/babel" src="js/views/BookingsView.js?v=20261012"></script>  <!-- Chantier C (Locations 7j/7) -->
+  <script type="text/babel" src="js/views/ProfileView.js?v=20261012"></script>   <!-- Chantier D (Compte & Confiance) -->
 
   <!-- 4. Orchestrateur principal -->
-  <script type="text/babel" src="js/app.js?v=20261009"></script>
+  <script type="text/babel" src="js/app.js?v=20261012"></script>
+
+  <!-- 5. Service Worker (PWA installable & hors ligne) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('[CampuShare] Service worker non enregistré :', e));
+      });
+    }
+  </script>
 </body>
 </html>

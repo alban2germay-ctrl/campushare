@@ -79,6 +79,19 @@ window.CS.components.StudioBar = function StudioBar({
         </button>
       </div>
 
+      {/* Remise à zéro des données sauvegardées (localStorage) */}
+      <button
+        onClick={() => {
+          if (window.confirm('Effacer les données sauvegardées et revenir aux données de démo ?')) {
+            window.CS.store && window.CS.store.reset();
+          }
+        }}
+        className="px-2 py-1.5 rounded-xl bg-[#FAF8F5] text-[#D87D4A] border border-[#EAE2D5] text-[10px] font-bold hover:bg-[#D87D4A] hover:text-white transition"
+        title="Réinitialiser les données de démo"
+      >
+        ↺ Reset démo
+      </button>
+
       {/* Accès Direct au Hub Roadmap & Preuves */}
       <a
         href="/roadmap.html"
