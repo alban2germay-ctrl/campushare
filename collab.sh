@@ -68,6 +68,8 @@ case "$1" in
       echo -e "Exemple : ${YELLOW}./collab.sh save \"Micro-tâche 1.1.1 terminée\"${NC}"
       exit 1
     fi
+    echo -e "${YELLOW}🔎 Vérification et mise à jour automatique de l'app...${NC}"
+    python3 outils/sync_app.py || { echo -e "${RED}❌ Rien n'a été envoyé : corrigez l'erreur ci-dessus puis relancez.${NC}"; exit 1; }
     echo -e "${YELLOW}📸 Sauvegarde de votre travail...${NC}"
     git add .
     git commit -m "$2" || echo "Rien à commiter."

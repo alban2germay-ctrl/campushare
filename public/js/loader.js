@@ -7,7 +7,8 @@
 // empreinte du contenu). Babel (~3 Mo) n'est téléchargé et exécuté QUE si un
 // fichier a changé depuis la dernière visite → démarrage quasi instantané sur
 // mobile, sans aucune étape de build (pas besoin de Node).
-// ⚠️ Pour ajouter un fichier JS de l'app : l'ajouter à SOURCES (et à sw.js).
+// 🤖 La liste SOURCES est tenue à jour automatiquement par outils/sync_app.py
+//    (lancé par `collab.sh save` / `collab.ps1 save`) : rien à faire à la main.
 // ==============================================================================
 
 (function () {

@@ -8,8 +8,9 @@ Développer pas à pas la Progressive Web App (PWA) **CampuShare** pour Alban (2
 ## 🏛️ Architecture & Organisation des Fichiers
 Le projet est une PWA modulaire pure Vanilla JS / React (sans build step lourd) :
 * `public/index.html` : Point d'entrée PWA (React production + Lucide, versions figées)
-* `public/js/loader.js` : Charge les fichiers JSX dans l'ordre et garde leur version compilée en cache (Babel téléchargé seulement si un fichier a changé). **Nouveau fichier JS → l'ajouter à `SOURCES` dans `loader.js` et à `APP_SHELL` dans `sw.js`.**
-* `public/sw.js` : Service worker hors ligne (incrémenter `CACHE_VERSION` quand les fichiers de l'app changent)
+* `public/js/loader.js` : Charge les fichiers JSX dans l'ordre et garde leur version compilée en cache (Babel téléchargé seulement si un fichier a changé). La liste `SOURCES` est mise à jour automatiquement.
+* `public/sw.js` : Service worker hors ligne (`APP_SHELL` et `CACHE_VERSION` mis à jour automatiquement)
+* `outils/sync_app.py` : lancé par `collab.sh save` / `collab.ps1 save` → vérifie la syntaxe (bloque l'envoi si erreur), puis met à jour `SOURCES`, `APP_SHELL`, `CACHE_VERSION` et le `?v=` de `loader.js`. Lancement manuel : `python3 outils/sync_app.py`
 * `public/js/app.js` : Orchestrateur principal & routeur d'onglets
 * `public/js/data/mockData.js` : Contrat de données partagé (utilisateurs, catégories, objets, réservations)
 * `public/js/components/` : Composants partagés (`CampusHeader.js`, `BottomNav.js`, `StudioBar.js`)

@@ -56,6 +56,12 @@ switch ($Action.ToLower()) {
             Write-Host "Exemple : .\collab.ps1 save `"Ma description`"" -ForegroundColor Yellow
             exit 1
         }
+        Write-Host "Verification et mise a jour automatique de l'app..." -ForegroundColor Yellow
+        python outils\sync_app.py
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "Rien n'a ete envoye : corrigez l'erreur ci-dessus puis relancez." -ForegroundColor Red
+            exit 1
+        }
         Write-Host "Sauvegarde en cours..." -ForegroundColor Yellow
         git add .
         git commit -m "$Message"

@@ -134,3 +134,16 @@ Ce journal consigne les discussions et arbitrages collégiaux entre les directeu
 * **Discord :** webhook réellement branché dans `collab.sh` **et `collab.ps1`** (script de Mathys, modification additive : nouvelle fonction appelée après le push). Il est optionnel : URL à coller dans `.discord_webhook` (ajouté au nouveau `.gitignore`, donc jamais poussé publiquement). `AGENTS.md` décrit désormais le comportement réel.
 * **Roadmap :** liens `file:///…/.gemini/…` remplacés par des chemins relatifs dans `ROADMAP.md` et `ESPACE_ALBAN.md`.
 * **Hors périmètre, à prévoir :** `public/roadmap.html` charge toujours React dev + Babel (page secondaire) ; Tailwind passe encore par le CDN « play », qui compile le CSS dans le navigateur.
+
+---
+
+### 🎙️ Session n°7 — Zéro tâche manuelle à l'envoi (12 octobre 2026)
+
+* **Demande d'Alban :** ne plus avoir à penser à la liste des fichiers de `loader.js` (« fais-le pour nous »).
+* **@agent-architect :** nouveau script `outils/sync_app.py` (Python, déjà présent chez Alban et Mathys, rien à installer), lancé **automatiquement** par `./collab.sh save` et `collab.ps1 save` avant chaque commit :
+  1. vérifie la syntaxe de tous les fichiers JS → **l'envoi est bloqué** en cas d'erreur, avec le fichier fautif affiché ;
+  2. ajoute les nouveaux fichiers JS à `SOURCES` (données après `store.js`, le reste avant `app.js`) et retire ceux qui ont été supprimés ;
+  3. recopie la liste dans `APP_SHELL` de `sw.js` ;
+  4. recalcule `CACHE_VERSION` (empreinte des fichiers de l'app) et le `?v=` de `loader.js`.
+* ⚠️ **Impact pour Mathys :** `collab.ps1 save` lance désormais `python outils\sync_app.py` (même commande `python` que `collab.ps1 start`). Aucune autre action à faire, `ItemsView.js` non modifié.
+* Les règles « incrémenter `CACHE_VERSION` » et « ajouter le fichier à `loader.js` » deviennent automatiques.

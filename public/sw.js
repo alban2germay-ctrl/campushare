@@ -6,16 +6,17 @@
 //   → vos modifs apparaissent tout de suite, et l'app marche sans réseau.
 // - Librairies CDN & images (autres origines) : cache d'abord
 //   → chargement rapide et disponible hors ligne (QR de retrait au Foyer N7).
-// ⚠️ Incrémenter CACHE_VERSION à chaque changement de la liste APP_SHELL.
+// 🤖 APP_SHELL et CACHE_VERSION sont mis à jour automatiquement par
+//    outils/sync_app.py à chaque `collab.sh save` / `collab.ps1 save`.
 // ==============================================================================
 
-const CACHE_VERSION = 'campushare-v3';
+const CACHE_VERSION = 'campushare-3405bf27';
 
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
-  './js/loader.js?v=20261012c',
+  './js/loader.js?v=36a265d7',
   './js/data/mockData.js?v=20261012',
   './js/data/store.js?v=20261012',
   './js/components/StudioBar.js?v=20261012',
